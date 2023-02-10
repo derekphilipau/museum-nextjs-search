@@ -1,0 +1,13 @@
+{
+  "elasticsearch": {
+    "host": "localhost",
+    "protocol": "https",
+    "port": "9200",
+    "username": "elastic",
+    "password": "JWa*J6=6+u-oYLzlruZh",
+    "auth": "tls",
+    "cert": "./config/http_ca.crt",
+    "bulkLimit": 100,
+    "bulkSleepSeconds": 2
+  }
+}
