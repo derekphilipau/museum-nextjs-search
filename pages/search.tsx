@@ -7,9 +7,8 @@ import { ItemCard } from "@/components/search/item-card";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
-
 import { Checkbox } from "@/components/ui/checkbox"
-
+import { getAggregations } from "./api/util/elasticsearch";
 import { SearchFilter } from "@/components/search/search-filter"
 
 export default function Search() {
@@ -19,40 +18,34 @@ export default function Search() {
   const [options, setOptions] = useState([]);
   const [error, setError] = useState("");
 
-  const filters = [
-    {
-      name: 'period',
-      displayName: 'Period'
-    },
-    {
-      name: 'primaryConstituent',
-      displayName: 'Maker'
-    },
-    {
-      name: 'medium',
-      displayName: 'Medium'
-    },
-    {
-      name: 'classification',
-      displayName: 'Classification'
-    }
-  ];
+  const indexAggregations = {
+    collections: [
+      { name: 'primaryConstituent', displayName: 'Maker' },
+      { name: 'classification', displayName: 'Classification' },
+      { name: 'medium', displayName: 'Medium' },
+      { name: 'period', displayName: 'Period' },
+      { name: 'dynasty', displayName: 'Dynasty' },
+      { name: 'museumLocation', displayName: 'Museum Location' },
+      { name: 'section', displayName: 'Section' },
+    ]
+  }
 
   useEffect(() => {
-    console.log('query change');
-    search();
-  }, [query]);
+    const getData = setTimeout(() => {
+      console.log('query change');
+      search();
+    }, 600);
+    return () => clearTimeout(getData);
+  }, [query])
 
   function handleSubmit(e) {    
     e.preventDefault();
     search();
   }
 
-  function handleFilterChange(key: string, e) {
-    console.log('filter change: ', key, e)
-    e.preventDefault();
+  function handleFilterChange(name: string, key: string, e) {
+    console.log('filter change: ', name, key)
   }
-
 
   function search() {
     console.log('init search ' + query)
@@ -94,10 +87,10 @@ export default function Search() {
       <section className="container grid sm:grid-cols-3 md:grid-cols-4 gap-6 pt-6 pb-8 md:py-10">
         <div className="sm:col-span-1 h-full space-y-6">
           <Input name="query" placeholder="Search" onChange={(e) => setQuery(e.target.value)} />
-          {filters?.map(
+          {indexAggregations.collections?.map(
             (filter, index) =>
               filter && (
-                <SearchFilter filter={filter} options={options[filter.name]} onChangeHandler={handleFilterChange} />
+                <SearchFilter filter={filter} options={options[filter.name]} checked={false} onChangeHandler={handleFilterChange} />
               )
           )}
           <div className="flex items-center space-x-2">

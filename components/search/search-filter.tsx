@@ -1,8 +1,7 @@
-import * as React from "react"
+import {useEffect, useState} from "react";
 import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+//import { useSearchParams } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import {useEffect} from 'react'
 import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
@@ -19,19 +18,14 @@ import {
 interface SearchFilterProps {
   filter?: Filter,
   options?: any,
+  checked?: boolean,
   onChangeHandler?: any,
 }
 
 export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = React.useState(false)
-
-  useEffect(() => {
-    console.log('router change')
-    console.log(searchParams.toString())
-  }, [searchParams]);
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Collapsible
@@ -58,7 +52,7 @@ export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterP
           (option, index) =>
             option && (
               <div className="flex items-center space-x-2">
-                <Checkbox id={`terms-${filter.name}-${index}`} onChange={(e) => onChangeHandler(option.key, e)} />
+                <Checkbox id={`terms-${filter.name}-${index}`} onClick={(e) => onChangeHandler(filter.name, option.key, e)} />
                 <label
                   htmlFor={`terms-${filter.name}-${index}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

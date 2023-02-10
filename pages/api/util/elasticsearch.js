@@ -2,12 +2,17 @@
 import {readFileSync} from 'fs'
 import {Client} from '@elastic/elasticsearch';
 
-const AGGREGATIONS = {
+const indexAggregations = {
   collections: [
-    'period', 'dynasty', 'medium', 'classification', 'section', 
-    'museumLocation', 'primaryConstituent'
+    { name: 'primaryConstituent', displayName: 'Maker' },
+    { name: 'classification', displayName: 'Classification' },
+    { name: 'medium', displayName: 'Medium' },
+    { name: 'period', displayName: 'Period' },
+    { name: 'dynasty', displayName: 'Dynasty' },
+    { name: 'museumLocation', displayName: 'Museum Location' },
+    { name: 'section', displayName: 'Section' },
   ]
-};
+}
 
 function getClient() {
   const ca = readFileSync('./secrets/http_ca.crt');
@@ -62,12 +67,12 @@ export async function search(params) {
       match_all: {}
     };
 
-  if (AGGREGATIONS[index]?.length > 0) {
+  if (indexAggregations[index]?.length > 0) {
     const aggs = {}
-    for (const agg of AGGREGATIONS[index]) {
-      aggs[agg] = {
+    for (const agg of indexAggregations[index]) {
+      aggs[agg.name] = {
         terms: {
-          field: agg,
+          field: agg.name,
           size: 20
         }
       }
