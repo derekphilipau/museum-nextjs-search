@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getAggregations } from "./api/util/elasticsearch";
 import { SearchFilter } from "@/components/search/search-filter"
 
 export default function Search() {

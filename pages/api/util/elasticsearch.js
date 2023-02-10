@@ -44,6 +44,22 @@ async function countIndex(index, client) {
   }
 }
 
+export async function getDocument(index, id) {
+  const esQuery = {
+    index,
+    query: {
+      match: {
+        id
+      }
+    }
+  };
+
+  const client = getClient();
+  const response = await client.search(esQuery);
+  return { query: esQuery, data: response?.hits?.hits[0]?._source }
+}
+
+
 export async function search(params) {
   const {
     index, from, size, query

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 //import { useSearchParams } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -33,17 +33,17 @@ export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterP
       onOpenChange={setIsOpen}
       className="w-full space-y-2"
     >
-      <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold">
-          {filter.displayName}
-        </h4>
-        <CollapsibleTrigger asChild>
-          <Button variant="ghost" size="sm" className="w-6 h-6 p-0">
+      <CollapsibleTrigger asChild>
+        <Button variant="ghost" size="sm" className="p-1 flex items-center justify-between w-full">
+          <h4 className="text-sm font-semibold">
+            {filter.displayName}
+          </h4>
+          <div>
             <ChevronsUpDown className="h-4 w-4" />
-            <span className="sr-only">Toggle</span>
-          </Button>
-        </CollapsibleTrigger>
-      </div>
+            <span className="sr-only">Toggle {filter.displayName} Filter</span>
+          </div>
+        </Button>
+      </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 w-full">
         <div className="mb-2">
           <Input type="artist" placeholder={`Search ${filter.displayName}`} />
