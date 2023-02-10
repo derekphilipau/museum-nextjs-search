@@ -13,6 +13,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    console.log('go', req.query)
     const result = await search(req.query);
     res.status(200).json(result)
   } catch (error) {

@@ -62,14 +62,14 @@ export async function getDocument(index, id) {
 
 export async function search(params) {
   const {
-    index, from, size, query
+    index, page, size, query
   } = params;
   console.log('query is ' + query, params)
 
   const esQuery = {
     index,
-    from: from || 0,
-    size: size || 24,
+    from: (page - 1) * size || 0,
+    size: parseInt(size) || 24,
     track_total_hits: true
   };
   if (query) esQuery.query = 
@@ -95,16 +95,23 @@ export async function search(params) {
     }
     esQuery.aggs = aggs;
   }
+  console.log(esQuery)
 
   const client = getClient();
   const response = await client.search(esQuery);
-  console.log(response.aggregations)
+  console.log(response)
 
   const options = getResponseOptions(response)
 
-  if (true) {
-    return { query: esQuery, data: response.hits.hits, options }
+  const count = response?.hits?.total?.value || 0;
+  const metadata = { 
+    count,
+    pages: Math.ceil(count/size)
   }
+
+  const test = Math.floor(Math.random() * 640000);
+
+  return { query: esQuery, data: response.hits.hits, options, metadata, test: test }
 }
 
 function getResponseOptions (response) {

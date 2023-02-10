@@ -51,7 +51,7 @@ export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterP
         {options?.length > 0 && options?.map(
           (option, index) =>
             option && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" key={`filter-${filter.name}-${index}`}>
                 <Checkbox id={`terms-${filter.name}-${index}`} onClick={(e) => onChangeHandler(filter.name, option.key, e)} />
                 <label
                   htmlFor={`terms-${filter.name}-${index}`}
