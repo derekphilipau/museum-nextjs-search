@@ -2,6 +2,7 @@
 import {useEffect, useState} from "react";
 import Head from "next/head"
 import Link from "next/link"
+import useSWRInfinite from "swr/infinite";
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { Input } from "@/components/ui/input";
@@ -12,10 +13,19 @@ import { SearchFilter } from "@/components/search/search-filter"
 
 export default function Search() {
 
+  const PAGE_SIZE = 24;
+  
+  const [searchParams, setSearchParams] = useState({
+      index: 'collections',
+      from: '0',
+      size: '24'
+    });
   const [query, setQuery] = useState("");
-  const [items, setItems] = useState([]);
-  const [options, setOptions] = useState([]);
+  //const [items, setItems] = useState([]);
+  //const [options, setOptions] = useState([]);
   const [error, setError] = useState("");
+
+  const fetcher = (...args) => fetch(...args).then(res => res.json())
 
   const indexAggregations = {
     collections: [
@@ -29,21 +39,51 @@ export default function Search() {
     ]
   }
 
+
+
+
+  const {
+    data,
+    mutate,
+    size,
+    setSize,
+    isValidating,
+    isLoading
+  } = useSWRInfinite(
+    (index) =>
+      `/api/search?${new URLSearchParams(searchParams)}`,
+    fetcher
+  );
+
+  const pageData = data?.[0]?.data
+  const items = pageData ? [].concat(...pageData) : [];
+  const options = data?.[0]?.options || {};
+  const isLoadingMore =
+    isLoading || (size > 0 && pageData && typeof pageData[size - 1] === "undefined");
+  const isEmpty = pageData?.[0]?.length === 0;
+  const isReachingEnd =
+    isEmpty || (pageData && pageData[pageData.length - 1]?.length < PAGE_SIZE);
+  const isRefreshing = isValidating && pageData && pageData.length === size;
+
+
   useEffect(() => {
     const getData = setTimeout(() => {
       console.log('query change');
-      search();
+      //search();
+      setSearchParams({...searchParams, ...{ query: query }})
     }, 600);
     return () => clearTimeout(getData);
   }, [query])
 
-  function handleSubmit(e) {    
-    e.preventDefault();
-    search();
-  }
-
   function handleFilterChange(name: string, key: string, e) {
     console.log('filter change: ', name, key)
+  }
+
+  async function sendRequest(url, { arg }) {
+    return fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(arg)
+    }).then(res => res.json())
   }
 
   function search() {
@@ -52,14 +92,11 @@ export default function Search() {
     const postData = async () => {
       const params = {
         index: 'collections',
-        from: 0,
-        size: 24,
+        from: '0',
+        size: '24',
         query: query,
       };
-      const response = await fetch("/api/search", {
-        method: "POST",
-        body: JSON.stringify(params),
-      });
+      const response = await fetch('/api/search?' + new URLSearchParams(params));
       return response.json();
     };
     postData().then((res) => {
@@ -124,6 +161,15 @@ export default function Search() {
                 )
             )}
           </div>
+          <button
+            className={buttonVariants({ size: "sm" })}
+            disabled={isLoadingMore || isReachingEnd}
+            onClick={() => {
+              setSize(size + 1);
+            }}
+            >
+            Load More
+          </button>
         </div>
       </section>
     </Layout>

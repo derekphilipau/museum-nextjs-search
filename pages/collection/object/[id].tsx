@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head"
 import Link from "next/link"
 import { Layout } from "@/components/layout/layout"
 import { buttonVariants } from "@/components/ui/button"
-
+import { ObjectDescription } from "@/components/search/object-description";
 import { useRouter } from 'next/router'
 
 export default function IndexPage() {
@@ -27,7 +27,7 @@ export default function IndexPage() {
     if (!item && id) getDocument()
     console.log("loaded");
   });
-  
+
   return (
     <Layout>
       <Head>
@@ -43,19 +43,33 @@ export default function IndexPage() {
         <div className="md:col-span-1 lg:col-span-3 flex justify-center">
           <figure>
             <img className="max-h-96" src={`https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/${item?.image}`} alt="" />
-            <figcaption>Fig.1 - Trulli, Puglia, Italy.</figcaption>
+            <figcaption></figcaption>
           </figure>
         </div>
         <div className="md:col-span-1 lg:col-span-5">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl mb-6">
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl mb-3">
             {item?.title}
           </h1>
-          <p className="text-neutral-700 dark:text-neutral-400"
-            dangerouslySetInnerHTML={{__html: item?.description}}>
-          </p>
-          <pre className="max-w-[980px] break-normal">
-            {JSON.stringify(item, null, 2)}
-          </pre>
+          <div className="text-gray-700 dark:text-gray-400 mb-4">
+            {item?.date}
+          </div>
+          <h2 className="text-xl mb-4">
+            {item?.primaryConstituent || 'Unknown Maker'}
+          </h2>
+          <h4 className="font-semibold uppercase text-gray-700 dark:text-gray-400 mb-4">
+            {item?.collections?.map(
+              (collection, index) =>
+                collection && (
+                  <span>{collection}{(index > 0) ? ', ' : ''}</span>
+                )
+            )}
+          </h4>
+          <div className="text-neutral-700 dark:text-neutral-400 mb-4"
+            dangerouslySetInnerHTML={{ __html: item?.description }}>
+          </div>
+          <div className="pt-4">
+            <ObjectDescription item={item} />
+          </div>
         </div>
       </section>
     </Layout>

@@ -1,12 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { ChevronsUpDown, Plus, X } from "lucide-react"
-
-import { Filter } from "@/types/filter"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
 export function ItemCard({ item }) {
 
   const data = item._source;
@@ -17,8 +11,13 @@ export function ItemCard({ item }) {
   return (
     <Link href={href}>
       <div className="py-4">
-        <img className="w-full object-cover" src={imageSrc} alt="" />
-        <div className="pt-2">
+        <div className="flex justify-center items-center bg-gray-50">
+          <figure>
+            <img className="object-contain h-48" src={imageSrc} alt="" />
+            <figcaption></figcaption>
+          </figure>
+        </div>
+        <div className="pt-3">
           <h4 className="mb-1 text-xl font-semibold text-gray-900 dark:text-white">{data.title}</h4>
           <a href="#">
             <h5 className="mb-1 text-lg text-gray-900 dark:text-white">{maker}</h5>
