@@ -5,8 +5,18 @@ import { Layout } from "@/components/layout/layout"
 import { buttonVariants } from "@/components/ui/button"
 import { ObjectDescription } from "@/components/search/object-description";
 import { useRouter } from 'next/router'
+import { ImageViewer } from "@/components/search/image-viewer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default function IndexPage() {
+  const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
   const [item, setItem] = useState(null);
 
   const router = useRouter()
@@ -40,20 +50,17 @@ export default function IndexPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <section className="container grid md:grid-cols-2 lg:grid-cols-8 gap-6 pt-6 pb-8 md:py-10">
-        <div className="md:col-span-1 lg:col-span-3 flex justify-center">
-          <figure>
-            <img className="max-h-96" src={`https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/${item?.image}`} alt="" />
-            <figcaption></figcaption>
-          </figure>
+        <div className="md:col-span-1 lg:col-span-3 flex justify-center items-start">
+          <ImageViewer item={item} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl mb-3">
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl mb-3">
             {item?.title}
           </h1>
           <div className="text-gray-700 dark:text-gray-400 mb-4">
             {item?.date}
           </div>
-          <h2 className="text-xl mb-4">
+          <h2 className="text-lg md:text-xl mb-4">
             {item?.primaryConstituent || 'Unknown Maker'}
           </h2>
           <h4 className="font-semibold uppercase text-gray-700 dark:text-gray-400 mb-4">
