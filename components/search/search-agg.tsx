@@ -31,7 +31,7 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [dynamicOptions, setDynamicOptions] = useState(options);
+  const [searchOptions, setSearchOptions] = useState([]);
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
@@ -44,8 +44,7 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
     console.log('updated option: ' + realQuery)
     setLoading(true)
     if (realQuery?.length < 3) {
-      if (options?.length > 0 && dynamicOptions?.length === 0)
-        setDynamicOptions(options);
+      setSearchOptions([]);
       return;
     }
     else {
@@ -53,8 +52,8 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
         .then((res) => res.json())
         .then((data) => {
           console.log('got options', data)
-          if (data?.length > 0) setDynamicOptions(data)
-          else setDynamicOptions(options)
+          if (data?.length > 0) setSearchOptions(data)
+          else setSearchOptions([])
           setLoading(false)
         })
     }
@@ -64,11 +63,11 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
   let checked = []
   if (agg.name in filters) {
     checked.push(filters[agg.name])
-    if (!hasCheckedValues 
-        && options?.length > 0
-        && options.filter(o => o.key === filters[agg.name]).length > 0) {
+    if (!hasCheckedValues
+      && options?.length > 0
+      && options.filter(o => o.key === filters[agg.name]).length > 0) {
       hasCheckedValues = true;
-    }  
+    }
   }
 
   const [isOpen, setIsOpen] = useState(hasCheckedValues)
@@ -94,15 +93,33 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
         <div className="mb-2">
           <Input name="query" placeholder={`Search ${agg.displayName}`} onChange={(e) => setQuery(e.target.value)} />
         </div>
-        {dynamicOptions?.length > 0 && dynamicOptions?.map(
+        {searchOptions?.length > 0 && searchOptions?.map(
           (option, index) =>
             option && (
               <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
-                <Checkbox 
-                  id={`terms-${agg.name}-${index}`} 
-                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)} 
+                <Checkbox
+                  id={`terms-${agg.name}-${index}`}
+                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)}
                   defaultChecked={checked.includes(option.key)}
-                  />
+                />
+                <label
+                  htmlFor={`terms-${agg.name}-${index}`}
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
+                </label>
+              </div>
+            )
+        )}
+        {searchOptions?.length === 0 && options?.length > 0 && options?.map(
+          (option, index) =>
+            option && (
+              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
+                <Checkbox
+                  id={`terms-${agg.name}-${index}`}
+                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)}
+                  defaultChecked={checked.includes(option.key)}
+                />
                 <label
                   htmlFor={`terms-${agg.name}-${index}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

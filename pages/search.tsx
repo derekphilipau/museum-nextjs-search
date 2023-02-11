@@ -35,8 +35,8 @@ export default function Search() {
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
 
-
   const [index, setIndex] = useState(searchParams.get('index') || 'collections');
+  console.log('lll' + searchParams.get('index'), index)
   const [q, setQ] = useState(searchParams.get('q') || '');
   console.log('got querylll: ', q)
   const [pageIndex, setPageIndex] = useState(parseInt(searchParams.get('p')) || 0);
