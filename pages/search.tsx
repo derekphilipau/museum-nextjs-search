@@ -15,39 +15,43 @@ import { SearchPagination } from "@/components/search/search-pagination";
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 const PAGE_SIZE = 24;
 
+const indexAggregations = {
+  collections: [
+    { name: 'primaryConstituent', displayName: 'Maker' },
+    { name: 'classification', displayName: 'Classification' },
+    { name: 'medium', displayName: 'Medium' },
+    { name: 'period', displayName: 'Period' },
+    { name: 'dynasty', displayName: 'Dynasty' },
+    { name: 'museumLocation', displayName: 'Museum Location' },
+    { name: 'section', displayName: 'Section' },
+  ]
+}
+
 export default function Search() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const [query, setQuery] = useState('');
+  const [realQuery, setRealQuery] = useState('');
 
-  // Get search params from querystring
-  const q = searchParams.get('q') || '';
-  const pageIndex = parseInt(searchParams.get('p')) || 1;
+  const [index, setIndex] = useState(searchParams.get('index') || 'collections');
+  const [q, setQ] = useState(searchParams.get('q') || '');
+  console.log('got querylll: ', q)
+  const [pageIndex, setPageIndex] = useState(parseInt(searchParams.get('p')) || 0);
 
   const filters = {};
-  const classification = searchParams.get('classification') || '';
-  if (classification) filters.classification = classification;
-  const medium = searchParams.get('medium') || '';
-  if (medium) filters.medium = medium;
-  const period = searchParams.get('period') || '';
-  if (period) filters.period = period;
-  const dynasty = searchParams.get('dynasty') || '';
-  if (dynasty) filters.dynasty = dynasty;
-  const museumLocation = searchParams.get('museumLocation') || '';
-  if (museumLocation) filters.museumLocation = museumLocation;
-  const section = searchParams.get('section') || '';
-  if (section) filters.section = section;
-
-  const [query, setQuery] = useState('');
-  const [realQuery, setRealQuery] = useState('')
+  for (const agg of indexAggregations[index]) {
+    if (searchParams.has(agg.name))
+      filters[agg.name] = searchParams.get(agg.name) || '';
+  }
 
   function getNewQueryParams(newParams) {
     for (const [name, value] of Object.entries(newParams)) {
       if (value) params.set(name, value);
       else params.delete(name)
     }
-    params.set('index', 'collections');
+    params.set('index', index);
     return params;
   }
 
@@ -72,28 +76,13 @@ export default function Search() {
     pushQueryParam({q: realQuery, p: 1});
   }, [realQuery]);
 
-  function setPageIndex(p) {
+  function updatePageIndex(p) {
     pushQueryParam({p});
   }
 
   function setFilter(name: string, key: string, checked) {
-    console.log('yyy', checked)
-    //const checked = e.target.checked;
-    console.log('filter change: ', name, key, checked);
     if (checked) pushQueryParam({[name]: key});
     else pushQueryParam({[name]: null});
-  }
-
-  const indexAggregations = {
-    collections: [
-      { name: 'primaryConstituent', displayName: 'Maker' },
-      { name: 'classification', displayName: 'Classification' },
-      { name: 'medium', displayName: 'Medium' },
-      { name: 'period', displayName: 'Period' },
-      { name: 'dynasty', displayName: 'Dynasty' },
-      { name: 'museumLocation', displayName: 'Museum Location' },
-      { name: 'section', displayName: 'Section' },
-    ]
   }
 
   const { data } = useSWR(getApiUrl(), fetcher);
@@ -102,7 +91,6 @@ export default function Search() {
   const options = data?.options || {};
   const count = data?.metadata?.count || 0;
   const totalPages = data?.metadata?.pages || 0;
-  console.log('8888', data)
 
   return (
     <Layout>
@@ -143,7 +131,7 @@ export default function Search() {
               {error}
             </h3>
           }
-          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={setPageIndex} />
+          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8 md:pb-10">
             {
               items?.length > 0 && items.map(
@@ -156,7 +144,7 @@ export default function Search() {
               )
             }
           </div>
-          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={setPageIndex} />
+          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
         </div>
       </section>
     </Layout>
