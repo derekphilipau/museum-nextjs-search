@@ -35,6 +35,7 @@ export default function Search() {
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
 
+
   const [index, setIndex] = useState(searchParams.get('index') || 'collections');
   const [q, setQ] = useState(searchParams.get('q') || '');
   console.log('got querylll: ', q)
@@ -107,9 +108,9 @@ export default function Search() {
         <div className="sm:col-span-1 h-full space-y-6">
           <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
           {indexAggregations.collections?.map(
-            (agg, index) =>
+            (agg, i) =>
               agg && (
-                <SearchAgg key={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}
           <div className="flex items-center space-x-2">
@@ -135,9 +136,9 @@ export default function Search() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8 md:pb-10">
             {
               items?.length > 0 && items.map(
-                (item, index) =>
+                (item, i) =>
                   item._source && (
-                    <div className="" key={index}>
+                    <div className="" key={i}>
                       <ItemCard item={item._source} />
                     </div>
                   )

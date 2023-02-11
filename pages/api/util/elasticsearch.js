@@ -136,7 +136,7 @@ export async function search(params) {
   return { query: esQuery, data: response.hits.hits, options, metadata, test: test }
 }
 
-function getResponseOptions (response) {
+function getResponseOptions(response) {
   const options = {}
   Object.keys(response.aggregations).forEach(n => {
     const agg = response.aggregations[n]
@@ -146,3 +146,47 @@ function getResponseOptions (response) {
   })
   return options
 };
+
+export async function options(params) {
+  const {
+    index, field, q
+  } = params;
+
+  const size = 20;
+
+  if (!index || !field) { return }
+
+  const request = {
+    index,
+    size: 0,
+    aggs: {
+      [field]: {
+        terms: {
+          field,
+          size  
+        }
+      }
+    }  
+  }
+
+  if (q) {
+    request.query = {
+      wildcard: {
+        [field]: {
+          value: '*' + q + '*',
+          case_insensitive: true
+        }
+      }
+    }
+  }
+  //console.log(JSON.stringify(request, null, 2))
+
+  const client = getClient();
+  const response = await client.search(request)
+  console.log(JSON.stringify(response, null, 2))
+  if (response.aggregations[field].buckets) {
+    return response.aggregations[field].buckets
+  } else {
+    return []
+  }
+}

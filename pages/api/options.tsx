@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {search} from './util/elasticsearch.js'
+import {options} from './util/elasticsearch.js'
 
 /*
 type ResponseData = {
@@ -13,7 +13,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const result = await search(req.query);
+    const result = await options(req.query);
     res.status(200).json(result)
   } catch (error) {
     res.status(500).json({ error })

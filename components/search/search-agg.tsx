@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/collapsible"
 
 interface SearchAggProps {
+  index?: string,
   agg?: Agg,
   options?: any,
   filters?: any,
@@ -23,9 +24,41 @@ interface SearchAggProps {
   onChangeHandler?: any,
 }
 
-export function SearchAgg({ agg, options, filters, onChangeHandler }: SearchAggProps) {
+export function SearchAgg({ index, agg, options, filters, onChangeHandler }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [query, setQuery] = useState('');
+  const [realQuery, setRealQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [dynamicOptions, setDynamicOptions] = useState(options);
+
+  useEffect(() => {
+    const debounceQuery = setTimeout(() => {
+      setRealQuery(query)
+    }, 400);
+    return () => clearTimeout(debounceQuery);
+  }, [query]);
+
+  useEffect(() => {
+    console.log('updated option: ' + realQuery)
+    setLoading(true)
+    if (realQuery?.length < 3) {
+      if (options?.length > 0 && dynamicOptions?.length === 0)
+        setDynamicOptions(options);
+      return;
+    }
+    else {
+      fetch(`/api/options?index=${index}&field=${agg.name}&q=${realQuery}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('got options', data)
+          if (data?.length > 0) setDynamicOptions(data)
+          else setDynamicOptions(options)
+          setLoading(false)
+        })
+    }
+  }, [realQuery]);
 
   let hasCheckedValues = false;
   let checked = []
@@ -59,9 +92,9 @@ export function SearchAgg({ agg, options, filters, onChangeHandler }: SearchAggP
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 w-full">
         <div className="mb-2">
-          <Input type="artist" placeholder={`Search ${agg.displayName}`} />
+          <Input name="query" placeholder={`Search ${agg.displayName}`} onChange={(e) => setQuery(e.target.value)} />
         </div>
-        {options?.length > 0 && options?.map(
+        {dynamicOptions?.length > 0 && dynamicOptions?.map(
           (option, index) =>
             option && (
               <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
@@ -74,7 +107,7 @@ export function SearchAgg({ agg, options, filters, onChangeHandler }: SearchAggP
                   htmlFor={`terms-${agg.name}-${index}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {option.key} ({option.doc_count})
+                  {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
                 </label>
               </div>
             )
