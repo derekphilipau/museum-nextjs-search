@@ -35,12 +35,12 @@ export default function Search() {
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
 
-  const [index, setIndex] = useState(searchParams.get('index') || 'collections');
+  const index = searchParams.get('index') || 'collections';
   console.log('lll' + searchParams.get('index'), index)
-  const [q, setQ] = useState(searchParams.get('q') || '');
+  const q = searchParams.get('q') || '';
   console.log('got querylll: ', q)
-  const [pageIndex, setPageIndex] = useState(parseInt(searchParams.get('p')) || 0);
-
+  const pageIndex = parseInt(searchParams.get('p')) || 1;
+  console.log('query p is ' + parseInt(searchParams.get('p')) + ' pi val: ' + pageIndex)
   const filters = {};
   for (const agg of indexAggregations[index]) {
     if (searchParams.has(agg.name))
@@ -49,6 +49,7 @@ export default function Search() {
 
   function getNewQueryParams(newParams) {
     for (const [name, value] of Object.entries(newParams)) {
+      console.log('push: ' + name + ' val: ' + value)
       if (value) params.set(name, value);
       else params.delete(name)
     }
@@ -62,7 +63,7 @@ export default function Search() {
   }
 
   function pushQueryParam(newParams) {
-    const params = getNewQueryParams(newParams);
+    const params = getNewQueryParams(newParams); 
     router.push(`${pathname}?${params}`, undefined, { shallow: true })
   }
 
@@ -82,7 +83,7 @@ export default function Search() {
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushQueryParam({[name]: key});
+    if (checked) pushQueryParam({[name]: key, p: 1});
     else pushQueryParam({[name]: null});
   }
 
