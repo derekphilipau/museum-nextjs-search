@@ -217,6 +217,11 @@ export async function similar(id) {
           term: {
             id: document.id
           }
+        },
+        must: {
+          exists: {
+            field: 'image'
+          }
         }
       }
     },

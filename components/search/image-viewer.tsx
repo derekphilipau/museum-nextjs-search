@@ -1,7 +1,8 @@
-import * as React from "react"
+import { useEffect } from "react";
 import dynamic from 'next/dynamic'
 import Link from "next/link"
-//import { OpenSeaDragonViewer } from "@/components/search/open-seadragon-viewer";
+import { isImageRestricted, getSmallImageUrl, getRestrictedImageUrl, getLargeImageUrl } from '@/util/image.js';
+
 import {
   Dialog,
   DialogContent,
@@ -15,37 +16,61 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
   ssr: false
 })
 
-const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
-const IMG_LG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size4/'
-
 export function ImageViewer({ item }) {
 
   if (!item?.id) return;
 
-  const imageSrc = `${IMG_BASE_URL}${item.image}`;
+  //const isRestricted = isImageRestricted(item.image);
+  //const smallImageUrl = isRestricted ? getRestrictedImageUrl(item.image) : getSmallImageUrl(item.image);
+  let isLoaded = false;
+  let isRestricted = false; // TODO
+  const smallImageUrl = getSmallImageUrl(item.image);
+  const largeImageUrl = getLargeImageUrl(item.image);
   const href = `/collection/object/${item.id}`;
 
+  /*
+  useEffect(() => {
+    async function checkImageRestriction() {
+      if (item.image) isRestricted = await isImageRestricted(item.image);
+      console.log('is restricted: ' + isRestricted)
+    }
+    if(!isLoaded) {
+      checkImageRestriction();
+      isLoaded = true;
+    } 
+  }, []);
+  */
+
   return (
-    <Dialog className="">
-      <DialogTrigger>
+    <>
+      {isRestricted ? (
         <figure>
-          <img className="max-h-96" src={`${IMG_BASE_URL}${item?.image}`} alt="" />
+          <img className="max-h-96" src={smallImageUrl} alt="" />
           <figcaption></figcaption>
         </figure>
-      </DialogTrigger>
-      <DialogContent className="h-full min-w-full">
-        <DialogHeader className="">
-          <DialogTitle>{item.title}</DialogTitle>
-          <DialogDescription>
-            <div className="">
-              {item?.image && (
-                <OpenSeaDragonViewer image={`${IMG_LG_BASE_URL}${item.image}`} />
-              )}
-            </div>
-          </DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+      ) : (
+        <Dialog className="">
+          <DialogTrigger>
+            <figure>
+              <img className="max-h-96" src={smallImageUrl} alt="" />
+              <figcaption></figcaption>
+            </figure>
+          </DialogTrigger>
+          <DialogContent className="h-full min-w-full">
+            <DialogHeader className="">
+              <DialogTitle>{item.title}</DialogTitle>
+              <DialogDescription>
+                <div className="">
+                  {item?.image && (
+                    <OpenSeaDragonViewer image={largeImageUrl} />
+                  )}
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   )
 }
 

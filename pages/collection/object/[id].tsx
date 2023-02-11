@@ -14,8 +14,6 @@ import { similar } from "@/pages/api/util/elasticsearch.js";
 
 
 export default function IndexPage({item, similar}) {
-  const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
-
   const router = useRouter()
   const { id } = router.query
 
