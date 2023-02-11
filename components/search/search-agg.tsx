@@ -26,14 +26,19 @@ interface SearchAggProps {
 export function SearchAgg({ agg, options, filters, onChangeHandler }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false)
 
+  let hasCheckedValues = false;
   let checked = []
   if (agg.name in filters) {
     checked.push(filters[agg.name])
+    if (!hasCheckedValues 
+        && options?.length > 0
+        && options.filter(o => o.key === filters[agg.name]).length > 0) {
+      hasCheckedValues = true;
+    }  
   }
-  console.log('filters', filters)
-  console.log('checked', checked)
+
+  const [isOpen, setIsOpen] = useState(hasCheckedValues)
 
   return (
     <Collapsible

@@ -61,7 +61,9 @@ export async function getDocument(index, id) {
 
 export async function search(params) {
   const {
-    index, p, q, classification, medium
+    index, p, q,
+    classification, medium, period, dynasty,
+    museumLocation, section
   } = params;
   const size = 24;
   console.log('q is ' + q, params)
@@ -85,12 +87,13 @@ export async function search(params) {
     };
 
   const filters = [];
-  if (classification) {
-    filters.push({ name: 'classification', value: classification })
-  }
-  if (medium) {
-    filters.push({ name: 'medium', value: medium })
-  }
+  if (classification) filters.push({ name: 'classification', value: classification });
+  if (medium) filters.push({ name: 'medium', value: medium });
+  if (period) filters.push({ name: 'period', value: period });
+  if (dynasty) filters.push({ name: 'dynasty', value: dynasty });
+  if (museumLocation) filters.push({ name: 'museumLocation', value: museumLocation });
+  if (section) filters.push({ name: 'section', value: section });
+
   if (filters.length > 0) {
     esQuery.query.bool.filter = [];
     for (const filter of filters) {

@@ -30,7 +30,14 @@ export default function Search() {
   if (classification) filters.classification = classification;
   const medium = searchParams.get('medium') || '';
   if (medium) filters.medium = medium;
-  console.log('lll', filters)
+  const period = searchParams.get('period') || '';
+  if (period) filters.period = period;
+  const dynasty = searchParams.get('dynasty') || '';
+  if (dynasty) filters.dynasty = dynasty;
+  const museumLocation = searchParams.get('museumLocation') || '';
+  if (museumLocation) filters.museumLocation = museumLocation;
+  const section = searchParams.get('section') || '';
+  if (section) filters.section = section;
 
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('')
