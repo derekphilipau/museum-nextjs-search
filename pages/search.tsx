@@ -1,5 +1,8 @@
 "use client"
 import {useEffect, useState} from "react";
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Head from "next/head"
 import useSWR from 'swr'
 import { Layout } from "@/components/layout/layout"
@@ -13,6 +16,10 @@ const fetcher = (...args) => fetch(...args).then(res => res.json())
 const PAGE_SIZE = 24;
 
 export default function Search() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('')
   const [pageIndex, setPageIndex] = useState(1);
@@ -23,6 +30,17 @@ export default function Search() {
     }, 400);
     return () => clearTimeout(debounceQuery);
   }, [query]);
+
+  useEffect(() => {
+    if (query) params.set('query', query);
+    else params.delete('query')
+    router.push(`${pathname}?${params}`, undefined, { shallow: true })
+  }, [realQuery]);
+
+  useEffect(() => {
+    params.set('p', pageIndex);
+    router.push(`${pathname}?${params}`, undefined, { shallow: true })
+  }, [pageIndex]);
 
   const indexAggregations = {
     collections: [

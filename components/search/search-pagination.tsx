@@ -10,7 +10,10 @@ interface SearchPaginationProps {
 
 export function SearchPagination({ count, pageIndex, totalPages, onPageChangeHandler }: SearchPaginationProps) {
   return (
-    <div className="sm:flex items-center justify-between gap-x-4 pt-2">
+    <nav
+      className="sm:flex items-center justify-between gap-x-4 pt-2"
+      aria-label="Pagination"
+      >
       <div className="text-sm">
         {count} results, page {pageIndex} of {totalPages} pages
       </div>
@@ -21,7 +24,7 @@ export function SearchPagination({ count, pageIndex, totalPages, onPageChangeHan
           variant="ghost"
           size="sm"
         >
-          <Icons.chevronLeft className="h-5 w-5 mr-2" />
+          <Icons.chevronLeft className="h-5 w-5 mr-2" aria-hidden="true" />
           Previous
         </Button>
         <Button
@@ -31,9 +34,9 @@ export function SearchPagination({ count, pageIndex, totalPages, onPageChangeHan
           size="sm"
         >
           Next
-          <Icons.chevronRight className="h-5 w-5 ml-2" />
+          <Icons.chevronRight className="h-5 w-5 ml-2" aria-hidden="true" />
         </Button>
       </div>
-    </div>
+    </nav>
   )
 }
