@@ -6,18 +6,16 @@ import { buttonVariants } from "@/components/ui/button"
 import { ObjectDescription } from "@/components/search/object-description";
 import { useRouter } from 'next/router'
 import { ImageViewer } from "@/components/search/image-viewer";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { SimilarItemCard } from "@/components/search/similar-item-card";
+import { Button } from "@/components/ui/button";
+
 
 export default function IndexPage() {
   const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
   const [item, setItem] = useState(null);
+  const [similar, setSimilar] = useState([]);
+  const [visibleSimilar, setVisibleSimilar] = useState([]);
+  const [showAllSimilar, setShowAllSimilar] = useState(false);
 
   const router = useRouter()
   const { id } = router.query
@@ -33,15 +31,36 @@ export default function IndexPage() {
     });
   }
 
+  function getSimilar() {
+    const getData = async () => {
+      const response = await fetch(`/api/similar?id=${id}`, { method: "GET" });
+      return response.json();
+    };
+    getData().then((res) => {
+      console.log('similar', res)
+      setSimilar(res);
+    });
+  }
+
   useEffect(() => {
-    if (!item && id) getDocument()
+    if (!item && id) {
+      getDocument();
+      getSimilar();
+    }
     console.log("loaded");
   });
+
+  useEffect(() => {
+    if (showAllSimilar)
+      setVisibleSimilar(similar);
+    else
+      setVisibleSimilar(similar.slice(0, 12));
+  }, [similar, showAllSimilar]);
 
   return (
     <Layout>
       <Head>
-        <title>Search : Brooklyn Museum</title>
+        <title>{item?.title} : Brooklyn Museum</title>
         <meta
           name="description"
           content="Elasticsearch + Next.js Search Prototype"
@@ -54,14 +73,14 @@ export default function IndexPage() {
           <ImageViewer item={item} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl mb-3">
+          <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl mb-3">
             {item?.title}
           </h1>
           <div className="text-gray-700 dark:text-gray-400 mb-4">
             {item?.date}
           </div>
           <h2 className="text-lg md:text-xl mb-4">
-            {item?.primaryConstituent || 'Unknown Maker'}
+            {item?.primaryConstituent || 'Maker Unknown'}
           </h2>
           <h4 className="font-semibold uppercase text-gray-700 dark:text-gray-400 mb-4">
             {item?.collections?.map(
@@ -78,6 +97,35 @@ export default function IndexPage() {
             <ObjectDescription item={item} />
           </div>
         </div>
+      </section>
+      <section className="container pt-6 pb-8 md:py-8 bg-gray-100">
+        <h2 className="text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl mb-6">
+          Similar Objects
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-8 md:pb-10">
+          {
+            visibleSimilar?.length > 0 && visibleSimilar.map(
+              (item, i) =>
+                item && (
+                  <div className="" key={i}>
+                    <SimilarItemCard item={item} />
+                  </div>
+                )
+            )
+          }
+        </div>
+        {
+          !showAllSimilar && (
+            <Button
+              onClick={() => setShowAllSimilar(true)}
+              variant="default"
+              size="sm"
+            >
+              Show more
+            </Button>
+          )
+        }
+
       </section>
     </Layout>
   )

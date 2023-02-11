@@ -2,16 +2,26 @@
 import {readFileSync} from 'fs'
 import {Client} from '@elastic/elasticsearch';
 
-const indexAggregations = {
-  collections: [
-    { name: 'primaryConstituent', displayName: 'Maker' },
-    { name: 'classification', displayName: 'Classification' },
-    { name: 'medium', displayName: 'Medium' },
-    { name: 'period', displayName: 'Period' },
-    { name: 'dynasty', displayName: 'Dynasty' },
-    { name: 'museumLocation', displayName: 'Museum Location' },
-    { name: 'section', displayName: 'Section' },
-  ]
+const SEARCH_PAGE_SIZE = 24;
+const SEARCH_AGG_SIZE = 20;
+const OPTIONS_PAGE_SIZE = 20;
+const SIMILAR_PAGE_SIZE = 24;
+const UNKNOWN_CONSTITUENT = 'Unknown';
+
+const indicesMeta = {
+  collections: {
+    aggs: [
+      { name: 'primaryConstituent', displayName: 'Maker' },
+      { name: 'classification', displayName: 'Classification' },
+      { name: 'medium', displayName: 'Medium' },
+      { name: 'period', displayName: 'Period' },
+      { name: 'dynasty', displayName: 'Dynasty' },
+      { name: 'collections', displayName: 'Collections' },
+      { name: 'geographicalLocations', displayName: 'Places' },
+      { name: 'museumLocation', displayName: 'Museum Location' },
+      { name: 'section', displayName: 'Section' },
+    ]
+  }
 }
 
 function getClient() {
@@ -63,9 +73,9 @@ export async function search(params) {
   const {
     index, p, q,
     classification, medium, period, dynasty,
-    museumLocation, section
+    museumLocation, section, geographicalLocations, collections
   } = params;
-  const size = 24;
+  const size = SEARCH_PAGE_SIZE;
   console.log('q is ' + q, params)
 
   const esQuery = {
@@ -93,6 +103,8 @@ export async function search(params) {
   if (dynasty) filters.push({ name: 'dynasty', value: dynasty });
   if (museumLocation) filters.push({ name: 'museumLocation', value: museumLocation });
   if (section) filters.push({ name: 'section', value: section });
+  if (geographicalLocations) filters.push({ name: 'geographicalLocations', value: geographicalLocations });
+  if (collections) filters.push({ name: 'collections', value: collections });
 
   if (filters.length > 0) {
     esQuery.query.bool.filter = [];
@@ -105,13 +117,13 @@ export async function search(params) {
     }
   }
 
-  if (indexAggregations[index]?.length > 0) {
+  if (indicesMeta[index]?.aggs?.length > 0) {
     const aggs = {}
-    for (const agg of indexAggregations[index]) {
+    for (const agg of indicesMeta[index].aggs) {
       aggs[agg.name] = {
         terms: {
           field: agg.name,
-          size: 20
+          size: SEARCH_AGG_SIZE
         }
       }
     }
@@ -133,7 +145,9 @@ export async function search(params) {
 
   const test = Math.floor(Math.random() * 640000);
 
-  return { query: esQuery, data: response.hits.hits, options, metadata, test: test }
+  const data = response.hits.hits.map(h => h._source)
+
+  return { query: esQuery, data, options, metadata, test: test }
 }
 
 function getResponseOptions(response) {
@@ -152,7 +166,7 @@ export async function options(params) {
     index, field, q
   } = params;
 
-  const size = 20;
+  const size = OPTIONS_PAGE_SIZE;
 
   if (!index || !field) { return }
 
@@ -179,7 +193,6 @@ export async function options(params) {
       }
     }
   }
-  //console.log(JSON.stringify(request, null, 2))
 
   const client = getClient();
   const response = await client.search(request)
@@ -189,4 +202,68 @@ export async function options(params) {
   } else {
     return []
   }
+}
+
+export async function similar(params) {
+  const { id } = params;
+  const docResponse = await getDocument('collections', id);
+  const document = docResponse?.data;
+  if (!document) return;
+
+  const esQuery = {
+    index: 'collections',
+    query: {
+      bool: {
+        must_not: {
+          term: {
+            id: document.id
+          }
+        }
+      }
+    },
+    from: 0,
+    size: SIMILAR_PAGE_SIZE
+  }
+
+  if (
+    document.primaryConstituent
+    && document.primaryConstituent !== UNKNOWN_CONSTITUENT
+  ) {
+    addShouldTerms(document, esQuery, 'primaryConstituent', 4)
+  }
+
+  //addShouldTerms(esQuery, 'style', document.style, 3.5)
+  //addShouldTerms(esQuery, 'movement', document.movement, 3)
+  //addShouldTerms(esQuery, 'culture', document.culture, 3)
+  addShouldTerms(document, esQuery, 'dynasty', 2)
+  //addShouldTerms(esQuery, 'reign', document.reign, 2)
+  addShouldTerms(document, esQuery, 'period', 2)
+  addShouldTerms(document, esQuery, 'classification', 1)
+  addShouldTerms(document, esQuery, 'medium', 1)
+  //addShouldTerms(esQuery, 'artistRole', document, 1)
+  addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
+console.log(JSON.stringify(esQuery))
+  const client = getClient();
+  const response = await client.search(esQuery)
+  if (!response?.hits?.hits?.length) {
+    return []
+  }
+  return response.hits.hits.map(h => h._source)
+}
+
+function addShouldTerms (document, esQuery, name, boost) {
+  if (!(name in document)) return;
+  let value = document[name];
+  if (!(value?.length > 0)) return;
+  if (!Array.isArray(value)) value = [value];
+  if (!('query' in esQuery)) esQuery.query = {};
+  if (!('bool' in esQuery.query)) esQuery.query.bool = {};
+  if (!('should' in esQuery.query.bool)) esQuery.query.bool.should = [];
+
+  esQuery.query.bool.should.push({
+    terms: {
+      [name]: value,
+      boost
+    }
+  })
 }

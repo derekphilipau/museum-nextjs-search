@@ -235,16 +235,33 @@
         "analyzer": "unaggregatedStandardAnalyzer"
       },      
       "collections": {
-        "type": "object",
-        "enabled": false
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          },
+          "suggest": {
+            "type": "search_as_you_type",
+            "analyzer": "suggestAnalyzer"
+          }
+        }
       },
       "exhibitions": {
-        "type": "object",
-        "enabled": false
+        "type": "keyword"
       },
       "geographicalLocations": {
-        "type": "object",
-        "enabled": false
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          },
+          "suggest": {
+            "type": "search_as_you_type",
+            "analyzer": "suggestAnalyzer"
+          }
+        }
       }
     }
   }

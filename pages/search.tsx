@@ -15,16 +15,20 @@ import { SearchPagination } from "@/components/search/search-pagination";
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 const PAGE_SIZE = 24;
 
-const indexAggregations = {
-  collections: [
-    { name: 'primaryConstituent', displayName: 'Maker' },
-    { name: 'classification', displayName: 'Classification' },
-    { name: 'medium', displayName: 'Medium' },
-    { name: 'period', displayName: 'Period' },
-    { name: 'dynasty', displayName: 'Dynasty' },
-    { name: 'museumLocation', displayName: 'Museum Location' },
-    { name: 'section', displayName: 'Section' },
-  ]
+const indicesMeta = {
+  collections: {
+    aggs: [
+      { name: 'primaryConstituent', displayName: 'Maker' },
+      { name: 'classification', displayName: 'Classification' },
+      { name: 'medium', displayName: 'Medium' },
+      { name: 'period', displayName: 'Period' },
+      { name: 'dynasty', displayName: 'Dynasty' },
+      { name: 'collections', displayName: 'Collections' },
+      { name: 'geographicalLocations', displayName: 'Places' },
+      { name: 'museumLocation', displayName: 'Museum Location' },
+      { name: 'section', displayName: 'Section' },
+    ]
+  }
 }
 
 export default function Search() {
@@ -42,7 +46,7 @@ export default function Search() {
   const pageIndex = parseInt(searchParams.get('p')) || 1;
   console.log('query p is ' + parseInt(searchParams.get('p')) + ' pi val: ' + pageIndex)
   const filters = {};
-  for (const agg of indexAggregations[index]) {
+  for (const agg of indicesMeta[index]?.aggs) {
     if (searchParams.has(agg.name))
       filters[agg.name] = searchParams.get(agg.name) || '';
   }
@@ -107,8 +111,7 @@ export default function Search() {
       </Head>
       <section className="container grid sm:grid-cols-3 md:grid-cols-4 gap-6 pt-6 pb-8 md:py-10">
         <div className="sm:col-span-1 h-full space-y-6">
-          <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
-          {indexAggregations.collections?.map(
+          {indicesMeta.collections?.aggs?.map(
             (agg, i) =>
               agg && (
                 <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
@@ -125,9 +128,7 @@ export default function Search() {
           </div>
         </div>
         <div className="sm:col-span-2 md:col-span-3">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl mb-2">
-            Collection Search
-          </h1>
+          <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
           {error?.length > 0 &&
             <h3 className="text-lg text-red-800 font-extrabold leading-tight tracking-tighter mb-6">
               {error}
@@ -138,9 +139,9 @@ export default function Search() {
             {
               items?.length > 0 && items.map(
                 (item, i) =>
-                  item._source && (
+                  item && (
                     <div className="" key={i}>
-                      <ItemCard item={item._source} />
+                      <ItemCard item={item} />
                     </div>
                   )
               )

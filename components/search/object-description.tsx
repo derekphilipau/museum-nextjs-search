@@ -7,7 +7,7 @@ export function ObjectDescription({ item }) {
   if (!item?.id) return;
 
   const imageSrc = `https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size2/${item.image}`;
-  const maker = item.primaryConstituent || 'Unknown Maker';
+  const maker = item.primaryConstituent || 'Maker Unknown';
 
   return (
     <div className="mt-5 border-t border-gray-200">
