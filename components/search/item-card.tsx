@@ -18,9 +18,7 @@ export function ItemCard({ item }) {
         </div>
         <div className="pt-3">
           <h4 className="mb-1 text-xl font-semibold text-gray-900 dark:text-white">{item.title}</h4>
-          <a href="#">
-            <h5 className="mb-1 text-lg text-gray-900 dark:text-white">{maker}</h5>
-          </a>
+          <h5 className="mb-1 text-lg text-gray-900 dark:text-white">{maker}</h5>
           <p className="font-normal text-gray-700 dark:text-gray-400 text-xs">
             {item.date}
           </p>

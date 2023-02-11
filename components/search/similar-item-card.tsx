@@ -18,9 +18,7 @@ export function SimilarItemCard({ item }) {
         </div>
         <div className="pt-2">
           <h4 className="font-semibold text-gray-900 dark:text-white">{item.title}</h4>
-          <a href="#">
-            <h5 className="text-sm text-gray-900 dark:text-white">{maker}</h5>
-          </a>
+          <h5 className="text-sm text-gray-900 dark:text-white">{maker}</h5>
           <p className="font-normal text-gray-700 dark:text-gray-400 text-xs">
             {item.date}
           </p>
