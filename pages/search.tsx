@@ -69,7 +69,7 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
-    pushQueryParam({q: query, p: 1});
+    pushQueryParam({q: realQuery, p: 1});
   }, [realQuery]);
 
   function setPageIndex(p) {
@@ -117,7 +117,7 @@ export default function Search() {
       </Head>
       <section className="container grid sm:grid-cols-3 md:grid-cols-4 gap-6 pt-6 pb-8 md:py-10">
         <div className="sm:col-span-1 h-full space-y-6">
-          <Input name="query" placeholder="Search" onChange={(e) => setQuery(e.target.value)} />
+          <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
           {indexAggregations.collections?.map(
             (agg, index) =>
               agg && (
