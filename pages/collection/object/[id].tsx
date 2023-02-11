@@ -9,46 +9,18 @@ import { ImageViewer } from "@/components/search/image-viewer";
 import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
 
+import { getDocument } from "@/pages/api/util/elasticsearch.js";
+import { similar } from "@/pages/api/util/elasticsearch.js";
 
-export default function IndexPage() {
+
+export default function IndexPage({item, similar}) {
   const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
-  const [item, setItem] = useState(null);
-  const [similar, setSimilar] = useState([]);
-  const [visibleSimilar, setVisibleSimilar] = useState([]);
-  const [showAllSimilar, setShowAllSimilar] = useState(false);
 
   const router = useRouter()
   const { id } = router.query
 
-  function getDocument() {
-    const getData = async () => {
-      const response = await fetch(`/api/document/${id}`, { method: "GET" });
-      return response.json();
-    };
-    getData().then((res) => {
-      console.log(res)
-      setItem(res.data);
-    });
-  }
-
-  function getSimilar() {
-    const getData = async () => {
-      const response = await fetch(`/api/similar?id=${id}`, { method: "GET" });
-      return response.json();
-    };
-    getData().then((res) => {
-      console.log('similar', res)
-      setSimilar(res);
-    });
-  }
-
-  useEffect(() => {
-    if (!item && id) {
-      getDocument();
-      getSimilar();
-    }
-    console.log("loaded");
-  });
+  const [visibleSimilar, setVisibleSimilar] = useState([]);
+  const [showAllSimilar, setShowAllSimilar] = useState(false);
 
   useEffect(() => {
     if (showAllSimilar)
@@ -70,7 +42,7 @@ export default function IndexPage() {
       </Head>
       <section className="container grid md:grid-cols-2 lg:grid-cols-8 gap-6 pt-6 pb-8 md:py-10">
         <div className="md:col-span-1 lg:col-span-3 flex justify-center items-start">
-          <ImageViewer item={item} />
+        <ImageViewer item={item} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
           <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl mb-3">
@@ -129,4 +101,11 @@ export default function IndexPage() {
       </section>
     </Layout>
   )
+}
+
+export async function getServerSideProps(context) {
+  const { id } = context.query;
+  const item = await getDocument('collections', id);
+  const similarItems = await similar(id);
+  return { props: { item: item.data, similar: similarItems } }
 }

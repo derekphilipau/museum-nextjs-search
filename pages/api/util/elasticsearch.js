@@ -204,8 +204,7 @@ export async function options(params) {
   }
 }
 
-export async function similar(params) {
-  const { id } = params;
+export async function similar(id) {
   const docResponse = await getDocument('collections', id);
   const document = docResponse?.data;
   if (!document) return;

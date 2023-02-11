@@ -1,6 +1,7 @@
 import * as React from "react"
+import dynamic from 'next/dynamic'
 import Link from "next/link"
-import { OpenSeaDragonViewer } from "@/components/search/open-seadragon-viewer";
+//import { OpenSeaDragonViewer } from "@/components/search/open-seadragon-viewer";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+
+const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
+  ssr: false
+})
 
 const IMG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
 const IMG_LG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size4/'

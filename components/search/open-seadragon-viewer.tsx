@@ -50,4 +50,5 @@ const OpenSeaDragonViewer = ({ image }) => {
     </div>
   );
 };
-export { OpenSeaDragonViewer };
+export default OpenSeaDragonViewer;
+//export { OpenSeaDragonViewer };
