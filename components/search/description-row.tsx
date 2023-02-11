@@ -13,8 +13,8 @@ export function DescriptionRow({ name, value }) {
 
   return (
     <div className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-2">
-      <dt className="text-sm font-medium text-gray-500">{name}</dt>
-      <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+      <dt className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{name}</dt>
+      <dd className="mt-1 flex text-sm sm:col-span-2 sm:mt-0">
         <span className="flex-grow">{val}</span>
       </dd>
     </div>

@@ -58,9 +58,13 @@ export function ImageViewer({ item }) {
           </DialogTrigger>
           <DialogContent className="h-full min-w-full">
             <DialogHeader className="">
-              <DialogTitle>{item.title}</DialogTitle>
+              <DialogTitle className="z-50">
+                <span className="px-4 py-3 rounded-lg bg-white dark:bg-neutral-900 bg-opacity-50">
+                  {item.title}
+                </span>
+              </DialogTitle>
               <DialogDescription>
-                <div className="">
+                <div>
                   {item?.image && (
                     <OpenSeaDragonViewer image={largeImageUrl} />
                   )}

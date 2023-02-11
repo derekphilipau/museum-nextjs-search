@@ -46,13 +46,13 @@ export default function IndexPage({item, similar}) {
           <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl mb-3">
             {item?.title}
           </h1>
-          <div className="text-gray-700 dark:text-gray-400 mb-4">
+          <div className="text-neutral-700 dark:text-neutral-400 mb-4">
             {item?.date}
           </div>
           <h2 className="text-lg md:text-xl mb-4">
             {item?.primaryConstituent || 'Maker Unknown'}
           </h2>
-          <h4 className="font-semibold uppercase text-gray-700 dark:text-gray-400 mb-4">
+          <h4 className="font-semibold uppercase text-neutral-700 dark:text-neutral-400 mb-4">
             {item?.collections?.map(
               (collection, index) =>
                 collection && (
@@ -68,7 +68,7 @@ export default function IndexPage({item, similar}) {
           </div>
         </div>
       </section>
-      <section className="container pt-6 pb-8 md:py-8 bg-gray-100">
+      <section className="container pt-6 pb-8 md:py-8 bg-neutral-100 dark:bg-neutral-800">
         <h2 className="text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl mb-6">
           Similar Objects
         </h2>
