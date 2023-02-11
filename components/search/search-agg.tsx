@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
 
-import { Filter } from "@/types/filter"
+import { Agg } from "@/types/agg"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,17 +15,25 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-interface SearchFilterProps {
-  filter?: Filter,
+interface SearchAggProps {
+  agg?: Agg,
   options?: any,
+  filters?: any,
   checked?: boolean,
   onChangeHandler?: any,
 }
 
-export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterProps) {
+export function SearchAgg({ agg, options, filters, onChangeHandler }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false)
+
+  let checked = []
+  if (agg.name in filters) {
+    checked.push(filters[agg.name])
+  }
+  console.log('filters', filters)
+  console.log('checked', checked)
 
   return (
     <Collapsible
@@ -36,25 +44,29 @@ export function SearchFilter({ filter, options, onChangeHandler }: SearchFilterP
       <CollapsibleTrigger asChild>
         <Button variant="ghost" size="sm" className="p-1 flex items-center justify-between w-full">
           <h4 className="text-sm font-semibold">
-            {filter.displayName}
+            {agg.displayName}
           </h4>
           <div>
             <ChevronsUpDown className="h-4 w-4" />
-            <span className="sr-only">Toggle {filter.displayName} Filter</span>
+            <span className="sr-only">Toggle {agg.displayName}</span>
           </div>
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 w-full">
         <div className="mb-2">
-          <Input type="artist" placeholder={`Search ${filter.displayName}`} />
+          <Input type="artist" placeholder={`Search ${agg.displayName}`} />
         </div>
         {options?.length > 0 && options?.map(
           (option, index) =>
             option && (
-              <div className="flex items-center space-x-2" key={`filter-${filter.name}-${index}`}>
-                <Checkbox id={`terms-${filter.name}-${index}`} onClick={(e) => onChangeHandler(filter.name, option.key, e)} />
+              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
+                <Checkbox 
+                  id={`terms-${agg.name}-${index}`} 
+                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)} 
+                  defaultChecked={checked.includes(option.key)}
+                  />
                 <label
-                  htmlFor={`terms-${filter.name}-${index}`}
+                  htmlFor={`terms-${agg.name}-${index}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.key} ({option.doc_count})

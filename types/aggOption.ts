@@ -1,4 +1,4 @@
-export interface FilterOption {
+export interface AggOption {
   value: string
   count: number
 }

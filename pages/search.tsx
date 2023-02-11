@@ -9,7 +9,7 @@ import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
-import { SearchFilter } from "@/components/search/search-filter"
+import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
@@ -20,9 +20,39 @@ export default function Search() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+
+  // Get search params from querystring
+  const q = searchParams.get('q') || '';
+  const pageIndex = parseInt(searchParams.get('p')) || 1;
+
+  const filters = {};
+  const classification = searchParams.get('classification') || '';
+  if (classification) filters.classification = classification;
+  const medium = searchParams.get('medium') || '';
+  if (medium) filters.medium = medium;
+  console.log('lll', filters)
+
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('')
-  const [pageIndex, setPageIndex] = useState(1);
+
+  function getNewQueryParams(newParams) {
+    for (const [name, value] of Object.entries(newParams)) {
+      if (value) params.set(name, value);
+      else params.delete(name)
+    }
+    params.set('index', 'collections');
+    return params;
+  }
+
+  function getApiUrl() {
+    const apiParams = new URLSearchParams(searchParams);
+    return `/api/search?${apiParams}`
+  }
+
+  function pushQueryParam(newParams) {
+    const params = getNewQueryParams(newParams);
+    router.push(`${pathname}?${params}`, undefined, { shallow: true })
+  }
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
@@ -32,15 +62,20 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
-    if (query) params.set('query', query);
-    else params.delete('query')
-    router.push(`${pathname}?${params}`, undefined, { shallow: true })
+    pushQueryParam({q: query, p: 1});
   }, [realQuery]);
 
-  useEffect(() => {
-    params.set('p', pageIndex);
-    router.push(`${pathname}?${params}`, undefined, { shallow: true })
-  }, [pageIndex]);
+  function setPageIndex(p) {
+    pushQueryParam({p});
+  }
+
+  function setFilter(name: string, key: string, checked) {
+    console.log('yyy', checked)
+    //const checked = e.target.checked;
+    console.log('filter change: ', name, key, checked);
+    if (checked) pushQueryParam({[name]: key});
+    else pushQueryParam({[name]: null});
+  }
 
   const indexAggregations = {
     collections: [
@@ -54,16 +89,13 @@ export default function Search() {
     ]
   }
 
-  const { data } = useSWR(`/api/search?index=${'collections'}&page=${pageIndex}&size=${PAGE_SIZE}&query=${realQuery}`, fetcher);
+  const { data } = useSWR(getApiUrl(), fetcher);
   const items = data?.data || [];
   const error = data?.error || null;
   const options = data?.options || {};
   const count = data?.metadata?.count || 0;
   const totalPages = data?.metadata?.pages || 0;
-
-  function handleFilterChange(name: string, key: string, e) {
-    console.log('filter change: ', name, key)
-  }
+  console.log('8888', data)
 
   return (
     <Layout>
@@ -80,9 +112,9 @@ export default function Search() {
         <div className="sm:col-span-1 h-full space-y-6">
           <Input name="query" placeholder="Search" onChange={(e) => setQuery(e.target.value)} />
           {indexAggregations.collections?.map(
-            (filter, index) =>
-              filter && (
-                <SearchFilter key={index} filter={filter} options={options[filter.name]} checked={false} onChangeHandler={handleFilterChange} />
+            (agg, index) =>
+              agg && (
+                <SearchAgg key={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}
           <div className="flex items-center space-x-2">
