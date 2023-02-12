@@ -1,28 +1,13 @@
 'use strict'
 import {readFileSync} from 'fs'
 import {Client} from '@elastic/elasticsearch';
+import { indicesMeta } from "@/util/search.js";
 
 const SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
 const OPTIONS_PAGE_SIZE = 20;
 const SIMILAR_PAGE_SIZE = 24;
 const UNKNOWN_CONSTITUENT = 'Unknown';
-
-export const indicesMeta = {
-  collections: {
-    aggs: [
-      { name: 'primaryConstituent', displayName: 'Maker' },
-      { name: 'classification', displayName: 'Classification' },
-      { name: 'medium', displayName: 'Medium' },
-      { name: 'period', displayName: 'Period' },
-      { name: 'dynasty', displayName: 'Dynasty' },
-      { name: 'collections', displayName: 'Collections' },
-      { name: 'geographicalLocations', displayName: 'Places' },
-      { name: 'museumLocation', displayName: 'Museum Location' },
-      { name: 'section', displayName: 'Section' },
-    ]
-  }
-}
 
 function getClient() {
   const ca = readFileSync('./secrets/http_ca.crt');

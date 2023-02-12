@@ -11,25 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
+import { indicesMeta } from "@/util/search.js";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 const PAGE_SIZE = 24;
-
-const indicesMeta = {
-  collections: {
-    aggs: [
-      { name: 'primaryConstituent', displayName: 'Maker' },
-      { name: 'classification', displayName: 'Classification' },
-      { name: 'medium', displayName: 'Medium' },
-      { name: 'period', displayName: 'Period' },
-      { name: 'dynasty', displayName: 'Dynasty' },
-      { name: 'collections', displayName: 'Collections' },
-      { name: 'geographicalLocations', displayName: 'Places' },
-      { name: 'museumLocation', displayName: 'Museum Location' },
-      { name: 'section', displayName: 'Section' },
-    ]
-  }
-}
 
 export default function Search() {
   const router = useRouter();
