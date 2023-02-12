@@ -8,7 +8,7 @@ const OPTIONS_PAGE_SIZE = 20;
 const SIMILAR_PAGE_SIZE = 24;
 const UNKNOWN_CONSTITUENT = 'Unknown';
 
-const indicesMeta = {
+export const indicesMeta = {
   collections: {
     aggs: [
       { name: 'primaryConstituent', displayName: 'Maker' },

@@ -9,8 +9,7 @@ import { ImageViewer } from "@/components/search/image-viewer";
 import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
 
-import { getDocument } from "@/pages/api/util/elasticsearch.js";
-import { similar } from "@/pages/api/util/elasticsearch.js";
+import { getDocument, similar } from "@/util/elasticsearch.js";
 
 
 export default function IndexPage({item, similar}) {
