@@ -1,9 +1,9 @@
 import Link from "next/link"
-import { getSmallImageUrl } from '@/util/image.js';
+import { getSmallOrRestrictedImageUrl } from '@/util/image.js';
 
 export function ItemCard({ item }) {
 
-  const imageSrc = getSmallImageUrl(item.image);
+  const imageSrc = getSmallOrRestrictedImageUrl(item);
   const maker = item.primaryConstituent || 'Maker Unknown';
   const href = `/collection/object/${item.id}`;
 

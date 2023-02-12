@@ -72,7 +72,7 @@ export async function getDocument(index, id) {
 export async function search(params) {
   const {
     index, p, q,
-    classification, medium, period, dynasty,
+    primaryConstituent, classification, medium, period, dynasty,
     museumLocation, section, geographicalLocations, collections
   } = params;
   const size = SEARCH_PAGE_SIZE;
@@ -97,6 +97,7 @@ export async function search(params) {
     };
 
   const filters = [];
+  if (primaryConstituent) filters.push({ name: 'primaryConstituent', value: primaryConstituent });
   if (classification) filters.push({ name: 'classification', value: classification });
   if (medium) filters.push({ name: 'medium', value: medium });
   if (period) filters.push({ name: 'period', value: period });

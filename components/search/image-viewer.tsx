@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import dynamic from 'next/dynamic'
 import Link from "next/link"
-import { isImageRestricted, getSmallImageUrl, getRestrictedImageUrl, getLargeImageUrl } from '@/util/image.js';
+import { isImageRestricted, getSmallOrRestrictedImageUrl, getLargeImageUrl } from '@/util/image.js';
 
 import {
   Dialog,
@@ -20,36 +20,19 @@ export function ImageViewer({ item }) {
 
   if (!item?.id) return;
 
-  //const isRestricted = isImageRestricted(item.image);
-  //const smallImageUrl = isRestricted ? getRestrictedImageUrl(item.image) : getSmallImageUrl(item.image);
-  let isLoaded = false;
-  let isRestricted = false; // TODO
-  const smallImageUrl = getSmallImageUrl(item.image);
+  const smallImageUrl = getSmallOrRestrictedImageUrl(item);
   const largeImageUrl = getLargeImageUrl(item.image);
   const href = `/collection/object/${item.id}`;
 
-  /*
-  useEffect(() => {
-    async function checkImageRestriction() {
-      if (item.image) isRestricted = await isImageRestricted(item.image);
-      console.log('is restricted: ' + isRestricted)
-    }
-    if(!isLoaded) {
-      checkImageRestriction();
-      isLoaded = true;
-    } 
-  }, []);
-  */
-
   return (
     <>
-      {isRestricted ? (
+      {isImageRestricted(item) ? (
         <figure>
           <img className="max-h-96" src={smallImageUrl} alt="" />
           <figcaption></figcaption>
         </figure>
       ) : (
-        <Dialog className="">
+        <Dialog>
           <DialogTrigger>
             <figure>
               <img className="max-h-96" src={smallImageUrl} alt="" />

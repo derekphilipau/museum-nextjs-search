@@ -3,26 +3,24 @@ const IMG_RESTRICTED_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/op
 const IMG_SM_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
 const IMG_LG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size4/'
 
-export async function isImageRestricted(image) {
-  const result = await fetch(`${IMG_LG_BASE_URL}${image}`, { method: 'HEAD' });
-  return !result.ok;
+export function isImageRestricted(item) {
+  return item.copyrightRestricted;
 }
 
-export async function getSmallOrRestrictedImageUrl(image) {
-  const isRestricted = await isImageRestricted(image);
-  if (isRestricted) return getRestrictedImageUrl(image);
-  return getSmallImageUrl(image);
+export function getSmallOrRestrictedImageUrl(item) {
+  if (item.copyrightRestricted)
+    return getRestrictedImageUrl(item.image);
+  return getSmallImageUrl(item.image);
 }
 
-
-export function getSmallImageUrl(image) {
-  return `${IMG_SM_BASE_URL}${image}`
+function getSmallImageUrl(image) {
+  return `${IMG_SM_BASE_URL}${image}`;
 }
 
-export function getRestrictedImageUrl(image) {
-  return `${IMG_RESTRICTED_BASE_URL}${image}`
+function getRestrictedImageUrl(image) {
+  return `${IMG_RESTRICTED_BASE_URL}${image}`;
 }
 
 export function getLargeImageUrl(image) {
-  return `${IMG_LG_BASE_URL}${image}`
+  return `${IMG_LG_BASE_URL}${image}`;
 }

@@ -1,15 +1,10 @@
 import * as React from "react"
 import Link from "next/link"
-import { isImageRestricted, getSmallImageUrl, getRestrictedImageUrl } from '@/util/image.js';
+import { isImageRestricted, getSmallOrRestrictedImageUrl } from '@/util/image.js';
 
 export function SimilarItemCard({ item }) {
 
-  //const isRestricted = isImageRestricted(item);
-  const isRestricted = false;
-  let imageSrc = getSmallImageUrl(item.image);
-  if (isRestricted) {
-    imageSrc = getRestrictedImageUrl(item.image);
-  }
+  let imageSrc = getSmallOrRestrictedImageUrl(item);
   const maker = item.primaryConstituent || 'Maker Unknown';
   const href = `/collection/object/${item.id}`;
 

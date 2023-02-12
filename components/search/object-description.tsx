@@ -11,21 +11,21 @@ export function ObjectDescription({ item }) {
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
-        <DescriptionRow name="Maker" value={maker} />
-        <DescriptionRow name="Medium" value={item.medium} />
-        <DescriptionRow name="Place Made" value={item.geographicalLocations} />
-        <DescriptionRow name="Dates" value={item.date} />
-        <DescriptionRow name="Dynasty" value={item.dynasty} />
-        <DescriptionRow name="Period" value={item.period} />
-        <DescriptionRow name="Dimensions" value={item.dimensions} />
-        <DescriptionRow name="Signature" value={item.signed} />
-        <DescriptionRow name="Inscriptions" value={item.inscribed} />
-        <DescriptionRow name="Collections" value={item.collections} />
-        <DescriptionRow name="Accession Number" value={item.accessionNumber} />
-        <DescriptionRow name="Credit Line" value={item.creditLine} />
-        <DescriptionRow name="Exhibitions" value={item.exhibitions} />
-        <DescriptionRow name="Museum Location" value={item.museumLocation} />
-        <DescriptionRow name="Rights Statement" value={item.rightsType} />
+        <DescriptionRow name="maker" displayName="Maker" value={maker} />
+        <DescriptionRow name="medium" displayName="Medium" item={item} isLink={true} />
+        <DescriptionRow name="geographicalLocations" displayName="Place Made" item={item} />
+        <DescriptionRow name="date" displayName="Dates" item={item} />
+        <DescriptionRow name="dynasty" displayName="Dynasty" item={item} />
+        <DescriptionRow name="period" displayName="Period" item={item} />
+        <DescriptionRow name="dimensions" displayName="Dimensions" item={item} />
+        <DescriptionRow name="signed" displayName="Signature" item={item} />
+        <DescriptionRow name="inscribed" displayName="Inscriptions" item={item} />
+        <DescriptionRow name="collections" displayName="Collections" item={item} />
+        <DescriptionRow name="accessionNumber" displayName="Accession Number" item={item} />
+        <DescriptionRow name="creditLine" displayName="Credit Line" item={item} />
+        <DescriptionRow name="exhibitions" displayName="Exhibitions" item={item} />
+        <DescriptionRow name="museumLocation" displayName="Museum Location" item={item} />
+        <DescriptionRow name="rightsType" displayName="Rights Statement" item={item} />
       </dl>
     </div>
   )

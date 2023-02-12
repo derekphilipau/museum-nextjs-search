@@ -46,10 +46,21 @@ export default function Search() {
   const pageIndex = parseInt(searchParams.get('p')) || 1;
   console.log('query p is ' + parseInt(searchParams.get('p')) + ' pi val: ' + pageIndex)
   const filters = {};
-  for (const agg of indicesMeta[index]?.aggs) {
-    if (searchParams.has(agg.name))
-      filters[agg.name] = searchParams.get(agg.name) || '';
+  if (Array.isArray(indicesMeta[index]?.aggs)) {
+    for (const agg of indicesMeta[index].aggs) {
+      if (searchParams.has(agg.name))
+        filters[agg.name] = searchParams.get(agg.name) || '';
+    }  
   }
+
+  /*
+  sfddf
+  useEffect(() => {
+    if(!router.isReady) return;
+    const query = router.query;
+  }, [router.isReady, router.query]);
+*/
+
 
   function getNewQueryParams(newParams) {
     for (const [name, value] of Object.entries(newParams)) {
@@ -68,7 +79,7 @@ export default function Search() {
 
   function pushQueryParam(newParams) {
     const params = getNewQueryParams(newParams); 
-    router.push(`${pathname}?${params}`, undefined, { shallow: true })
+    router.push(`${pathname}?${params}`, undefined)
   }
 
   useEffect(() => {
@@ -113,7 +124,7 @@ export default function Search() {
         <div className="sm:col-span-1 h-full space-y-6">
           {indicesMeta.collections?.aggs?.map(
             (agg, i) =>
-              agg && (
+              agg && options[agg.name]?.length > 0 && (
                 <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}

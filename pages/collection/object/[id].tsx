@@ -27,6 +27,10 @@ export default function IndexPage({item, similar}) {
       setVisibleSimilar(similar.slice(0, 12));
   }, [similar, showAllSimilar]);
 
+  useEffect(() => {
+    setVisibleSimilar(similar.slice(0, 12));
+  }, [router.query]);
+
   return (
     <Layout>
       <Head>
