@@ -24,7 +24,7 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 
 export function ImageViewer({ item }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [selectedImage, setSelectedImage] = useState({})
+  const [selectedImage, setSelectedImage] = useState(null)
   const sortedImages = item?.images?.sort((a, b) => a.rank - b.rank) || [];
 
   useEffect(() => {
