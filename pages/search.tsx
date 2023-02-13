@@ -15,7 +15,7 @@ import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryPara
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-
+ 
 const fetcher = async (
   input: RequestInfo,
   init: RequestInit,
@@ -84,7 +84,7 @@ export default function Search({ ssrData }) {
     else pushQueryParam({ [name]: null, p: 1 });
   }
 
-  const { data, error } = useSWR(getApiUrl(), fetcher, {
+  const { data, error, isLoading } = useSWR(getApiUrl(), fetcher, {
     fallbackData: ssrData
   })
   console.log('got data', data)
@@ -245,7 +245,13 @@ export default function Search({ ssrData }) {
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
+            <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
+              {
+                isLoading && (
+                  <div className="absolute z-10 flex h-full w-full items-center justify-center bg-white dark:bg-neutral-900 bg-opacity-50 dark:bg-opacity-50">
+                  </div>
+                )
+              }
               {
                 items?.length > 0 && items.map(
                   (item, i) =>
