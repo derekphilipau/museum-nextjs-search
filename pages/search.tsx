@@ -15,7 +15,6 @@ import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryPara
 import { search } from "@/util/elasticsearch.js";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
-const PAGE_SIZE = 24;
 
 export default function Search({ssrData}) {
 
@@ -25,37 +24,33 @@ export default function Search({ssrData}) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const {index, q, pageIndex, filters} = getSearchParams(searchParams);
-  const [query, setQuery] = useState('');
-  const [realQuery, setRealQuery] = useState('');
+  const [query, setQuery] = useState(q);
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
     return `/api/search?${apiParams}`
   }
 
-  function pushQueryParam(params, newParams) {
+  function pushQueryParam(newParams) {
     const updatedParams = getNewQueryParams(params, newParams); 
     router.push(`${pathname}?${updatedParams}`, undefined)
   }
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
-      setRealQuery(query)
+      if (query !== q)
+        pushQueryParam({q: query, p: 1});
     }, 400);
     return () => clearTimeout(debounceQuery);
   }, [query]);
 
-  useEffect(() => {
-    pushQueryParam(params, {q: realQuery, p: 1});
-  }, [realQuery]);
-
   function updatePageIndex(p) {
-    pushQueryParam(params, {p});
+    pushQueryParam({p});
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushQueryParam(params, {[name]: key, p: 1});
-    else pushQueryParam(params, {[name]: null});
+    if (checked) pushQueryParam({[name]: key, p: 1});
+    else pushQueryParam({[name]: null});
   }
 
   const {data, error} = useSWR(getApiUrl(), fetcher, {

@@ -6,7 +6,7 @@ export function ObjectDescription({ item }) {
 
   if (!item?.id) return;
 
-  const maker = item.primaryConstituent || 'Maker Unknown';
+  const maker = item.primaryConstituent || 'Unknown';
 
   return (
     <div className="mt-5 border-t border-gray-200">
