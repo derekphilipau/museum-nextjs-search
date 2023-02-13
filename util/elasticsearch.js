@@ -74,16 +74,18 @@ export async function search(params) {
     index, p, size, q,
     isUnrestricted, hasPhoto, onView,
     primaryConstituent, classification, medium, period, dynasty,
-    museumLocation, section, geographicalLocations, collections
+    museumLocation, section, geographicalLocations, exhibitions, collections
   } = params;
+
+  // Coerce boolean vars
+  isUnrestricted = isUnrestricted === 'true';
+  hasPhoto = hasPhoto === 'true';
+  onView = onView === 'true';
 
   // Defaults for missing params:
   index = index || 'collections';
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
-  isUnrestricted = isUnrestricted === 'true';
-  hasPhoto = hasPhoto === 'true';
-  onView = onView === 'true';
 
 
   const esQuery = {
@@ -129,6 +131,7 @@ export async function search(params) {
   if (museumLocation) filters.push({ name: 'museumLocation', value: museumLocation });
   if (section) filters.push({ name: 'section', value: section });
   if (geographicalLocations) filters.push({ name: 'geographicalLocations', value: geographicalLocations });
+  if (exhibitions) filters.push({ name: 'exhibitions', value: exhibitions });
   if (collections) filters.push({ name: 'collections', value: collections });
   if (isUnrestricted) filters.push({ name: 'copyrightRestricted', value: false });
   
@@ -154,9 +157,10 @@ export async function search(params) {
   }
 
   if (onView) {
-    if (!esQuery.query.bool.must_not) esQuery.query.bool.must_not = {};
-    esQuery.query.bool.must_not.term = {
-      museumLocation: 'This item is not on view'
+    esQuery.query.bool.must_not = {
+      term: {
+        museumLocation: 'This item is not on view'
+      }
     };
   }  
 
@@ -287,10 +291,12 @@ export async function similar(id) {
   addShouldTerms(document, esQuery, 'dynasty', 2)
   //addShouldTerms(esQuery, 'reign', document.reign, 2)
   addShouldTerms(document, esQuery, 'period', 2)
-  addShouldTerms(document, esQuery, 'classification', 1)
+  addShouldTerms(document, esQuery, 'classification', 1.5)
   addShouldTerms(document, esQuery, 'medium', 1)
   //addShouldTerms(esQuery, 'artistRole', document, 1)
+  addShouldTerms(document, esQuery, 'exhibitions', 1)
   addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
+
 console.log(JSON.stringify(esQuery))
   const client = getClient();
   const response = await client.search(esQuery)

@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronUp,
   ChevronDown,
+  SlidersHorizontal,
   type Icon as LucideIcon,
 } from "lucide-react"
 
@@ -25,6 +26,7 @@ export const Icons = {
   chevronRight: ChevronRight,
   chevronUp: ChevronUp,
   chevronDown: ChevronDown,
+  slidersHorizontal: SlidersHorizontal,
   menu: Menu,
   logo: (props: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612.26 69.54" {...props}>

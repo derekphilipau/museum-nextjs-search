@@ -23,7 +23,7 @@ export function ObjectDescription({ item }) {
         <DescriptionRow name="collections" displayName="Collections" item={item} isLink={true} />
         <DescriptionRow name="accessionNumber" displayName="Accession Number" item={item} />
         <DescriptionRow name="creditLine" displayName="Credit Line" item={item} />
-        <DescriptionRow name="exhibitions" displayName="Exhibitions" item={item} />
+        <DescriptionRow name="exhibitions" displayName="Exhibitions" item={item} isLink={true} />
         <DescriptionRow name="museumLocation" displayName="Museum Location" item={item} isLink={true} />
         <DescriptionRow name="rightsType" displayName="Rights Statement" item={item} />
       </dl>

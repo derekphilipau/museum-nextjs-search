@@ -248,7 +248,17 @@
         }
       },
       "exhibitions": {
-        "type": "keyword"
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          },
+          "suggest": {
+            "type": "search_as_you_type",
+            "analyzer": "suggestAnalyzer"
+          }
+        }
       },
       "geographicalLocations": {
         "type": "keyword",

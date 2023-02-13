@@ -11,6 +11,7 @@ export const indicesMeta = {
       { name: 'collections', displayName: 'Collections' },
       { name: 'geographicalLocations', displayName: 'Places' },
       { name: 'museumLocation', displayName: 'Museum Location' },
+      { name: 'exhibitions', displayName: 'Exhibitions' },
       { name: 'section', displayName: 'Section' },
     ]
   }

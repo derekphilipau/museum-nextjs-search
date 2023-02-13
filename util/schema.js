@@ -2,6 +2,7 @@ import { getSmallOrRestrictedImageUrl } from './image.js'
 
 function getDimensionsCM(dimensions) {
   // H x W x D
+  if (!(dimensions?.length > 0)) return {};
   const cm = dimensions.match(/\((.+?)\)/);
   if (cm?.length === 2) {
     const dim = cm[1].match(/\d+(\.\d{1,2})?/g);
@@ -33,9 +34,9 @@ export function getSchemaVisualArtwork(item) {
   if (item.medium) schema.artMedium = item.medum; // TODO
   if (item.classification) schema.artform = item.classification;
   const dimensions = getDimensionsCM(item.dimensions);
-  if (dimensions.height) schema.height = [{ '@type': 'Distance', 'name': `${dimensions.height} cm`}]
-  if (dimensions.width) schema.width = [{ '@type': 'Distance', 'name': `${dimensions.width} cm`}]
-  if (dimensions.depth) schema.depth = [{ '@type': 'Distance', 'name': `${dimensions.depth} cm`}]
+  if (dimensions?.height) schema.height = [{ '@type': 'Distance', 'name': `${dimensions.height} cm`}]
+  if (dimensions?.width) schema.width = [{ '@type': 'Distance', 'name': `${dimensions.width} cm`}]
+  if (dimensions?.depth) schema.depth = [{ '@type': 'Distance', 'name': `${dimensions.depth} cm`}]
   schema.accessMode = 'visual'; // TODO
   if (item.copyright) schema.copyrightNotice = item.copyright;
   if (item.creditLine) schema.creditText = item.creditLine;

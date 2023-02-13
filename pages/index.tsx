@@ -29,7 +29,7 @@ export default function IndexPage() {
         </div>
         <div className="flex gap-4">
           <Link
-            href="/search?index=collections&isUnrestricted=true&hasPhoto=true&onView=true"
+            href="/search?index=collections&hasPhoto=true"
             className={buttonVariants({ size: "lg" })}
           >
             Try the search!

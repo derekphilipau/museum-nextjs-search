@@ -16,18 +16,32 @@ interface SearchPaginationProps {
   p: number,
   size: string,
   totalPages: number,
+  isShowFilters: boolean,
   onPageChangeHandler: any,
   onSizeChangeHandler: any,
+  onShowFilters?: any,
 }
 
-export function SearchPagination({ count, p, size, totalPages, onPageChangeHandler, onSizeChangeHandler }: SearchPaginationProps) {
+export function SearchPagination({ count, p, size, totalPages, isShowFilters, onPageChangeHandler, onSizeChangeHandler, onShowFilters }: SearchPaginationProps) {
 
   return (
     <nav
-      className="items-center justify-between gap-x-4 pt-2 sm:flex"
+      className="items-center justify-between gap-x-4 sm:flex"
       aria-label="Pagination"
       >
-      <div className="flex items-center justify-start gap-x-4 pt-2">
+      <div className="flex items-center justify-start gap-x-4">
+        {!isShowFilters && (
+        <div className="">
+          <Button
+            onClick={() => onShowFilters(true)}
+            variant="ghost"
+            size="sm"
+          >
+            <Icons.slidersHorizontal className="h-5 w-5 mr-4" />
+            Show Filters
+          </Button>
+        </div>
+        )}
         <div className="flex w-16">
           <Select defaultValue={size} onValueChange={(value) => onSizeChangeHandler(value)}>
             <SelectTrigger className="w-[180px]">
@@ -44,7 +58,7 @@ export function SearchPagination({ count, p, size, totalPages, onPageChangeHandl
           {count} results, page {p} of {totalPages}.
         </div>
       </div>
-      <div className="flex items-center justify-end gap-x-4 pt-2">
+      <div className="flex items-center justify-end gap-x-4">
         <Button
           disabled={p <= 1}
           onClick={() => onPageChangeHandler(p - 1)}

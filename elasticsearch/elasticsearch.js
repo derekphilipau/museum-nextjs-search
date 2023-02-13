@@ -130,7 +130,7 @@ export async function importData(index, dataFilename) {
     if (documents.length >= bulkLimit) {
       await bulk(index, documents, 'id', 'index');
       documents = [];
-      await snooze(3);
+      await snooze(2);
     }
   }
   if (documents.length > 0) {

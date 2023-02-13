@@ -14,6 +14,7 @@ import { SearchPagination } from "@/components/search/search-pagination";
 import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryParams } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 const fetcher = async (
   input: RequestInfo,
@@ -33,6 +34,7 @@ export default function Search({ ssrData }) {
   const { index, q, p, size, isUnrestricted, hasPhoto, onView, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
   const [isMobileFilter, setIsMobileFilter] = useState(false);
+  const [isShowFilters, setIsShowFilters] = useState(false);
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
@@ -85,6 +87,7 @@ export default function Search({ ssrData }) {
   const { data, error } = useSWR(getApiUrl(), fetcher, {
     fallbackData: ssrData
   })
+  console.log('got data', data)
   const items = data?.data || [];
   const apiError = data?.error || null;
   const options = data?.options || {};
@@ -104,135 +107,175 @@ export default function Search({ ssrData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container grid gap-6 pt-6 pb-8 sm:grid-cols-3 md:grid-cols-4 md:py-10">
-        <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-          {isMobileFilter && indicesMeta.collections?.aggs?.map(
-            (agg, i) =>
-              agg && options[agg.name]?.length > 0 && (
-                <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
-              )
-          )}
-          <div>
-            <button
-              type="button"
-              className="w-full space-y-2"
-              onClick={() => setIsMobileFilter(!isMobileFilter)}
-            >
-              {isMobileFilter ? (
-                <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+      <section className="container pt-4 md:pt-10">
+        <div className="flex flex-wrap gap-x-6 gap-y-4">
+          <div className="grow">
+            <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
+          </div>
+          <div className="flex flex-wrap gap-x-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="onView"
+                onCheckedChange={(checked) => changeOnView(checked)}
+                defaultChecked={onView}
+              />
+              <label
+                htmlFor="onView"
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                On View
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="hasPhoto"
+                onCheckedChange={(checked) => changeHasPhoto(checked)}
+                defaultChecked={hasPhoto}
+              />
+              <label
+                htmlFor="hasPhoto"
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Has Photo
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isUnrestricted"
+                onCheckedChange={(checked) => changeIsUnrestricted(checked)}
+                defaultChecked={isUnrestricted}
+              />
+              <label
+                htmlFor="isUnrestricted"
+                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Open Access
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-8">
+          <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
+            <div class="pb-4">
+              <button
+                type="button"
+                className="flex h-9 w-full items-center justify-between rounded-md bg-transparent p-1 text-sm font-medium transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-transparent"
+                onClick={() => setIsMobileFilter(!isMobileFilter)}
+              >
+                {isMobileFilter ? (
+                  <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                    Hide Filters
+                    <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                ) : (
+                  <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                    Show Filters
+                    <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                )}
+              </button>
+            </div>
+            {isMobileFilter && indicesMeta.collections?.aggs?.map(
+              (agg, i) =>
+                agg && options[agg.name]?.length > 0 && (
+                  <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                )
+            )}
+          </div>
+          {isShowFilters && (
+            <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
+              <div className="">
+                <Button
+                  onClick={() => setIsShowFilters(false)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
                   Hide Filters
-                  <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
-                </div>
-              ) : (
-                <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-                  Show Filters
-                  <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
-                </div>
+                </Button>
+              </div>
+              {indicesMeta.collections?.aggs?.map(
+                (agg, i) =>
+                  agg && options[agg.name]?.length > 0 && (
+                    <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                  )
               )}
-            </button>
-          </div>
-        </div>
-        <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
-          {indicesMeta.collections?.aggs?.map(
-            (agg, i) =>
-              agg && options[agg.name]?.length > 0 && (
-                <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
-              )
+            </div>
           )}
-        </div>
-        <div className="sm:col-span-2 md:col-span-3">
-          <div className="flex flex-wrap gap-x-6 gap-y-4">
-            <div className="grow">
-              <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
-            </div>
-            <div className="flex flex-wrap gap-x-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="onView"
-                  onCheckedChange={(checked) => changeOnView(checked)}
-                  defaultChecked={onView}
-                />
-                <label
-                  htmlFor="onView"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  On View
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="hasPhoto"
-                  onCheckedChange={(checked) => changeHasPhoto(checked)}
-                  defaultChecked={hasPhoto}
-                />
-                <label
-                  htmlFor="hasPhoto"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Has Photo
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isUnrestricted"
-                  onCheckedChange={(checked) => changeIsUnrestricted(checked)}
-                  defaultChecked={isUnrestricted}
-                />
-                <label
-                  htmlFor="isUnrestricted"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Open Access
-                </label>
-              </div>
-            </div>
-          </div>
+          <div className={isShowFilters ? 'sm:col-span-2 md:col-span-3' : 'sm:col-span-3 md:col-span-4'}>
 
-          {error?.length > 0 &&
-            <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
-              {error}
-            </h3>
-          }
-          {filterArr?.length > 0 && (
-            <div className="flex flex-wrap gap-x-2 pt-3">
+            {error?.length > 0 &&
+              <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
+                {error}
+              </h3>
+            }
+
+            <SearchPagination
+              count={count}
+              p={p}
+              size={size}
+              totalPages={totalPages}
+              isShowFilters={isShowFilters}
+              onPageChangeHandler={updatePageIndex}
+              onSizeChangeHandler={updatePageSize}
+              onShowFilters={() => setIsShowFilters(true)} />
+
+            {filterArr?.length > 0 && (
+              <div className="flex flex-wrap gap-x-2 pt-3">
+                {
+                  filterArr?.length > 0 && filterArr.map(
+                    (filter, i) =>
+                      filter && (
+                        <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
+                          {filter[1]}
+                          <button
+                            type="button"
+                            className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
+                            onClick={() => setFilter(filter[0], '', false)}
+                          >
+                            <span className="sr-only">Remove option</span>
+                            <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                              <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+                            </svg>
+                          </button>
+                        </span>
+                      )
+                  )
+                }
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
               {
-                filterArr?.length > 0 && filterArr.map(
-                  (filter, i) =>
-                    filter && (
-                      <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
-                        {filter[1]}
-                        <button
-                          type="button"
-                          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
-                          onClick={() => setFilter(filter[0], '', false)}
-                        >
-                          <span className="sr-only">Remove option</span>
-                          <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                            <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-                          </svg>
-                        </button>
-                      </span>
+                items?.length > 0 && items.map(
+                  (item, i) =>
+                    item && (
+                      <div className="" key={i}>
+                        <ItemCard item={item} />
+                      </div>
                     )
                 )
               }
+              {
+                !(items?.length > 0) && (
+                  <h3 className="my-10 mb-4 text-lg md:text-xl">
+                    Sorry, we couldn’t find any results matching your criteria.
+                  </h3>
+                )
+              }
             </div>
-          )}
-
-          <SearchPagination count={count} p={p} size={size} totalPages={totalPages} onPageChangeHandler={updatePageIndex} onSizeChangeHandler={updatePageSize} />
-          <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
-            {
-              items?.length > 0 && items.map(
-                (item, i) =>
-                  item && (
-                    <div className="" key={i}>
-                      <ItemCard item={item} />
-                    </div>
-                  )
-              )
-            }
+            <SearchPagination
+              count={count}
+              p={p}
+              size={size}
+              totalPages={totalPages}
+              isShowFilters={true}
+              onPageChangeHandler={updatePageIndex}
+              onSizeChangeHandler={updatePageSize}
+            />
           </div>
-          <SearchPagination count={count} p={p} size={size} totalPages={totalPages} onPageChangeHandler={updatePageIndex} onSizeChangeHandler={updatePageSize} />
         </div>
+
       </section>
     </Layout>
   )
