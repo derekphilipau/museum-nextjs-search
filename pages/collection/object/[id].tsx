@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import Head from "next/head"
 import Link from "next/link"
 import { Layout } from "@/components/layout/layout"
-import { buttonVariants } from "@/components/ui/button"
 import { ObjectDescription } from "@/components/search/object-description";
 import { useRouter } from 'next/router'
 import { ImageViewer } from "@/components/search/image-viewer";
 import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
-
 import { getDocument, similar } from "@/util/elasticsearch.js";
 
 
@@ -27,7 +25,7 @@ export default function IndexPage({ item, similar }) {
   }, [similar, showAllSimilar]);
 
   useEffect(() => {
-    setVisibleSimilar(similar.slice(0, 12));
+    setShowAllSimilar(false);
   }, [router.query]);
 
   return (
@@ -41,21 +39,21 @@ export default function IndexPage({ item, similar }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container grid md:grid-cols-2 lg:grid-cols-8 gap-y-6 gap-x-12 pt-6 pb-8 md:py-10">
-        <div className="md:col-span-1 lg:col-span-3 flex justify-center items-start">
+      <section className="container grid gap-y-6 gap-x-12 pt-6 pb-8 md:grid-cols-2 md:py-10 lg:grid-cols-8">
+        <div className="flex items-start justify-center md:col-span-1 lg:col-span-3">
           <ImageViewer item={item} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
-          <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl mb-3">
+          <h1 className="mb-3 text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
             {item?.title}
           </h1>
-          <div className="text-neutral-700 dark:text-neutral-400 mb-4">
+          <div className="mb-4 text-neutral-700 dark:text-neutral-400">
             {item?.date}
           </div>
-          <h2 className="text-lg md:text-xl mb-4">
+          <h2 className="mb-4 text-lg md:text-xl">
             {item?.primaryConstituent || 'Maker Unknown'}
           </h2>
-          <h4 className="font-semibold uppercase text-neutral-700 dark:text-neutral-400 mb-4">
+          <h4 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
             {item?.collections?.map(
               (collection, i) =>
                 collection && (
@@ -63,7 +61,7 @@ export default function IndexPage({ item, similar }) {
                 )
             )}
           </h4>
-          <div className="text-neutral-700 dark:text-neutral-400 mb-4"
+          <div className="mb-4 text-neutral-700 dark:text-neutral-400"
             dangerouslySetInnerHTML={{ __html: item?.description }}>
           </div>
           <div className="pt-4">
@@ -71,11 +69,11 @@ export default function IndexPage({ item, similar }) {
           </div>
         </div>
       </section>
-      <section className="container pt-6 pb-8 md:py-8 bg-neutral-100 dark:bg-neutral-800">
-        <h2 className="text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl mb-6">
+      <section className="container bg-neutral-100 pt-6 pb-8 dark:bg-neutral-800 md:py-8">
+        <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
           Similar Objects
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 pb-8 md:pb-10">
+        <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
           {
             visibleSimilar?.length > 0 && visibleSimilar.map(
               (item, i) =>

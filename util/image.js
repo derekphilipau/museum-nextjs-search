@@ -8,24 +8,24 @@ export function isImageRestricted(item) {
   return item.copyrightRestricted;
 }
 
-export function getSmallOrRestrictedImageUrl(item) {
-  if (!item.image) return NONE_IMG;
-  if (item.copyrightRestricted)
-    return getRestrictedImageUrl(item.image);
-  return getSmallImageUrl(item.image);
+export function getSmallOrRestrictedImageUrl(filename, isCopyrightRestricted) {
+  if (!filename) return NONE_IMG;
+  if (isCopyrightRestricted)
+    return getRestrictedImageUrl(filename);
+  return getSmallImageUrl(filename);
 }
 
-export function getSmallImageUrl(image) {
-  if (!image) return NONE_IMG;
-  return `${IMG_SM_BASE_URL}${image}`;
+export function getSmallImageUrl(filename) {
+  if (!filename) return NONE_IMG;
+  return `${IMG_SM_BASE_URL}${filename}`;
 }
 
-export function getRestrictedImageUrl(image) {
-  if (!image) return NONE_IMG;
-  return `${IMG_RESTRICTED_BASE_URL}${image}`;
+export function getRestrictedImageUrl(filename) {
+  if (!filename) return NONE_IMG;
+  return `${IMG_RESTRICTED_BASE_URL}${filename}`;
 }
 
-export function getLargeImageUrl(image) {
-  if (!image) return NONE_IMG;
-  return `${IMG_LG_BASE_URL}${image}`;
+export function getLargeImageUrl(filename) {
+  if (!filename) return NONE_IMG;
+  return `${IMG_LG_BASE_URL}${filename}`;
 }

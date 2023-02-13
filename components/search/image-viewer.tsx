@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic'
 import Link from "next/link"
+import Image from 'next/image'
 import {
   isImageRestricted,
   getRestrictedImageUrl,
@@ -22,8 +23,26 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 })
 
 export function ImageViewer({ item }) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [selectedImage, setSelectedImage] = useState({})
+  const sortedImages = item?.images?.sort((a, b) => a.rank - b.rank) || [];
 
-  if (!item?.id) return;
+  useEffect(() => {
+    setSelectedImageIndex(0)
+  }, [item.images])
+
+  useEffect(() => {
+    setSelectedImage(sortedImages[selectedImageIndex])
+  }, [selectedImageIndex, sortedImages])
+
+  if (!item?.id || !(item?.images?.length > 0)) return;
+
+  function getThumbnailClass(filename) {
+    const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';
+    if (filename === selectedImage?.filename)
+      return `${base} border border-neutral-400`
+    return base
+  }
 
   const smallImageUrl = getSmallOrRestrictedImageUrl(item);
   const largeImageUrl = getLargeImageUrl(item.image);
@@ -33,28 +52,40 @@ export function ImageViewer({ item }) {
       <div>
         {isImageRestricted(item) ? (
           <figure>
-            <img className="max-h-96" src={smallImageUrl} alt="" />
+            <Image
+              src={getSmallOrRestrictedImageUrl(selectedImage?.filename, item.copyrightRestricted)}
+              className="max-h-16 object-contain"
+              alt=""
+              width={800}
+              height={800}
+            />
             <figcaption></figcaption>
           </figure>
         ) : (
           <Dialog>
             <DialogTrigger>
               <figure>
-                <img className="max-h-96" src={smallImageUrl} alt="" />
+                <Image
+                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, item.copyrightRestricted)}
+                  className="max-h-96 object-contain"
+                  alt=""
+                  width={800}
+                  height={800}
+                />
                 <figcaption></figcaption>
               </figure>
             </DialogTrigger>
             <DialogContent className="h-full min-w-full">
               <DialogHeader className="">
                 <DialogTitle className="z-50">
-                  <span className="px-4 py-3 rounded-lg bg-white dark:bg-neutral-900 bg-opacity-50">
+                  <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
                     {item.title}
                   </span>
                 </DialogTitle>
                 <DialogDescription>
                   <div>
                     {item?.image && (
-                      <OpenSeaDragonViewer image={largeImageUrl} />
+                      <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
                     )}
                   </div>
                 </DialogDescription>
@@ -63,14 +94,24 @@ export function ImageViewer({ item }) {
           </Dialog>
         )}
       </div>
-      {item?.image?.length > 1 && (
-        <div className="flex flex-wrap justify-start gap-2 my-6">
-          {item?.images?.map(
+      {sortedImages.length > 1 && (
+        <div className="my-6 flex flex-wrap justify-start gap-2">
+          {sortedImages.map(
             (image, index) =>
               image?.filename && (
-                <div className="w-16 flex justify-center items-center">
+                <div
+                  key={index}
+                  className={getThumbnailClass(image.filename)}
+                  onClick={() => setSelectedImageIndex(index)}
+                  >
                   <figure key={index}>
-                    <img className="max-h-16 object-contain" src={getRestrictedImageUrl(image.filename)} alt="" />
+                    <Image
+                      src={getRestrictedImageUrl(image.filename)}
+                      className="max-h-16 object-contain"
+                      alt=""
+                      width={200}
+                      height={200}
+                    />
                     <figcaption></figcaption>
                   </figure>
                 </div>
