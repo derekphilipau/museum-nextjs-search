@@ -1,4 +1,4 @@
 export interface AggOption {
   key: string
-  count: number
+  doc_count: number
 }

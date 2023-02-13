@@ -30,7 +30,7 @@ export function Footer() {
         </div>
         <div className="mt-6 md:mt-0">
           <h5 className="text-lg mb-2">
-            Let's Stay Connected
+            Let&apos;s Stay Connected
           </h5>
           <Input name="marketing" placeholder="Sign Up" />
         </div>
