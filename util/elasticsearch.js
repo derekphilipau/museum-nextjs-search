@@ -72,6 +72,7 @@ export async function getDocument(index, id) {
 export async function search(params) {
   const {
     index, p, q,
+    isUnrestricted,
     primaryConstituent, classification, medium, period, dynasty,
     museumLocation, section, geographicalLocations, collections
   } = params;
@@ -106,6 +107,8 @@ export async function search(params) {
       match_all: {}
     };
 
+  
+
   const filters = [];
   if (primaryConstituent) filters.push({ name: 'primaryConstituent', value: primaryConstituent });
   if (classification) filters.push({ name: 'classification', value: classification });
@@ -116,6 +119,8 @@ export async function search(params) {
   if (section) filters.push({ name: 'section', value: section });
   if (geographicalLocations) filters.push({ name: 'geographicalLocations', value: geographicalLocations });
   if (collections) filters.push({ name: 'collections', value: collections });
+  if (isUnrestricted) filters.push({ name: 'copyrightRestricted', value: false });
+  
 
   if (filters.length > 0) {
     esQuery.query.bool.filter = [];

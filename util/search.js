@@ -35,6 +35,8 @@ export function getSearchParams(searchParams) {
   const index = searchParams.get('index') || 'collections';
   const q = searchParams.get('q') || '';
   const pageIndex = parseInt(searchParams.get('p')) || 1;
+  const isUnrestricted = searchParams.get('isUnrestricted') === 'true';
+  
   const filters = {};
   if (Array.isArray(indicesMeta[index]?.aggs)) {
     for (const agg of indicesMeta[index].aggs) {
@@ -45,7 +47,7 @@ export function getSearchParams(searchParams) {
       }
     }  
   }
-  return { index, q, pageIndex, filters }
+  return { index, q, pageIndex, isUnrestricted, filters }
 }
 
 export function getNewQueryParams(params, newParams) {

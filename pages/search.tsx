@@ -30,7 +30,7 @@ export default function Search({ ssrData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { index, q, pageIndex, filters } = getSearchParams(searchParams);
+  const { index, q, pageIndex, isUnrestricted, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
   const [isMobileFilter, setIsMobileFilter] = useState(false);
 
@@ -56,9 +56,14 @@ export default function Search({ ssrData }) {
     pushQueryParam({ p });
   }
 
+  function changeIsUnrestricted(checked) {
+    if (checked) pushQueryParam({ isUnrestricted: true, p: 1 });
+    else pushQueryParam({ isUnrestricted: null, p: 1 });
+  }
+
   function setFilter(name: string, key: string, checked) {
     if (checked) pushQueryParam({ [name]: key, p: 1 });
-    else pushQueryParam({ [name]: null });
+    else pushQueryParam({ [name]: null, p: 1 });
   }
 
   const { data, error } = useSWR(getApiUrl(), fetcher, {
@@ -118,6 +123,19 @@ export default function Search({ ssrData }) {
                 <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isUnrestricted"
+              onCheckedChange={(checked) => changeIsUnrestricted(checked)}
+              defaultChecked={isUnrestricted}
+            />
+            <label
+              htmlFor="isUnrestricted"
+              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Open Access
+            </label>
+          </div>
           {/*}
           <div className="flex items-center space-x-2">
             <Checkbox id="terms" />

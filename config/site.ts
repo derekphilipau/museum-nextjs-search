@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       title: "Search",
-      href: "/search?index=collections",
+      href: "/search?index=collections&isUnrestricted=true",
     },
   ],
   links: {
