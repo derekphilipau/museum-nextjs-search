@@ -61,7 +61,6 @@ export async function search(params) {
     museumLocation, section, geographicalLocations, collections
   } = params;
   const size = SEARCH_PAGE_SIZE;
-  console.log('q is ' + q, params)
 
   const esQuery = {
     index,

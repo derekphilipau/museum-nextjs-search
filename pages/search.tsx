@@ -11,60 +11,31 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
-import { indicesMeta } from "@/util/search.js";
+import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryParams } from "@/util/search.js";
+import { search } from "@/util/elasticsearch.js";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 const PAGE_SIZE = 24;
 
-export default function Search() {
+export default function Search({ssrData}) {
+
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const {index, q, pageIndex, filters} = getSearchParams(searchParams);
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
-
-  const index = searchParams.get('index') || 'collections';
-  console.log('lll' + searchParams.get('index'), index)
-  const q = searchParams.get('q') || '';
-  console.log('got querylll: ', q)
-  const pageIndex = parseInt(searchParams.get('p')) || 1;
-  console.log('query p is ' + parseInt(searchParams.get('p')) + ' pi val: ' + pageIndex)
-  const filters = {};
-  if (Array.isArray(indicesMeta[index]?.aggs)) {
-    for (const agg of indicesMeta[index].aggs) {
-      if (searchParams.has(agg.name))
-        filters[agg.name] = searchParams.get(agg.name) || '';
-    }  
-  }
-
-  /*
-  sfddf
-  useEffect(() => {
-    if(!router.isReady) return;
-    const query = router.query;
-  }, [router.isReady, router.query]);
-*/
-
-
-  function getNewQueryParams(newParams) {
-    for (const [name, value] of Object.entries(newParams)) {
-      console.log('push: ' + name + ' val: ' + value)
-      if (value) params.set(name, value);
-      else params.delete(name)
-    }
-    params.set('index', index);
-    return params;
-  }
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
     return `/api/search?${apiParams}`
   }
 
-  function pushQueryParam(newParams) {
-    const params = getNewQueryParams(newParams); 
-    router.push(`${pathname}?${params}`, undefined)
+  function pushQueryParam(params, newParams) {
+    const updatedParams = getNewQueryParams(params, newParams); 
+    router.push(`${pathname}?${updatedParams}`, undefined)
   }
 
   useEffect(() => {
@@ -75,21 +46,23 @@ export default function Search() {
   }, [query]);
 
   useEffect(() => {
-    pushQueryParam({q: realQuery, p: 1});
+    pushQueryParam(params, {q: realQuery, p: 1});
   }, [realQuery]);
 
   function updatePageIndex(p) {
-    pushQueryParam({p});
+    pushQueryParam(params, {p});
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushQueryParam({[name]: key, p: 1});
-    else pushQueryParam({[name]: null});
+    if (checked) pushQueryParam(params, {[name]: key, p: 1});
+    else pushQueryParam(params, {[name]: null});
   }
 
-  const { data } = useSWR(getApiUrl(), fetcher);
+  const {data, error} = useSWR(getApiUrl(), fetcher, {
+    fallbackData: ssrData
+  })
   const items = data?.data || [];
-  const error = data?.error || null;
+  const apiError = data?.error || null;
   const options = data?.options || {};
   const count = data?.metadata?.count || 0;
   const totalPages = data?.metadata?.pages || 0;
@@ -148,4 +121,9 @@ export default function Search() {
       </section>
     </Layout>
   )
+}
+
+export async function getServerSideProps(context) {
+  const data = await search(context.query);
+  return { props: { ssrData: data } }
 }
