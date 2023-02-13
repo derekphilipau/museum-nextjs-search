@@ -31,13 +31,13 @@ export function SearchPagination({ count, p, size, totalPages, isShowFilters, on
       >
       <div className="flex items-center justify-start gap-x-4">
         {!isShowFilters && (
-        <div className="">
+        <div className="hidden sm:block">
           <Button
             onClick={() => onShowFilters(true)}
             variant="ghost"
             size="sm"
           >
-            <Icons.slidersHorizontal className="h-5 w-5 mr-4" />
+            <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
             Show Filters
           </Button>
         </div>
