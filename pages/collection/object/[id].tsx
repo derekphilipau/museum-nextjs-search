@@ -7,8 +7,8 @@ import { useRouter } from 'next/router'
 import { ImageViewer } from "@/components/search/image-viewer";
 import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
-import { getDocument, similar } from "@/util/elasticsearch.js";
-
+import { getDocument, similar } from "@/util/elasticsearch";
+import { getSchemaVisualArtwork } from "@/util/schema"
 
 export default function IndexPage({ item, similar }) {
   const router = useRouter()
@@ -38,6 +38,9 @@ export default function IndexPage({ item, similar }) {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <script type="application/ld+json">
+          {JSON.stringify(getSchemaVisualArtwork(item), null, 2)}
+        </script>
       </Head>
       <section className="container grid gap-y-6 gap-x-12 pt-6 pb-8 md:grid-cols-2 md:py-10 lg:grid-cols-8">
         <div className="flex items-start justify-center md:col-span-1 lg:col-span-3">
