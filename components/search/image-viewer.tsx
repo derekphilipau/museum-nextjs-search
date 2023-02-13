@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic'
 import Link from "next/link"
 import Image from 'next/image'
 import {
-  isImageRestricted,
   getRestrictedImageUrl,
   getSmallOrRestrictedImageUrl,
   getLargeImageUrl
@@ -48,54 +47,56 @@ export function ImageViewer({ item }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div>
-        {isCopyrightRestricted ? (
-          <figure>
-            <Image
-              src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
-              className="max-h-96 object-contain"
-              alt=""
-              width={800}
-              height={800}
-            />
-            <figcaption className="mt-4 text-xs italic">
-              This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
-              The Brooklyn Museum respects the rights of artists who retain the copyright to their work
-            </figcaption>
-          </figure>
-        ) : (
-          <Dialog>
-            <DialogTrigger>
-              <figure>
-                <Image
-                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
-                  className="max-h-96 object-contain"
-                  alt=""
-                  width={800}
-                  height={800}
-                />
-                <figcaption></figcaption>
-              </figure>
-            </DialogTrigger>
-            <DialogContent className="h-full min-w-full">
-              <DialogHeader className="">
-                <DialogTitle className="z-50">
-                  <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
-                    {item.title}
-                  </span>
-                </DialogTitle>
-                <DialogDescription>
-                  <div>
-                    {item?.image && (
-                      <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
-                    )}
-                  </div>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+      {selectedImage && (
+        <div>
+          {isCopyrightRestricted ? (
+            <figure>
+              <Image
+                src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
+                className="max-h-96 object-contain"
+                alt=""
+                width={800}
+                height={800}
+              />
+              <figcaption className="mt-4 text-xs italic">
+                This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
+                The Brooklyn Museum respects the rights of artists who retain the copyright to their work
+              </figcaption>
+            </figure>
+          ) : (
+            <Dialog>
+              <DialogTrigger>
+                <figure>
+                  <Image
+                    src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
+                    className="max-h-96 object-contain"
+                    alt=""
+                    width={800}
+                    height={800}
+                  />
+                  <figcaption></figcaption>
+                </figure>
+              </DialogTrigger>
+              <DialogContent className="h-full min-w-full">
+                <DialogHeader className="">
+                  <DialogTitle className="z-50">
+                    <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
+                      {item.title}
+                    </span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    <div>
+                      {item?.image && (
+                        <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
+                      )}
+                    </div>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+      )}
       {sortedImages.length > 1 && (
         <div className="my-6 flex flex-wrap justify-start gap-2">
           {sortedImages.map(
@@ -105,7 +106,7 @@ export function ImageViewer({ item }) {
                   key={index}
                   className={getThumbnailClass(image.filename)}
                   onClick={() => setSelectedImageIndex(index)}
-                  >
+                >
                   <figure key={index}>
                     <Image
                       src={getRestrictedImageUrl(image.filename)}
