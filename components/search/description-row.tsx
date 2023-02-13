@@ -7,7 +7,7 @@ function appendQuery(url, name, val) {
 
 export function DescriptionRow({ name, displayName, value, item, isLink }) {
 
-  const searchUrl = '/search?index=collections?'
+  const searchUrl = '/search?index=collections&'
   let qs = ''
   
   if (!name) return;
@@ -40,5 +40,4 @@ export function DescriptionRow({ name, displayName, value, item, isLink }) {
     </div>
   )
 }
-
 
