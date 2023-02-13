@@ -71,8 +71,19 @@ export async function search(params) {
   };
   if (q) esQuery.query.bool.must = 
     {
-      match: {
-        title: q
+      multi_match: {
+        query: q,
+        type: 'best_fields',
+        operator: 'and',
+        fields: [
+          'boostedKeywords^20',
+          'primaryConstituent^4',
+          'title^2',
+          'keywords^2',
+          'description',
+          'searchText',
+          'accessionNumber'
+        ]
       }
     };
   else esQuery.query.bool.must =
