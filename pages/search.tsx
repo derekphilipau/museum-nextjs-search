@@ -89,6 +89,7 @@ export default function Search({ ssrData }) {
                 <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}
+          {/*}
           <div className="flex items-center space-x-2">
             <Checkbox id="terms" />
             <label
@@ -98,6 +99,7 @@ export default function Search({ ssrData }) {
               Has image
             </label>
           </div>
+          */}
         </div>
         <div className="sm:col-span-2 md:col-span-3">
           <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
