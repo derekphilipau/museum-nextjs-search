@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
+import { AltNav } from "./alt-nav"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,6 +77,9 @@ export function MainNav({ items }: MainNavProps) {
                 </DropdownMenuItem>
               )
           )}
+          <DropdownMenuItem asChild>
+            <AltNav />
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
