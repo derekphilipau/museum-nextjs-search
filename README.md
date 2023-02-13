@@ -1,6 +1,8 @@
 # next-template
 
 https://github.com/shadcn/next-template
+https://template.shadcn.com/
+https://ui.shadcn.com/
 
 A Next.js 13 template for building apps with Radix UI and Tailwind CSS.
 

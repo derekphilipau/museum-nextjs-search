@@ -1,7 +1,7 @@
 import * as React from "react"
 import Link from "next/link"
 
-const linkClasses = 'text-blue-700 hover:text-blue-900 visited:text-purple-700 dark:text-blue-500 dark:hover:text-blue-300 dark:visited:text-purple-500';
+const linkClasses = 'underline';
 
 function appendQuery(url, name, val) {
   return `${url}${(url ? '&' : '')}${name}=${val}`

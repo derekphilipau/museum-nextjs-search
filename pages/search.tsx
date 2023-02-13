@@ -1,5 +1,5 @@
 "use client"
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
@@ -16,14 +16,13 @@ import { search } from "@/util/elasticsearch.js";
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
-export default function Search({ssrData}) {
-
+export default function Search({ ssrData }) {
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const {index, q, pageIndex, filters} = getSearchParams(searchParams);
+  const { index, q, pageIndex, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
 
   function getApiUrl() {
@@ -32,28 +31,28 @@ export default function Search({ssrData}) {
   }
 
   function pushQueryParam(newParams) {
-    const updatedParams = getNewQueryParams(params, newParams); 
+    const updatedParams = getNewQueryParams(params, newParams);
     router.push(`${pathname}?${updatedParams}`, undefined)
   }
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
       if (query !== q)
-        pushQueryParam({q: query, p: 1});
+        pushQueryParam({ q: query, p: 1 });
     }, 400);
     return () => clearTimeout(debounceQuery);
   }, [query]);
 
   function updatePageIndex(p) {
-    pushQueryParam({p});
+    pushQueryParam({ p });
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushQueryParam({[name]: key, p: 1});
-    else pushQueryParam({[name]: null});
+    if (checked) pushQueryParam({ [name]: key, p: 1 });
+    else pushQueryParam({ [name]: null });
   }
 
-  const {data, error} = useSWR(getApiUrl(), fetcher, {
+  const { data, error } = useSWR(getApiUrl(), fetcher, {
     fallbackData: ssrData
   })
   const items = data?.data || [];
@@ -61,6 +60,8 @@ export default function Search({ssrData}) {
   const options = data?.options || {};
   const count = data?.metadata?.count || 0;
   const totalPages = data?.metadata?.pages || 0;
+
+  const filterArr = Object.entries(filters);
 
   return (
     <Layout>
@@ -98,6 +99,31 @@ export default function Search({ssrData}) {
               {error}
             </h3>
           }
+          {filterArr?.length > 0 && (
+            <div className="pt-3">
+              {
+                filterArr?.length > 0 && filterArr.map(
+                  (filter, i) =>
+                    filter && (
+                      <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700">
+                        {filter[1]}
+                        <button
+                          type="button"
+                          className="ml-0.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
+                          onClick={() => setFilter(filter[0], '', false)}
+                        >
+                          <span className="sr-only">Remove option</span>
+                          <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                            <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+                          </svg>
+                        </button>
+                      </span>
+                    )
+                )
+              }
+            </div>
+          )}
+
           <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8 md:pb-10">
             {
