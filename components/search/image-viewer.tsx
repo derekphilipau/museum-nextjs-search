@@ -70,7 +70,7 @@ export function ImageViewer({ item }) {
               image?.filename && (
                 <div className="w-16 flex justify-center items-center bg-neutral-50 dark:bg-neutral-800">
                   <figure key={index}>
-                    <img className="object-contain" src={getRestrictedImageUrl(image.filename)} alt="" />
+                    <img className="max-h-16 object-contain" src={getRestrictedImageUrl(image.filename)} alt="" />
                     <figcaption></figcaption>
                   </figure>
                 </div>
