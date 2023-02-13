@@ -1,4 +1,4 @@
 export interface AggOption {
-  value: string
+  key: string
   count: number
 }

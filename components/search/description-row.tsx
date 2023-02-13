@@ -7,7 +7,15 @@ function appendQuery(url, name, val) {
   return `${url}${(url ? '&' : '')}${name}=${val}`
 }
 
-export function DescriptionRow({ name, displayName, value, item, isLink = false }) {
+interface DescriptionRowProps {
+  name: string,
+  displayName: string,
+  value?: any,
+  item?: any,
+  isLink?: boolean
+}
+
+export function DescriptionRow({ name, displayName, value, item, isLink = false }: DescriptionRowProps) {
 
   const searchUrl = '/search?index=collections&'
   let qs = ''

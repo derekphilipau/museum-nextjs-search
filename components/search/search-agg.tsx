@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
 
 import { Agg } from "@/types/agg"
+import { AggOption } from "@/types/aggOption";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -18,7 +19,7 @@ import {
 interface SearchAggProps {
   index?: string,
   agg?: Agg,
-  options?: any,
+  options?: AggOption[],
   filters?: any,
   checked?: boolean,
   onChangeHandler?: any,
