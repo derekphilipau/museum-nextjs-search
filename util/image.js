@@ -2,7 +2,7 @@
 const IMG_RESTRICTED_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/'
 const IMG_SM_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'
 const IMG_LG_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size4/'
-const NONE_IMG = '/img/bkm_black.png'
+export const NONE_IMG = '/static/img/bkm_black.png'
 
 export function isImageRestricted(item) {
   return item.copyrightRestricted;
