@@ -1,6 +1,8 @@
 import * as React from "react"
 import Link from "next/link"
 
+const linkClasses = 'text-blue-700 hover:text-blue-900 visited:text-purple-700 dark:text-blue-500 dark:hover:text-blue-300 dark:visited:text-purple-500';
+
 function appendQuery(url, name, val) {
   return `${url}${(url ? '&' : '')}${name}=${val}`
 }
@@ -29,8 +31,10 @@ export function DescriptionRow({ name, displayName, value, item, isLink = false 
       <dt className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{displayName}</dt>
       <dd className="mt-1 flex text-sm sm:col-span-2 sm:mt-0">
         {qs?.length > 0 ? (
-          <Link href={`${searchUrl}${qs}`}>
-            {formattedValue}
+          <Link href={`${searchUrl}${qs}`} legacyBehavior>
+            <a className={linkClasses}>
+              {formattedValue}
+            </a>
           </Link>
         ) : (
           <span>{val}</span>

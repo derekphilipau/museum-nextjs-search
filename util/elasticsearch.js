@@ -137,12 +137,14 @@ export async function search(params) {
 
 function getResponseOptions(response) {
   const options = {}
-  Object.keys(response.aggregations).forEach(n => {
-    const agg = response.aggregations[n]
-    if (agg.buckets && agg.buckets.length) {
-      options[n] = agg.buckets
-    }
-  })
+  if (response?.aggregations) {
+    Object.keys(response?.aggregations).forEach(n => {
+      const agg = response.aggregations[n]
+      if (agg.buckets && agg.buckets.length) {
+        options[n] = agg.buckets
+      }
+    })  
+  }
   return options
 };
 
