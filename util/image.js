@@ -15,12 +15,12 @@ export function getSmallOrRestrictedImageUrl(item) {
   return getSmallImageUrl(item.image);
 }
 
-function getSmallImageUrl(image) {
+export function getSmallImageUrl(image) {
   if (!image) return NONE_IMG;
   return `${IMG_SM_BASE_URL}${image}`;
 }
 
-function getRestrictedImageUrl(image) {
+export function getRestrictedImageUrl(image) {
   if (!image) return NONE_IMG;
   return `${IMG_RESTRICTED_BASE_URL}${image}`;
 }

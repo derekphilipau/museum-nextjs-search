@@ -16,6 +16,7 @@ const client = getClient();
 
 const snooze = s => new Promise(resolve => setTimeout(resolve, (s * 1000)))
 
+/*
 function getClient() {
   const node = `${config.get('elasticsearch.protocol')}://${config.get('elasticsearch.host')}:${config.get('elasticsearch.port')}`;
   const clientSettings = {
@@ -29,6 +30,20 @@ function getClient() {
     clientSettings.tls = {
       ca: readFileSync(certificateFile),
       rejectUnauthorized: false
+    }
+  }
+  return new Client(clientSettings);
+}
+*/
+
+function getClient() {
+  const clientSettings = {
+    cloud: {
+      id: 'elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==',
+    },
+    auth: {
+      username: 'elastic',
+      password: 'pTsgwkbpVyDFUGYgWplDIJsl',
     }
   }
   return new Client(clientSettings);
@@ -115,7 +130,7 @@ export async function importData(index, dataFilename) {
     if (documents.length >= bulkLimit) {
       await bulk(index, documents, 'id', 'index');
       documents = [];
-      await snooze(1);
+      await snooze(3);
     }
   }
   if (documents.length > 0) {

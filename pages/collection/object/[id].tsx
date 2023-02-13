@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { getDocument, similar } from "@/util/elasticsearch.js";
 
 
-export default function IndexPage({item, similar}) {
+export default function IndexPage({ item, similar }) {
   const router = useRouter()
   const { id } = router.query
 
@@ -41,9 +41,9 @@ export default function IndexPage({item, similar}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container grid md:grid-cols-2 lg:grid-cols-8 gap-6 pt-6 pb-8 md:py-10">
+      <section className="container grid md:grid-cols-2 lg:grid-cols-8 gap-y-6 gap-x-12 pt-6 pb-8 md:py-10">
         <div className="md:col-span-1 lg:col-span-3 flex justify-center items-start">
-        <ImageViewer item={item} />
+          <ImageViewer item={item} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
           <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl mb-3">
@@ -57,9 +57,9 @@ export default function IndexPage({item, similar}) {
           </h2>
           <h4 className="font-semibold uppercase text-neutral-700 dark:text-neutral-400 mb-4">
             {item?.collections?.map(
-              (collection, index) =>
+              (collection, i) =>
                 collection && (
-                  <span>{collection}{(index > 0) ? ', ' : ''}</span>
+                  <span key={i}>{collection}{(i > 0) ? ', ' : ''}</span>
                 )
             )}
           </h4>

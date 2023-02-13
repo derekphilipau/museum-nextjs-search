@@ -121,7 +121,6 @@ async function transformData() {
     const esObj = getElasticsearchObject(obj, images);
     outputStream.write(`${JSON.stringify(esObj)}\n`);
   }
-  await insert('collections', outputPath)
 }
 
 async function run() {

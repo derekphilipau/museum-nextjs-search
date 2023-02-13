@@ -91,3 +91,13 @@ docker run --name kib-01 --net elastic -p 5601:5601 docker.elastic.co/kibana/kib
 
 
 docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana --url "https://172.0.0.3:9200"
+
+
+
+
+elastic.co trial:
+username,password 
+elastic,pTsgwkbpVyDFUGYgWplDIJsl
+
+ cloud id:
+ elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==

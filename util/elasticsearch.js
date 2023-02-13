@@ -9,6 +9,7 @@ const OPTIONS_PAGE_SIZE = 20;
 const SIMILAR_PAGE_SIZE = 24;
 const UNKNOWN_CONSTITUENT = 'Unknown';
 
+/*
 function getClient() {
   const ca = readFileSync('./secrets/http_ca.crt');
   const node = `https://localhost:9200`;
@@ -20,6 +21,20 @@ function getClient() {
     tls: {
       ca,
       rejectUnauthorized: false
+    }
+  }
+  return new Client(clientSettings);
+}
+*/
+
+function getClient() {
+  const clientSettings = {
+    cloud: {
+      id: 'elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==',
+    },
+    auth: {
+      username: 'elastic',
+      password: 'pTsgwkbpVyDFUGYgWplDIJsl',
     }
   }
   return new Client(clientSettings);
