@@ -100,12 +100,12 @@ export default function Search({ ssrData }) {
             </h3>
           }
           {filterArr?.length > 0 && (
-            <div className="pt-3">
+            <div className="pt-3 flex flex-wrap gap-x-2">
               {
                 filterArr?.length > 0 && filterArr.map(
                   (filter, i) =>
                     filter && (
-                      <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700">
+                      <span className="inline-flex items-center rounded-full bg-neutral-100 dark:bg-neutral-700 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:text-neutral-200">
                         {filter[1]}
                         <button
                           type="button"
