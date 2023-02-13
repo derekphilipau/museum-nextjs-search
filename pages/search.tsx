@@ -139,59 +139,55 @@ export default function Search({ ssrData }) {
                 <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
               )
           )}
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="onView"
-              onCheckedChange={(checked) => changeOnView(checked)}
-              defaultChecked={onView}
-            />
-            <label
-              htmlFor="onView"
-              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              On View
-            </label>
-          </div>        
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="hasPhoto"
-              onCheckedChange={(checked) => changeHasPhoto(checked)}
-              defaultChecked={hasPhoto}
-            />
-            <label
-              htmlFor="hasPhoto"
-              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Has Photo
-            </label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="isUnrestricted"
-              onCheckedChange={(checked) => changeIsUnrestricted(checked)}
-              defaultChecked={isUnrestricted}
-            />
-            <label
-              htmlFor="isUnrestricted"
-              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Open Access
-            </label>
-          </div>    
-          {/*}
-          <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <label
-              htmlFor="terms"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Has image
-            </label>
-          </div>
-          */}
         </div>
         <div className="sm:col-span-2 md:col-span-3">
-          <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
+          <div className="flex flex-wrap gap-x-6 gap-y-4">
+            <div className="grow">
+              <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
+            </div>
+            <div className="flex flex-wrap gap-x-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="onView"
+                  onCheckedChange={(checked) => changeOnView(checked)}
+                  defaultChecked={onView}
+                />
+                <label
+                  htmlFor="onView"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  On View
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="hasPhoto"
+                  onCheckedChange={(checked) => changeHasPhoto(checked)}
+                  defaultChecked={hasPhoto}
+                />
+                <label
+                  htmlFor="hasPhoto"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Has Photo
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isUnrestricted"
+                  onCheckedChange={(checked) => changeIsUnrestricted(checked)}
+                  defaultChecked={isUnrestricted}
+                />
+                <label
+                  htmlFor="isUnrestricted"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Open Access
+                </label>
+              </div>
+            </div>
+          </div>
+
           {error?.length > 0 &&
             <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
               {error}
