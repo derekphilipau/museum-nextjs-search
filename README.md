@@ -18,3 +18,7 @@ It's hoped that all one will need to do is be able to export TMS data to JSON ma
 ## License
 
 Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+
+
+### Notes:
+try 'embla-carousel-react'
