@@ -19,7 +19,7 @@ export const indicesMeta = {
 export function getSearchParamsFromQuery(query) {
   const index = query.index || 'collections';
   const q = query.q || '';
-  const pageIndex = parseInt(query.p) || 1;
+  const p = parseInt(query.p) || 1;
   const filters = {};
   if (Array.isArray(indicesMeta[index]?.aggs)) {
     for (const agg of indicesMeta[index].aggs) {
@@ -28,13 +28,13 @@ export function getSearchParamsFromQuery(query) {
       }
     }  
   }
-  return { index, q, pageIndex, filters }
+  return { index, q, p, filters }
 }
 
 export function getSearchParams(searchParams) {
   const index = searchParams.get('index') || 'collections';
   const q = searchParams.get('q') || '';
-  const pageIndex = parseInt(searchParams.get('p')) || 1;
+  const p = parseInt(searchParams.get('p')) || 1;
   const isUnrestricted = searchParams.get('isUnrestricted') === 'true';
   
   const filters = {};
@@ -47,7 +47,7 @@ export function getSearchParams(searchParams) {
       }
     }  
   }
-  return { index, q, pageIndex, isUnrestricted, filters }
+  return { index, q, p, isUnrestricted, filters }
 }
 
 export function getNewQueryParams(params, newParams) {

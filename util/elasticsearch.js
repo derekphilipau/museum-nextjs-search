@@ -70,13 +70,18 @@ export async function getDocument(index, id) {
 }
 
 export async function search(params) {
-  const {
+  let {
     index, p, q,
     isUnrestricted,
     primaryConstituent, classification, medium, period, dynasty,
     museumLocation, section, geographicalLocations, collections
   } = params;
   const size = SEARCH_PAGE_SIZE;
+
+  // Defaults for missing params:
+  index = index || 'collections';
+  p = p || 1;
+  isUnrestricted = isUnrestricted === 'true'
 
   const esQuery = {
     index,

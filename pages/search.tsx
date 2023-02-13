@@ -30,12 +30,13 @@ export default function Search({ ssrData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { index, q, pageIndex, isUnrestricted, filters } = getSearchParams(searchParams);
+  const { index, q, p, isUnrestricted, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
   const [isMobileFilter, setIsMobileFilter] = useState(false);
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
+    console.log('api params', apiParams)
     return `/api/search?${apiParams}`
   }
 
@@ -180,7 +181,7 @@ export default function Search({ ssrData }) {
             </div>
           )}
 
-          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
+          <SearchPagination count={count} p={p} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
           <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
             {
               items?.length > 0 && items.map(
@@ -193,7 +194,7 @@ export default function Search({ ssrData }) {
               )
             }
           </div>
-          <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
+          <SearchPagination count={count} p={p} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
         </div>
       </section>
     </Layout>
