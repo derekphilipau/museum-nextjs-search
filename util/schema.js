@@ -2,14 +2,19 @@ import { getSmallOrRestrictedImageUrl } from './image.js'
 
 function getDimensionsCM(dimensions) {
   // H x W x D
+  /*
+  FAILS:
+  component (Gong structure): 94 1/2 × 44 × 33 in. (240 × 111.8 × 83.8 cm) component (chair or throne-like form): 60 × 47 × 47 in. (152.4 × 119.4 × 119.4 cm) overall (one component in front of the other - dims variable): 94 1/2 × 47 × 82 in. (240 × 119.4 × 208.3 cm) component (gong only): 3 × 27 1/2 in. (7.6 × 69.9 cm)
+  */
   if (!(dimensions?.length > 0)) return {};
   const cm = dimensions.match(/\((.+?)\)/);
   if (cm?.length === 2) {
     const dim = cm[1].match(/\d+(\.\d{1,2})?/g);
-    if (dim.length === 1) return { height: dim[0] }
-    if (dim.length === 2) return { height: dim[0], width: dim[1] }
-    if (dim.length === 3) return { height: dim[0], width: dim[1], depth: dim[2] }
+    if (dim?.length === 1) return { height: dim[0] }
+    if (dim?.length === 2) return { height: dim[0], width: dim[1] }
+    if (dim?.length === 3) return { height: dim[0], width: dim[1], depth: dim[2] }
   }
+  return {};
 }
 
 /**
