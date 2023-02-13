@@ -30,7 +30,7 @@ export default function Search({ ssrData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { index, q, p, size, isUnrestricted, filters } = getSearchParams(searchParams);
+  const { index, q, p, size, isUnrestricted, hasPhoto, onView, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
   const [isMobileFilter, setIsMobileFilter] = useState(false);
 
@@ -65,6 +65,16 @@ export default function Search({ ssrData }) {
   function changeIsUnrestricted(checked) {
     if (checked) pushQueryParam({ isUnrestricted: true, p: 1 });
     else pushQueryParam({ isUnrestricted: null, p: 1 });
+  }
+
+  function changeHasPhoto(checked) {
+    if (checked) pushQueryParam({ hasPhoto: true, p: 1 });
+    else pushQueryParam({ hasPhoto: null, p: 1 });
+  }
+
+  function changeOnView(checked) {
+    if (checked) pushQueryParam({ onView: true, p: 1 });
+    else pushQueryParam({ onView: null, p: 1 });
   }
 
   function setFilter(name: string, key: string, checked) {
@@ -131,6 +141,32 @@ export default function Search({ ssrData }) {
           )}
           <div className="flex items-center space-x-2">
             <Checkbox
+              id="onView"
+              onCheckedChange={(checked) => changeOnView(checked)}
+              defaultChecked={onView}
+            />
+            <label
+              htmlFor="onView"
+              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              On View
+            </label>
+          </div>        
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="hasPhoto"
+              onCheckedChange={(checked) => changeHasPhoto(checked)}
+              defaultChecked={hasPhoto}
+            />
+            <label
+              htmlFor="hasPhoto"
+              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Has Photo
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
               id="isUnrestricted"
               onCheckedChange={(checked) => changeIsUnrestricted(checked)}
               defaultChecked={isUnrestricted}
@@ -141,7 +177,7 @@ export default function Search({ ssrData }) {
             >
               Open Access
             </label>
-          </div>
+          </div>    
           {/*}
           <div className="flex items-center space-x-2">
             <Checkbox id="terms" />

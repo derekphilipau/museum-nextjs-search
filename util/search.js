@@ -37,6 +37,8 @@ export function getSearchParams(searchParams) {
   const p = parseInt(searchParams.get('p')) || 1;
   const size = searchParams.get('size') || '24';
   const isUnrestricted = searchParams.get('isUnrestricted') === 'true';
+  const hasPhoto = searchParams.get('hasPhoto') === 'true';
+  const onView = searchParams.get('onView') === 'true';
   
   const filters = {};
   if (Array.isArray(indicesMeta[index]?.aggs)) {
@@ -48,7 +50,7 @@ export function getSearchParams(searchParams) {
       }
     }  
   }
-  return { index, q, p, size, isUnrestricted, filters }
+  return { index, q, p, size, isUnrestricted, hasPhoto, onView, filters }
 }
 
 export function getNewQueryParams(params, newParams) {

@@ -72,7 +72,7 @@ export async function getDocument(index, id) {
 export async function search(params) {
   let {
     index, p, size, q,
-    isUnrestricted,
+    isUnrestricted, hasPhoto, onView,
     primaryConstituent, classification, medium, period, dynasty,
     museumLocation, section, geographicalLocations, collections
   } = params;
@@ -82,6 +82,8 @@ export async function search(params) {
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
   isUnrestricted = isUnrestricted === 'true';
+  hasPhoto = hasPhoto === 'true';
+  onView = onView === 'true';
 
 
   const esQuery = {
@@ -89,6 +91,9 @@ export async function search(params) {
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
     size,
+    sort: [
+      { startDate: 'desc' }
+    ],
     track_total_hits: true
   };
   if (q) esQuery.query.bool.must = 
@@ -138,6 +143,22 @@ export async function search(params) {
       })
     }
   }
+
+  if (hasPhoto) {
+    if (!(esQuery.query.bool?.filter?.length > 0)) esQuery.query.bool.filter = [];      
+    esQuery.query.bool.filter.push({
+      exists: {
+        field: 'image'
+      }
+    });
+  }
+
+  if (onView) {
+    if (!esQuery.query.bool.must_not) esQuery.query.bool.must_not = {};
+    esQuery.query.bool.must_not.term = {
+      museumLocation: 'This item is not on view'
+    };
+  }  
 
   if (indicesMeta[index]?.aggs?.length > 0) {
     const aggs = {}
