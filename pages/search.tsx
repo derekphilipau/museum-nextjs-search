@@ -13,6 +13,7 @@ import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
 import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryParams } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
+import { Icons } from "@/components/icons";
 
 const fetcher = async (
   input: RequestInfo,
@@ -31,6 +32,7 @@ export default function Search({ ssrData }) {
   const params = new URLSearchParams(searchParams);
   const { index, q, pageIndex, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
+  const [isMobileFilter, setIsMobileFilter] = useState(false);
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
@@ -81,8 +83,35 @@ export default function Search({ ssrData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container grid sm:grid-cols-3 md:grid-cols-4 gap-6 pt-6 pb-8 md:py-10">
-        <div className="sm:col-span-1 h-full space-y-6">
+      <section className="container grid gap-6 pt-6 pb-8 sm:grid-cols-3 md:grid-cols-4 md:py-10">
+        <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
+          {isMobileFilter && indicesMeta.collections?.aggs?.map(
+            (agg, i) =>
+              agg && options[agg.name]?.length > 0 && (
+                <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+              )
+          )}
+          <div>
+            <button
+              type="button"
+              className="w-full space-y-2"
+              onClick={() => setIsMobileFilter(!isMobileFilter)}
+            >
+              {isMobileFilter ? (
+                <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                  Hide Filters
+                  <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
+                </div>
+              ) : (
+                <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                  Show Filters
+                  <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
+                </div>
+              )}
+            </button>
+          </div>
+        </div>
+        <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
           {indicesMeta.collections?.aggs?.map(
             (agg, i) =>
               agg && options[agg.name]?.length > 0 && (
@@ -104,21 +133,21 @@ export default function Search({ ssrData }) {
         <div className="sm:col-span-2 md:col-span-3">
           <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
           {error?.length > 0 &&
-            <h3 className="text-lg text-red-800 font-extrabold leading-tight tracking-tighter mb-6">
+            <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
               {error}
             </h3>
           }
           {filterArr?.length > 0 && (
-            <div className="pt-3 flex flex-wrap gap-x-2">
+            <div className="flex flex-wrap gap-x-2 pt-3">
               {
                 filterArr?.length > 0 && filterArr.map(
                   (filter, i) =>
                     filter && (
-                      <span className="inline-flex items-center rounded-full bg-neutral-100 dark:bg-neutral-700 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:text-neutral-200">
+                      <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
                         {filter[1]}
                         <button
                           type="button"
-                          className="ml-0.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
+                          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
                           onClick={() => setFilter(filter[0], '', false)}
                         >
                           <span className="sr-only">Remove option</span>
@@ -134,7 +163,7 @@ export default function Search({ ssrData }) {
           )}
 
           <SearchPagination count={count} pageIndex={pageIndex} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8 md:pb-10">
+          <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
             {
               items?.length > 0 && items.map(
                 (item, i) =>
