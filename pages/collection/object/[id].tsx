@@ -9,6 +9,7 @@ import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
 import { getDocument, similar } from "@/util/elasticsearch";
 import { getSchemaVisualArtwork } from "@/util/schema"
+import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
 
 export default function IndexPage({ item, similar }) {
   const router = useRouter()
@@ -69,6 +70,9 @@ export default function IndexPage({ item, similar }) {
           </div>
           <div className="pt-4">
             <ObjectDescription item={item} />
+          </div>
+          <div>
+            <LanguageDisclaimer />
           </div>
         </div>
       </section>
