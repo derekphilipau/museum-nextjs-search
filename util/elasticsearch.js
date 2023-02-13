@@ -3,7 +3,7 @@ import {readFileSync} from 'fs'
 import {Client} from '@elastic/elasticsearch';
 import { indicesMeta } from "@/util/search.js";
 
-const SEARCH_PAGE_SIZE = 24;
+const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
 const OPTIONS_PAGE_SIZE = 20;
 const SIMILAR_PAGE_SIZE = 24;
@@ -71,17 +71,18 @@ export async function getDocument(index, id) {
 
 export async function search(params) {
   let {
-    index, p, q,
+    index, p, size, q,
     isUnrestricted,
     primaryConstituent, classification, medium, period, dynasty,
     museumLocation, section, geographicalLocations, collections
   } = params;
-  const size = SEARCH_PAGE_SIZE;
 
   // Defaults for missing params:
   index = index || 'collections';
+  size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
-  isUnrestricted = isUnrestricted === 'true'
+  isUnrestricted = isUnrestricted === 'true';
+
 
   const esQuery = {
     index,

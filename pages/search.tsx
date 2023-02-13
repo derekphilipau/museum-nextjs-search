@@ -30,7 +30,7 @@ export default function Search({ ssrData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const { index, q, p, isUnrestricted, filters } = getSearchParams(searchParams);
+  const { index, q, p, size, isUnrestricted, filters } = getSearchParams(searchParams);
   const [query, setQuery] = useState(q);
   const [isMobileFilter, setIsMobileFilter] = useState(false);
 
@@ -55,6 +55,11 @@ export default function Search({ ssrData }) {
 
   function updatePageIndex(p) {
     pushQueryParam({ p });
+  }
+
+  function updatePageSize(size) {
+    console.log('updated size: ' + size)
+    pushQueryParam({ size, p: 1 });
   }
 
   function changeIsUnrestricted(checked) {
@@ -181,7 +186,7 @@ export default function Search({ ssrData }) {
             </div>
           )}
 
-          <SearchPagination count={count} p={p} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
+          <SearchPagination count={count} p={p} size={size} totalPages={totalPages} onPageChangeHandler={updatePageIndex} onSizeChangeHandler={updatePageSize} />
           <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
             {
               items?.length > 0 && items.map(
@@ -194,7 +199,7 @@ export default function Search({ ssrData }) {
               )
             }
           </div>
-          <SearchPagination count={count} p={p} totalPages={totalPages} onPageChangeHandler={updatePageIndex} />
+          <SearchPagination count={count} p={p} size={size} totalPages={totalPages} onPageChangeHandler={updatePageIndex} onSizeChangeHandler={updatePageSize} />
         </div>
       </section>
     </Layout>

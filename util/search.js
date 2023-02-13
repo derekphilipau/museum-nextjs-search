@@ -35,6 +35,7 @@ export function getSearchParams(searchParams) {
   const index = searchParams.get('index') || 'collections';
   const q = searchParams.get('q') || '';
   const p = parseInt(searchParams.get('p')) || 1;
+  const size = searchParams.get('size') || '24';
   const isUnrestricted = searchParams.get('isUnrestricted') === 'true';
   
   const filters = {};
@@ -47,7 +48,7 @@ export function getSearchParams(searchParams) {
       }
     }  
   }
-  return { index, q, p, isUnrestricted, filters }
+  return { index, q, p, size, isUnrestricted, filters }
 }
 
 export function getNewQueryParams(params, newParams) {
