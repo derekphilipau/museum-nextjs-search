@@ -5,23 +5,23 @@ function appendQuery(url, name, val) {
   return `${url}${(url ? '&' : '')}${name}=${val}`
 }
 
-export function DescriptionRow({ name, displayName, value, item, isLink }) {
+export function DescriptionRow({ name, displayName, value, item, isLink = false }) {
 
   const searchUrl = '/search?index=collections&'
   let qs = ''
   
-  if (!name) return;
-  let val = value ? value : item[name]
-  let formattedValue = ''
+  let val = value ? value : item[name];
+  if (!name || !val || val.length === 0) return;
+  let formattedValue = '';
   if (Array.isArray(val) && val.length > 0) {
     for (const v of val) {
       formattedValue += `${formattedValue.length > 0 ? ', ' : ''}${v}`;
-      qs = appendQuery(qs, name, v);
+      if (isLink) qs = appendQuery(qs, name, v);
     } 
   }
   else {
     formattedValue = val;
-    qs = appendQuery(qs, name, val);
+    if (isLink) qs = appendQuery(qs, name, val);
   }
 
   return (

@@ -5,7 +5,7 @@ import { isImageRestricted, getSmallOrRestrictedImageUrl } from '@/util/image.js
 export function SimilarItemCard({ item }) {
 
   let imageSrc = getSmallOrRestrictedImageUrl(item);
-  const maker = item.primaryConstituent || 'Maker Unknown';
+  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
   const href = `/collection/object/${item.id}`;
 
   return (
@@ -19,7 +19,7 @@ export function SimilarItemCard({ item }) {
         </div>
         <div className="pt-2">
           <h4 className="font-semibold text-neutral-900 dark:text-white">{item.title}</h4>
-          <h5 className="text-sm text-neutral-900 dark:text-white">{maker}</h5>
+          <h5 className="text-sm text-neutral-900 dark:text-white">{primaryConstituent}</h5>
           <p className="font-normal text-neutral-700 dark:text-neutral-400 text-xs">
             {item.date}
           </p>

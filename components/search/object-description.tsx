@@ -11,20 +11,20 @@ export function ObjectDescription({ item }) {
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
-        <DescriptionRow name="maker" displayName="Maker" value={maker} />
+        <DescriptionRow name="primaryConstituent" displayName="Maker" value={maker} isLink={true} />
         <DescriptionRow name="medium" displayName="Medium" item={item} isLink={true} />
-        <DescriptionRow name="geographicalLocations" displayName="Place Made" item={item} />
+        <DescriptionRow name="geographicalLocations" displayName="Place Made" item={item} isLink={true} />
         <DescriptionRow name="date" displayName="Dates" item={item} />
-        <DescriptionRow name="dynasty" displayName="Dynasty" item={item} />
-        <DescriptionRow name="period" displayName="Period" item={item} />
+        <DescriptionRow name="dynasty" displayName="Dynasty" item={item} isLink={true} />
+        <DescriptionRow name="period" displayName="Period" item={item} isLink={true} />
         <DescriptionRow name="dimensions" displayName="Dimensions" item={item} />
         <DescriptionRow name="signed" displayName="Signature" item={item} />
         <DescriptionRow name="inscribed" displayName="Inscriptions" item={item} />
-        <DescriptionRow name="collections" displayName="Collections" item={item} />
+        <DescriptionRow name="collections" displayName="Collections" item={item} isLink={true} />
         <DescriptionRow name="accessionNumber" displayName="Accession Number" item={item} />
         <DescriptionRow name="creditLine" displayName="Credit Line" item={item} />
         <DescriptionRow name="exhibitions" displayName="Exhibitions" item={item} />
-        <DescriptionRow name="museumLocation" displayName="Museum Location" item={item} />
+        <DescriptionRow name="museumLocation" displayName="Museum Location" item={item} isLink={true} />
         <DescriptionRow name="rightsType" displayName="Rights Statement" item={item} />
       </dl>
     </div>
