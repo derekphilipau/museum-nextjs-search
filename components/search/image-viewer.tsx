@@ -23,13 +23,15 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 })
 
 export function ImageViewer({ item }) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
   const sortedImages = item?.images?.sort((a, b) => a.rank - b.rank) || [];
 
   useEffect(() => {
-    setSelectedImageIndex(0)
-  }, [item.images])
+    setSelectedImageIndex(0);
+    setIsCopyrightRestricted(item.copyrightRestricted)
+  }, [item])
 
   useEffect(() => {
     setSelectedImage(sortedImages[selectedImageIndex])
@@ -44,29 +46,29 @@ export function ImageViewer({ item }) {
     return base
   }
 
-  const smallImageUrl = getSmallOrRestrictedImageUrl(item);
-  const largeImageUrl = getLargeImageUrl(item.image);
-
   return (
     <div className="flex flex-col items-center">
       <div>
-        {isImageRestricted(item) ? (
+        {isCopyrightRestricted ? (
           <figure>
             <Image
-              src={getSmallOrRestrictedImageUrl(selectedImage?.filename, item.copyrightRestricted)}
-              className="max-h-16 object-contain"
+              src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
+              className="max-h-96 object-contain"
               alt=""
               width={800}
               height={800}
             />
-            <figcaption></figcaption>
+            <figcaption className="mt-4 text-xs italic">
+              This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
+              The Brooklyn Museum respects the rights of artists who retain the copyright to their work
+            </figcaption>
           </figure>
         ) : (
           <Dialog>
             <DialogTrigger>
               <figure>
                 <Image
-                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, item.copyrightRestricted)}
+                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
                   className="max-h-96 object-contain"
                   alt=""
                   width={800}
