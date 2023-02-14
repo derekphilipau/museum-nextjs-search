@@ -14,11 +14,14 @@ export const indicesMeta = {
       { name: 'exhibitions', displayName: 'Exhibitions' },
       { name: 'section', displayName: 'Section' },
     ]
+  },
+  content: {
+    aggs: []
   }
 }
 
 export function getSearchParamsFromQuery(query) {
-  const index = query.index || 'collections';
+  const index = query.index;
   const q = query.q || '';
   const p = parseInt(query.p) || 1;
   const filters = {};
@@ -33,7 +36,7 @@ export function getSearchParamsFromQuery(query) {
 }
 
 export function getSearchParams(searchParams) {
-  const index = searchParams.get('index') || 'collections';
+  const index = searchParams.get('index');
   const q = searchParams.get('q') || '';
   const p = parseInt(searchParams.get('p')) || 1;
   const size = searchParams.get('size') || '24';
@@ -60,6 +63,6 @@ export function getNewQueryParams(params, newParams) {
     if (value) params.set(name, value);
     else params.delete(name)
   }
-  params.set('index', 'collections'); // TODO
+  params.delete('index')
   return params;
 }

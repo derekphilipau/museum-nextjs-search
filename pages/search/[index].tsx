@@ -7,15 +7,16 @@ import Head from "next/head"
 import useSWR from 'swr'
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
+import { ObjectCard } from "@/components/search/object-card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
-import { indicesMeta, getSearchParams, getSearchParamsFromQuery, getNewQueryParams } from "@/util/search.js";
+import { indicesMeta, getSearchParams, getNewQueryParams } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
- 
+
 const fetcher = async (
   input: RequestInfo,
   init: RequestInit,
@@ -25,7 +26,7 @@ const fetcher = async (
   return res.json();
 };
 
-export default function Search({ ssrData }) {
+export default function SearchPage({ ssrData }) {
 
   const router = useRouter();
   const pathname = usePathname();
@@ -39,7 +40,7 @@ export default function Search({ ssrData }) {
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
     console.log('api params', apiParams)
-    return `/api/search?${apiParams}`
+    return `/api/search/collections?${apiParams}`
   }
 
   function pushQueryParam(newParams) {
@@ -62,6 +63,13 @@ export default function Search({ ssrData }) {
   function updatePageSize(size) {
     console.log('updated size: ' + size)
     pushQueryParam({ size, p: 1 });
+  }
+
+  function changeIndex(newIndex: string) {
+    if (newIndex !== index) setIsShowFilters(false);
+    const qParam = q ? `&q=${q}` : '';
+    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${qParam}`, undefined)
+    router.push(`/search/${newIndex}?p=1${qParam}`, undefined)
   }
 
   function changeIsUnrestricted(checked) {
@@ -107,87 +115,118 @@ export default function Search({ ssrData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container pt-4 md:pt-10">
+      <section className="container pt-4 md:pt-6">
+        <div className="flex flex-wrap gap-x-2 pb-2">
+          <Button
+            variant={index === 'all' ? 'outline' : 'ghost'}
+            className="text-lg"
+            onClick={() => changeIndex('all')}
+          >
+            All
+          </Button>
+          <Button
+            variant={index === 'content' ? 'outline' : 'ghost'}
+            className="text-lg"
+            onClick={() => changeIndex('content')}
+          >
+            Pages
+          </Button>
+          <Button
+            variant={index === 'collections' ? 'outline' : 'ghost'}
+            className="text-lg"
+            onClick={() => changeIndex('collections')}
+          >
+            Collection
+          </Button>
+        </div>
         <div className="flex flex-wrap gap-x-6 gap-y-4">
           <div className="grow">
             <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
           </div>
-          <div className="flex flex-wrap gap-x-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="onView"
-                onCheckedChange={(checked) => changeOnView(checked)}
-                defaultChecked={onView}
-              />
-              <label
-                htmlFor="onView"
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                On View
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="hasPhoto"
-                onCheckedChange={(checked) => changeHasPhoto(checked)}
-                defaultChecked={hasPhoto}
-              />
-              <label
-                htmlFor="hasPhoto"
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Has Photo
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="isUnrestricted"
-                onCheckedChange={(checked) => changeIsUnrestricted(checked)}
-                defaultChecked={isUnrestricted}
-              />
-              <label
-                htmlFor="isUnrestricted"
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Open Access
-              </label>
-            </div>
-          </div>
+          {
+            index === 'collections' && (
+              <div className="flex flex-wrap gap-x-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="onView"
+                    onCheckedChange={(checked) => changeOnView(checked)}
+                    defaultChecked={onView}
+                  />
+                  <label
+                    htmlFor="onView"
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    On View
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="hasPhoto"
+                    onCheckedChange={(checked) => changeHasPhoto(checked)}
+                    defaultChecked={hasPhoto}
+                  />
+                  <label
+                    htmlFor="hasPhoto"
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Has Photo
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isUnrestricted"
+                    onCheckedChange={(checked) => changeIsUnrestricted(checked)}
+                    defaultChecked={isUnrestricted}
+                  />
+                  <label
+                    htmlFor="isUnrestricted"
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Open Access
+                  </label>
+                </div>
+              </div>
+            )
+          }
         </div>
-        <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-8">
-          <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-            <div className="pb-4">
-              <button
-                type="button"
-                className="flex h-9 w-full items-center justify-between rounded-md bg-transparent p-1 text-sm font-medium transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-transparent"
-                onClick={() => setIsMobileFilter(!isMobileFilter)}
-              >
-                {isMobileFilter ? (
-                  <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-                    Hide Filters
-                    <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                ) : (
-                  <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-                    Show Filters
-                    <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
-                  </div>
+        <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
+          {
+            index === 'collections' && (
+              <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
+                <div className="pb-4">
+                  <button
+                    type="button"
+                    className="flex h-9 w-full items-center justify-between rounded-md bg-transparent p-1 text-sm font-medium transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-transparent"
+                    onClick={() => setIsMobileFilter(!isMobileFilter)}
+                  >
+                    {isMobileFilter ? (
+                      <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                        Hide Filters
+                        <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                    ) : (
+                      <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
+                        Show Filters
+                        <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                    )}
+                  </button>
+                </div>
+                {isMobileFilter && indicesMeta.collections?.aggs?.map(
+                  (agg, i) =>
+                    agg && options[agg.name]?.length > 0 && (
+                      <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                    )
                 )}
-              </button>
-            </div>
-            {isMobileFilter && indicesMeta.collections?.aggs?.map(
-              (agg, i) =>
-                agg && options[agg.name]?.length > 0 && (
-                  <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
-                )
-            )}
-          </div>
+              </div>
+            )
+          }
           {isShowFilters && (
             <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
               <div className="">
                 <Button
                   onClick={() => setIsShowFilters(false)}
-                  variant="ghost"
+                  variant='ghost'
                   size="sm"
                 >
                   <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
@@ -211,6 +250,7 @@ export default function Search({ ssrData }) {
             }
 
             <SearchPagination
+              index={index}
               count={count}
               p={p}
               size={size}
@@ -257,7 +297,13 @@ export default function Search({ ssrData }) {
                   (item, i) =>
                     item && (
                       <div className="" key={i}>
-                        <ItemCard item={item} />
+                        {
+                          item.type === 'object' ? (
+                            <ObjectCard item={item} />
+                          ) : (
+                            <ItemCard item={item} />
+                          )
+                        }
                       </div>
                     )
                 )
@@ -271,6 +317,7 @@ export default function Search({ ssrData }) {
               }
             </div>
             <SearchPagination
+              index={index}
               count={count}
               p={p}
               size={size}

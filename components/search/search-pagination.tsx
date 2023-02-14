@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select"
 
 interface SearchPaginationProps {
+  index: string,
   count: number,
   p: number,
   size: string,
@@ -22,7 +23,7 @@ interface SearchPaginationProps {
   onShowFilters?: any,
 }
 
-export function SearchPagination({ count, p, size, totalPages, isShowFilters, onPageChangeHandler, onSizeChangeHandler, onShowFilters }: SearchPaginationProps) {
+export function SearchPagination({ index, count, p, size, totalPages, isShowFilters, onPageChangeHandler, onSizeChangeHandler, onShowFilters }: SearchPaginationProps) {
 
   return (
     <nav
@@ -30,7 +31,7 @@ export function SearchPagination({ count, p, size, totalPages, isShowFilters, on
       aria-label="Pagination"
       >
       <div className="flex items-center justify-start gap-x-4">
-        {!isShowFilters && (
+        {!isShowFilters && index === 'collections' && (
         <div className="hidden sm:block">
           <Button
             onClick={() => onShowFilters(true)}

@@ -1,6 +1,6 @@
 'use strict'
-import {readFileSync} from 'fs'
-import {Client} from '@elastic/elasticsearch';
+import { readFileSync } from 'fs'
+import { Client } from '@elastic/elasticsearch';
 import { indicesMeta } from "@/util/search.js";
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
@@ -70,6 +70,87 @@ export async function getDocument(index, id) {
 }
 
 export async function search(params) {
+
+  if (params.index === 'collections') {
+    return searchCollections(params);
+  }
+
+  let {
+    index, p, size, q
+  } = params;
+
+  index = index === 'content' ? 'content' : ['collections', 'content'];
+
+  // Defaults for missing params:
+  size = size || DEFAULT_SEARCH_PAGE_SIZE;
+  p = p || 1;
+
+  const esQuery = {
+    index,
+    query: { bool: { must: {} } },
+    from: (p - 1) * size || 0,
+    size,
+    track_total_hits: true
+  };
+  if (q) {
+    esQuery.query.bool.must =
+    {
+      multi_match: {
+        query: q,
+        type: 'best_fields',
+        operator: 'and',
+        fields: [
+          'boostedKeywords^20',
+          'primaryConstituent^4',
+          'title^2',
+          'keywords^2',
+          'description',
+          'searchText'
+        ]
+      }
+    };
+  }
+  else {
+    esQuery.query.bool.must =
+    {
+      match_all: {}
+    };
+    /*
+    esQuery.sort = [
+      { startDate: 'desc' }
+    ];
+    */
+  }
+
+  if (index !== 'content') {
+    esQuery.indices_boost = [
+      { content: 4 },
+      { collections: 1 }
+    ]  
+  }
+
+  console.log(esQuery)
+
+  const client = getClient();
+  const response = await client.search(esQuery);
+  console.log(response)
+
+  const options = getResponseOptions(response)
+
+  const count = response?.hits?.total?.value || 0;
+  const metadata = {
+    count,
+    pages: Math.ceil(count / size)
+  }
+
+  const test = Math.floor(Math.random() * 640000);
+
+  const data = response.hits.hits.map(h => h._source)
+
+  return { query: esQuery, data, options, metadata, test: test }
+}
+
+export async function searchCollections(params) {
   let {
     index, p, size, q,
     isUnrestricted, hasPhoto, onView,
@@ -83,7 +164,7 @@ export async function search(params) {
   onView = onView === 'true';
 
   // Defaults for missing params:
-  index = index || 'collections';
+  index = 'collections';
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
@@ -98,7 +179,8 @@ export async function search(params) {
     ],
     track_total_hits: true
   };
-  if (q) esQuery.query.bool.must = 
+  if (q) {
+    esQuery.query.bool.must =
     {
       multi_match: {
         query: q,
@@ -115,12 +197,17 @@ export async function search(params) {
         ]
       }
     };
-  else esQuery.query.bool.must =
+  }
+  else {
+    esQuery.query.bool.must =
     {
       match_all: {}
     };
+    esQuery.sort = [
+      { startDate: 'desc' }
+    ];
+  }
 
-  
 
   const filters = [];
   if (primaryConstituent) filters.push({ name: 'primaryConstituent', value: primaryConstituent });
@@ -134,7 +221,7 @@ export async function search(params) {
   if (exhibitions) filters.push({ name: 'exhibitions', value: exhibitions });
   if (collections) filters.push({ name: 'collections', value: collections });
   if (isUnrestricted) filters.push({ name: 'copyrightRestricted', value: false });
-  
+
 
   if (filters.length > 0) {
     esQuery.query.bool.filter = [];
@@ -148,7 +235,7 @@ export async function search(params) {
   }
 
   if (hasPhoto) {
-    if (!(esQuery.query.bool?.filter?.length > 0)) esQuery.query.bool.filter = [];      
+    if (!(esQuery.query.bool?.filter?.length > 0)) esQuery.query.bool.filter = [];
     esQuery.query.bool.filter.push({
       exists: {
         field: 'image'
@@ -162,7 +249,7 @@ export async function search(params) {
         museumLocation: 'This item is not on view'
       }
     };
-  }  
+  }
 
   if (indicesMeta[index]?.aggs?.length > 0) {
     const aggs = {}
@@ -185,9 +272,9 @@ export async function search(params) {
   const options = getResponseOptions(response)
 
   const count = response?.hits?.total?.value || 0;
-  const metadata = { 
+  const metadata = {
     count,
-    pages: Math.ceil(count/size)
+    pages: Math.ceil(count / size)
   }
 
   const test = Math.floor(Math.random() * 640000);
@@ -205,7 +292,7 @@ function getResponseOptions(response) {
       if (agg.buckets && agg.buckets.length) {
         options[n] = agg.buckets
       }
-    })  
+    })
   }
   return options
 };
@@ -226,10 +313,10 @@ export async function options(params) {
       [field]: {
         terms: {
           field,
-          size  
+          size
         }
       }
-    }  
+    }
   }
 
   if (q) {
@@ -298,7 +385,7 @@ export async function similar(id) {
   addShouldTerms(document, esQuery, 'exhibitions', 1)
   addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
 
-console.log(JSON.stringify(esQuery))
+  console.log(JSON.stringify(esQuery))
   const client = getClient();
   const response = await client.search(esQuery)
   if (!response?.hits?.hits?.length) {
@@ -307,7 +394,7 @@ console.log(JSON.stringify(esQuery))
   return response.hits.hits.map(h => h._source)
 }
 
-function addShouldTerms (document, esQuery, name, boost) {
+function addShouldTerms(document, esQuery, name, boost) {
   if (!(name in document)) return;
   let value = document[name];
   if (!(value?.length > 0)) return;

@@ -11,7 +11,7 @@ interface DescriptionRowProps {
 
 export function DescriptionRow({ name, displayName, value, item, isLink = false }: DescriptionRowProps) {
 
-  const searchUrl = '/search?index=collections'
+  const searchUrl = '/search/collections?'
   let qs = ''
 
   let val = value ? value : item[name];
@@ -27,7 +27,7 @@ export function DescriptionRow({ name, displayName, value, item, isLink = false 
             tag && (
               <Link
                 key={index}
-                href={`${searchUrl}&${name}=${tag}`}
+                href={`${searchUrl}${name}=${tag}`}
                 className='underline'
               >
                 {`${tag}${index !== val.length - 1 ? ',  ' : ''}`}
