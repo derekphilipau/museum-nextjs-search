@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Head from "next/head"
 import Link from "next/link"
+import { useSearchParams } from 'next/navigation';
 import { Layout } from "@/components/layout/layout"
 import { ObjectDescription } from "@/components/search/object-description";
-import { useRouter } from 'next/router'
 import { ImageViewer } from "@/components/search/image-viewer";
 import { SimilarItemCard } from "@/components/search/similar-item-card";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,9 @@ import { getSchemaVisualArtwork } from "@/util/schema"
 import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
 
 export default function IndexPage({ item, similar }) {
-  const router = useRouter()
-  const { id } = router.query
+  const searchParams = useSearchParams();
+  const urlParams = new URLSearchParams(searchParams);
+  const id = urlParams.get('id');
 
   const [visibleSimilar, setVisibleSimilar] = useState([]);
   const [showAllSimilar, setShowAllSimilar] = useState(false);
@@ -27,7 +28,7 @@ export default function IndexPage({ item, similar }) {
 
   useEffect(() => {
     setShowAllSimilar(false);
-  }, [router.query]);
+  }, [id]);
 
   return (
     <Layout>

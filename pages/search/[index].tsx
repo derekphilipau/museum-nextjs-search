@@ -32,6 +32,7 @@ export default function SearchPage({ ssrData }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   // Search State:
+  const [previousSearchParamsStr, setPreviousSearchParamsStr] = useState('');
   const [index, setIndex] = useState('');
   const [q, setQ] = useState('');
   const [query, setQuery] = useState('');
@@ -50,8 +51,16 @@ export default function SearchPage({ ssrData }) {
     const apiParams = new URLSearchParams(searchParams);
     return `/api/search/collections?${apiParams}`
   }
-
+/*
+  interface TransitionOptions {
+    shallow?: boolean;
+    locale?: string | false;
+    scroll?: boolean;
+    unstable_skipClientCache?: boolean;
+}
+*/
   function pushRouteWithParams(newParams) {
+    //declare const transitionOptions: TransitionOptions;
     const debouncePush = setTimeout(() => {
       const updatedParams = new URLSearchParams(searchParams);
       for (const [name, value] of Object.entries(newParams)) {
@@ -59,13 +68,34 @@ export default function SearchPage({ ssrData }) {
         else updatedParams.delete(name)  
       }
       updatedParams.delete('index')
-      router.push(`${pathname}?${updatedParams}`, undefined, { shallow: true })
+      router.push(`${pathname}?${updatedParams}`)
     }, 200);
     return () => clearTimeout(debouncePush);
   }
+  /*
+  console.log('ROUTE PARAMS CHANGED')
+  const currentSearchParams = getSearchParams(searchParams);
+  if (index !== currentSearchParams.index) setIndex(currentSearchParams.index);
+  if (q !== currentSearchParams.q) {
+    setQ(currentSearchParams.q);
+    setQuery(currentSearchParams.q);
+  }
+  if (p !== currentSearchParams.p) setP(currentSearchParams.p);
+  if (size !== currentSearchParams.size) setSize(currentSearchParams.size);
+  //if (filters !== currentSearchParams.filters) {
+    setFilters(currentSearchParams.filters);
+    setFilterArr(Object.entries(currentSearchParams.filters));
+  //}
+  if (hasPhoto !== currentSearchParams.hasPhoto) setHasPhoto(currentSearchParams.hasPhoto);
+  if (onView !== currentSearchParams.onView) setOnView(currentSearchParams.onView);
+  if (isUnrestricted !== currentSearchParams.isUnrestricted) setIsUnrestricted(currentSearchParams.isUnrestricted);
+  */
 
   useEffect(() => {
     const currentSearchParams = getSearchParams(searchParams);
+    const searchParamsStr = JSON.stringify(currentSearchParams);
+    if (previousSearchParamsStr === searchParamsStr) return;
+    setPreviousSearchParamsStr(searchParamsStr);
     setIndex(currentSearchParams.index);
     setQ(currentSearchParams.q);
     setQuery(currentSearchParams.q);
@@ -104,8 +134,8 @@ export default function SearchPage({ ssrData }) {
 
   function changeIndex(newIndex: string) {
     if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
-    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`, undefined, { shallow: true })
-    router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`, undefined, { shallow: true })
+    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`)
+    router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`)
   }
 
   function setFilter(name: string, key: string, checked) {
@@ -139,6 +169,7 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'all' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('all')}
+            disabled={isLoading}
           >
             All
           </Button>
@@ -146,6 +177,7 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'content' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('content')}
+            disabled={isLoading}
           >
             Pages
           </Button>
@@ -153,6 +185,7 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'collections' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('collections')}
+            disabled={isLoading}
           >
             Collection
           </Button>
@@ -167,7 +200,7 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="onView"
-                    onCheckedChange={(checked) => setOnView(checked)}
+                    onCheckedChange={(checked) => setOnView(checked ? true : false)}
                     checked={onView}
                   />
                   <label
@@ -180,7 +213,7 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="hasPhoto"
-                    onCheckedChange={(checked) => setHasPhoto(checked)}
+                    onCheckedChange={(checked) => setHasPhoto(checked ? true : false)}
                     checked={hasPhoto}
                   />
                   <label
@@ -193,7 +226,7 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="isUnrestricted"
-                    onCheckedChange={(checked) => setIsUnrestricted(checked)}
+                    onCheckedChange={(checked) => setIsUnrestricted(checked ? true : false)}
                     checked={isUnrestricted}
                   />
                   <label
