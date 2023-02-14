@@ -47,22 +47,10 @@ export function getSearchParams(searchParams) {
   const filters = {};
   if (Array.isArray(indicesMeta[index]?.aggs)) {
     for (const agg of indicesMeta[index].aggs) {
-      console.log('checking ' + agg.name)
       if (searchParams.has(agg.name)) {
-        console.log('search params has ' + agg.name + ' = ' + searchParams.get(agg.name))
         filters[agg.name] = searchParams.get(agg.name) || '';
       }
     }  
   }
   return { index, q, p, size, isUnrestricted, hasPhoto, onView, filters }
-}
-
-export function getNewQueryParams(params, newParams) {
-  for (const [name, value] of Object.entries(newParams)) {
-    console.log('push: ' + name + ' val: ' + value)
-    if (value) params.set(name, value);
-    else params.delete(name)
-  }
-  params.delete('index')
-  return params;
 }

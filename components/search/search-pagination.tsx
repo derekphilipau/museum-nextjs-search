@@ -3,10 +3,7 @@ import { Icons } from "@/components/icons";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -44,7 +41,7 @@ export function SearchPagination({ index, count, p, size, totalPages, isShowFilt
         </div>
         )}
         <div className="flex w-16">
-          <Select defaultValue={size} onValueChange={(value) => onSizeChangeHandler(value)}>
+          <Select value={size} onValueChange={(value) => onSizeChangeHandler(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="" />
             </SelectTrigger>

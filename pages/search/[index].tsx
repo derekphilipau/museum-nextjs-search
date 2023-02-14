@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
-import { indicesMeta, getSearchParams, getNewQueryParams } from "@/util/search.js";
+import { indicesMeta, getSearchParams } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -31,78 +31,96 @@ export default function SearchPage({ ssrData }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const { index, q, p, size, isUnrestricted, hasPhoto, onView, filters } = getSearchParams(searchParams);
-  const [query, setQuery] = useState(q);
+  // Search State:
+  const [index, setIndex] = useState('');
+  const [q, setQ] = useState('');
+  const [query, setQuery] = useState('');
+  const [p, setP] = useState(0);
+  const [size, setSize] = useState('');
+  const [filters, setFilters] = useState({});
+  const [filterArr, setFilterArr] = useState([]);
+  const [hasPhoto, setHasPhoto] = useState(false);
+  const [onView, setOnView] = useState(false);
+  const [isUnrestricted, setIsUnrestricted] = useState(false);
+  // UI State:
   const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
 
   function getApiUrl() {
     const apiParams = new URLSearchParams(searchParams);
-    console.log('api params', apiParams)
     return `/api/search/collections?${apiParams}`
   }
 
-  function pushQueryParam(newParams) {
-    const updatedParams = getNewQueryParams(params, newParams);
-    router.push(`${pathname}?${updatedParams}`, undefined)
+  function pushRouteWithParams(newParams) {
+    const debouncePush = setTimeout(() => {
+      const updatedParams = new URLSearchParams(searchParams);
+      for (const [name, value] of Object.entries(newParams)) {
+        if (value) updatedParams.set(name, value.toString());
+        else updatedParams.delete(name)  
+      }
+      updatedParams.delete('index')
+      router.push(`${pathname}?${updatedParams}`, undefined, { shallow: true })
+    }, 200);
+    return () => clearTimeout(debouncePush);
   }
+
+  useEffect(() => {
+    const currentSearchParams = getSearchParams(searchParams);
+    setIndex(currentSearchParams.index);
+    setQ(currentSearchParams.q);
+    setQuery(currentSearchParams.q);
+    setP(currentSearchParams.p);
+    setSize(currentSearchParams.size);
+    setFilters(currentSearchParams.filters);
+    setFilterArr(Object.entries(currentSearchParams.filters));
+    setHasPhoto(currentSearchParams.hasPhoto);
+    setOnView(currentSearchParams.onView);
+    setIsUnrestricted(currentSearchParams.isUnrestricted);
+  }, [searchParams]);
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
       if (query !== q)
-        pushQueryParam({ q: query, p: 1 });
+        pushRouteWithParams({ q: query, p: null });
     }, 400);
     return () => clearTimeout(debounceQuery);
-  }, [query]);
+  }, [query, q]);
+
+  useEffect(() => {
+    pushRouteWithParams({
+      p: null, hasPhoto, onView, isUnrestricted
+    });
+  }, [hasPhoto, onView, isUnrestricted]);
 
   function updatePageIndex(p) {
-    pushQueryParam({ p });
+    setP(p);
+    pushRouteWithParams({ p });
   }
 
   function updatePageSize(size) {
-    console.log('updated size: ' + size)
-    pushQueryParam({ size, p: 1 });
+    setSize(size);
+    pushRouteWithParams({ size, p: null });
   }
 
   function changeIndex(newIndex: string) {
-    if (newIndex !== index) setIsShowFilters(false);
-    const qParam = q ? `&q=${q}` : '';
-    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${qParam}`, undefined)
-    router.push(`/search/${newIndex}?p=1${qParam}`, undefined)
-  }
-
-  function changeIsUnrestricted(checked) {
-    if (checked) pushQueryParam({ isUnrestricted: true, p: 1 });
-    else pushQueryParam({ isUnrestricted: null, p: 1 });
-  }
-
-  function changeHasPhoto(checked) {
-    if (checked) pushQueryParam({ hasPhoto: true, p: 1 });
-    else pushQueryParam({ hasPhoto: null, p: 1 });
-  }
-
-  function changeOnView(checked) {
-    if (checked) pushQueryParam({ onView: true, p: 1 });
-    else pushQueryParam({ onView: null, p: 1 });
+    if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
+    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`, undefined, { shallow: true })
+    router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`, undefined, { shallow: true })
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushQueryParam({ [name]: key, p: 1 });
-    else pushQueryParam({ [name]: null, p: 1 });
+    if (checked) pushRouteWithParams({ [name]: key, p: null });
+    else pushRouteWithParams({ [name]: null, p: null });
   }
 
   const { data, error, isLoading } = useSWR(getApiUrl(), fetcher, {
     fallbackData: ssrData
   })
-  console.log('got data', data)
   const items = data?.data || [];
   const apiError = data?.error || null;
   const options = data?.options || {};
   const count = data?.metadata?.count || 0;
   const totalPages = data?.metadata?.pages || 0;
-
-  const filterArr = Object.entries(filters);
 
   return (
     <Layout>
@@ -149,8 +167,8 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="onView"
-                    onCheckedChange={(checked) => changeOnView(checked)}
-                    defaultChecked={onView}
+                    onCheckedChange={(checked) => setOnView(checked)}
+                    checked={onView}
                   />
                   <label
                     htmlFor="onView"
@@ -162,8 +180,8 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="hasPhoto"
-                    onCheckedChange={(checked) => changeHasPhoto(checked)}
-                    defaultChecked={hasPhoto}
+                    onCheckedChange={(checked) => setHasPhoto(checked)}
+                    checked={hasPhoto}
                   />
                   <label
                     htmlFor="hasPhoto"
@@ -175,8 +193,8 @@ export default function SearchPage({ ssrData }) {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="isUnrestricted"
-                    onCheckedChange={(checked) => changeIsUnrestricted(checked)}
-                    defaultChecked={isUnrestricted}
+                    onCheckedChange={(checked) => setIsUnrestricted(checked)}
+                    checked={isUnrestricted}
                   />
                   <label
                     htmlFor="isUnrestricted"
@@ -266,7 +284,10 @@ export default function SearchPage({ ssrData }) {
                   filterArr?.length > 0 && filterArr.map(
                     (filter, i) =>
                       filter && (
-                        <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
+                        <span
+                          key={i}
+                          className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+                          >
                           {filter[1]}
                           <button
                             type="button"
