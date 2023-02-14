@@ -28,6 +28,23 @@ export function ImageViewer({ item }) {
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
 
   /**
+   * Alma W. Thomas (American, 1891-1978). Wind, Sunshine and Flowers, 1968. Acrylic on canvas, 71 3/4 x 51 7/8 in. (182.2 x 131.8 cm). Brooklyn Museum, Gift of Mr. and Mrs. David K. Anderson, 76.120. © artist or artist's estate (Photo: Brooklyn Museum, 76.120_PS2.jpg)
+   */
+  function getCaption(item, filename) {
+    let caption = '';
+    caption += item?.primaryConstituent ? `${item.primaryConstituent}. ` : '';
+    caption += item?.title ? `${item.title}, ` : '';
+    caption += item?.date ? `${item.date}. ` : '';
+    caption += item?.medium ? `${item.medium}, ` : '';
+    caption += item?.dimensions ? `${item.dimensions}. ` : '';
+    caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
+    caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
+    caption += item?.copyright ? `${item.copyright}` : '';
+    caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
+    return caption;
+  }
+
+  /**
    * Sometimes the item's main image (item.image) is ranked at the same level
    * as other item images.  Force the main image to have the highest rank (0).
    */
@@ -36,7 +53,7 @@ export function ImageViewer({ item }) {
       if (item.image) {
         const index = item.images.findIndex(o => o.filename === item.image);
         if (item.images[index].rank) { item.images[index].rank = 0; }
-      }  
+      }
       return item?.images?.sort((a, b) => a.rank - b.rank) || [];
     }
   }
@@ -65,19 +82,24 @@ export function ImageViewer({ item }) {
       {selectedImage && (
         <div>
           {isCopyrightRestricted ? (
-            <figure>
-              <Image
-                src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
-                className="max-h-96 object-contain"
-                alt=""
-                width={800}
-                height={800}
-              />
-              <figcaption className="mt-4 text-xs italic">
+            <>
+              <figure>
+                <Image
+                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
+                  className="max-h-96 object-contain"
+                  alt=""
+                  width={800}
+                  height={800}
+                />
+                <figcaption className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+                  {getCaption(item, selectedImage?.filename)}
+                </figcaption>
+              </figure>
+              <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
                 This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
                 The Brooklyn Museum respects the rights of artists who retain the copyright to their work
-              </figcaption>
-            </figure>
+              </p>
+            </>
           ) : (
             <Dialog>
               <DialogTrigger>
@@ -89,7 +111,9 @@ export function ImageViewer({ item }) {
                     width={800}
                     height={800}
                   />
-                  <figcaption></figcaption>
+                  <figcaption className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+                    {getCaption(item, selectedImage?.filename)}
+                  </figcaption>
                 </figure>
               </DialogTrigger>
               <DialogContent className="h-full min-w-full">
