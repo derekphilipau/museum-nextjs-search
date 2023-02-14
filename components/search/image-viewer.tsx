@@ -22,12 +22,27 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 })
 
 export function ImageViewer({ item }) {
+  const [sortedImages, setSortedImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
-  const sortedImages = item?.images?.sort((a, b) => a.rank - b.rank) || [];
+
+  /**
+   * Sometimes the item's main image (item.image) is ranked at the same level
+   * as other item images.  Force the main image to have the highest rank (0).
+   */
+  function getSortedImages(item) {
+    if (item?.images?.length) {
+      if (item.image) {
+        const index = item.images.findIndex(o => o.filename === item.image);
+        if (item.images[index].rank) { item.images[index].rank = 0; }
+      }  
+      return item?.images?.sort((a, b) => a.rank - b.rank) || [];
+    }
+  }
 
   useEffect(() => {
+    setSortedImages(getSortedImages(item))
     setSelectedImageIndex(0);
     setIsCopyrightRestricted(item.copyrightRestricted)
   }, [item])

@@ -37,9 +37,9 @@ export function DescriptionRow({ name, displayName, value, item, isLink = false 
         {!isLink && val.map(
           (tag, index) =>
             tag && (
-              <>
-                {index > 0 ? ',  ' : ''} {tag}
-              </>
+              <span key={index}>
+                {`${index > 0 ? ',  ' : ''}${tag}`}
+              </span>
             )
         )}
       </dd>

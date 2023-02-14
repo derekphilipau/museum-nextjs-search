@@ -106,7 +106,7 @@ export default function SearchPage({ ssrData }) {
     setHasPhoto(currentSearchParams.hasPhoto);
     setOnView(currentSearchParams.onView);
     setIsUnrestricted(currentSearchParams.isUnrestricted);
-  }, [searchParams]);
+  }, [searchParams, previousSearchParamsStr]);
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
