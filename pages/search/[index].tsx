@@ -1,10 +1,8 @@
-"use client"
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Head from "next/head"
-import useSWR from 'swr'
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
@@ -17,15 +15,6 @@ import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
-const fetcher = async (
-  input: RequestInfo,
-  init: RequestInit,
-  ...args: any[]
-) => {
-  const res = await fetch(input, init);
-  return res.json();
-};
-
 export default function SearchPage({ ssrData }) {
 
   const router = useRouter();
@@ -33,6 +22,7 @@ export default function SearchPage({ ssrData }) {
   const searchParams = useSearchParams();
   // Search State:
   const [previousSearchParamsStr, setPreviousSearchParamsStr] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [index, setIndex] = useState('');
   const [q, setQ] = useState('');
   const [query, setQuery] = useState('');
@@ -43,6 +33,12 @@ export default function SearchPage({ ssrData }) {
   const [hasPhoto, setHasPhoto] = useState(false);
   const [onView, setOnView] = useState(false);
   const [isUnrestricted, setIsUnrestricted] = useState(false);
+  // Result State:
+  const [items, setItems] = useState([]);
+  const [apiError, setApiError] = useState('');
+  const [options, setOptions] = useState({});
+  const [count, setCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   // UI State:
   const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
@@ -51,14 +47,7 @@ export default function SearchPage({ ssrData }) {
     const apiParams = new URLSearchParams(searchParams);
     return `/api/search/collections?${apiParams}`
   }
-/*
-  interface TransitionOptions {
-    shallow?: boolean;
-    locale?: string | false;
-    scroll?: boolean;
-    unstable_skipClientCache?: boolean;
-}
-*/
+
   function pushRouteWithParams(newParams) {
     //declare const transitionOptions: TransitionOptions;
     const debouncePush = setTimeout(() => {
@@ -72,24 +61,6 @@ export default function SearchPage({ ssrData }) {
     }, 200);
     return () => clearTimeout(debouncePush);
   }
-  /*
-  console.log('ROUTE PARAMS CHANGED')
-  const currentSearchParams = getSearchParams(searchParams);
-  if (index !== currentSearchParams.index) setIndex(currentSearchParams.index);
-  if (q !== currentSearchParams.q) {
-    setQ(currentSearchParams.q);
-    setQuery(currentSearchParams.q);
-  }
-  if (p !== currentSearchParams.p) setP(currentSearchParams.p);
-  if (size !== currentSearchParams.size) setSize(currentSearchParams.size);
-  //if (filters !== currentSearchParams.filters) {
-    setFilters(currentSearchParams.filters);
-    setFilterArr(Object.entries(currentSearchParams.filters));
-  //}
-  if (hasPhoto !== currentSearchParams.hasPhoto) setHasPhoto(currentSearchParams.hasPhoto);
-  if (onView !== currentSearchParams.onView) setOnView(currentSearchParams.onView);
-  if (isUnrestricted !== currentSearchParams.isUnrestricted) setIsUnrestricted(currentSearchParams.isUnrestricted);
-  */
 
   useEffect(() => {
     const currentSearchParams = getSearchParams(searchParams);
@@ -106,6 +77,19 @@ export default function SearchPage({ ssrData }) {
     setHasPhoto(currentSearchParams.hasPhoto);
     setOnView(currentSearchParams.onView);
     setIsUnrestricted(currentSearchParams.isUnrestricted);
+    const apiParams = new URLSearchParams(searchParams);
+    setIsLoading(true)
+    console.log(`FETCH: /api/search/collections?${apiParams}`)
+    fetch(`/api/search/collections?${apiParams}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(data?.data || []);
+        setApiError(data?.error || '');
+        setOptions(data?.options || {});
+        setCount(data?.metadata?.count || 0);
+        setTotalPages(data?.metadata?.pages || 0);
+        setIsLoading(false);
+      })
   }, [searchParams, previousSearchParamsStr]);
 
   useEffect(() => {
@@ -135,22 +119,13 @@ export default function SearchPage({ ssrData }) {
   function changeIndex(newIndex: string) {
     if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
     if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`)
-    router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`)
+    else router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`)
   }
 
   function setFilter(name: string, key: string, checked) {
     if (checked) pushRouteWithParams({ [name]: key, p: null });
     else pushRouteWithParams({ [name]: null, p: null });
   }
-
-  const { data, error, isLoading } = useSWR(getApiUrl(), fetcher, {
-    fallbackData: ssrData
-  })
-  const items = data?.data || [];
-  const apiError = data?.error || null;
-  const options = data?.options || {};
-  const count = data?.metadata?.count || 0;
-  const totalPages = data?.metadata?.pages || 0;
 
   return (
     <Layout>
@@ -294,9 +269,9 @@ export default function SearchPage({ ssrData }) {
           )}
           <div className={isShowFilters ? 'sm:col-span-2 md:col-span-3' : 'sm:col-span-3 md:col-span-4'}>
 
-            {error?.length > 0 &&
+            {apiError?.length > 0 &&
               <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
-                {error}
+                {apiError}
               </h3>
             }
 
