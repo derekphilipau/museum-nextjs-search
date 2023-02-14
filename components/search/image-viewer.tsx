@@ -52,7 +52,7 @@ export function ImageViewer({ item }) {
     if (item?.images?.length) {
       if (item.image) {
         const index = item.images.findIndex(o => o.filename === item.image);
-        if (item.images[index].rank) { item.images[index].rank = 0; }
+        if ( index !== -1 && item.images[index]?.rank) { item.images[index].rank = 0; }
       }
       return item?.images?.sort((a, b) => a.rank - b.rank) || [];
     }
