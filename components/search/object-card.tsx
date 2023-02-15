@@ -10,7 +10,7 @@ export function ObjectCard({ item }) {
   return (
     <Link href={href}>
       <div className="py-4">
-        <div className="flex justify-center items-center bg-neutral-50 dark:bg-neutral-800">
+        <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
           <figure>
             {
               item.image ? (
@@ -37,7 +37,7 @@ export function ObjectCard({ item }) {
         <div className="pt-3">
           <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">{item.title}</h4>
           <h5 className="mb-1 text-lg text-neutral-900 dark:text-white">{primaryConstituent}</h5>
-          <p className="font-normal text-neutral-700 dark:text-neutral-400 text-xs">
+          <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
             {item.date}
           </p>
         </div>

@@ -6,6 +6,7 @@ import { indicesMeta } from "@/util/search.js";
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
 const OPTIONS_PAGE_SIZE = 20;
+const TERMS_PAGE_SIZE = 12;
 const SIMILAR_PAGE_SIZE = 24;
 const UNKNOWN_CONSTITUENT = 'Unknown';
 
@@ -142,12 +143,13 @@ export async function search(params) {
     count,
     pages: Math.ceil(count / size)
   }
-
-  const test = Math.floor(Math.random() * 640000);
-
   const data = response.hits.hits.map(h => h._source)
-
-  return { query: esQuery, data, options, metadata, test: test }
+  const res = { query: esQuery, data, options, metadata }
+  if (q?.length > 3 && p === 1) {
+    const t = await terms(q, size = TERMS_PAGE_SIZE, client);
+    res.terms = t;
+  }
+  return res
 }
 
 export async function searchCollections(params) {
@@ -277,11 +279,13 @@ export async function searchCollections(params) {
     pages: Math.ceil(count / size)
   }
 
-  const test = Math.floor(Math.random() * 640000);
-
-  const data = response.hits.hits.map(h => h._source)
-
-  return { query: esQuery, data, options, metadata, test: test }
+  const data = response.hits.hits.map(h => h._source);
+  const res = { query: esQuery, data, options, metadata };
+  if (q?.length > 3 && p === 1) {
+    const t = await terms(q, size = TERMS_PAGE_SIZE, client);
+    res.terms = t;
+  }
+  return res;
 }
 
 function getResponseOptions(response) {
@@ -336,6 +340,29 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
   } else {
     return []
   }
+}
+
+export async function terms(query, size = TERMS_PAGE_SIZE, client = null) {
+  const request = {
+    index: 'terms',
+    query: {
+      match: {
+        value: {
+          query,
+          fuzziness: 'AUTO'
+        }
+      }
+    },
+    from: 0,
+    size,
+  }
+  console.log('xxxx', request)
+
+  if (!client) client = getClient();
+  const response = await client.search(request)
+  console.log(JSON.stringify(response, null, 2))
+
+  return response.hits.hits.map(h => h._source)
 }
 
 export async function similar(id) {

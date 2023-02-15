@@ -6,6 +6,7 @@ import Head from "next/head"
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
+import { TermCard } from "@/components/search/term-card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
@@ -35,6 +36,7 @@ export default function SearchPage({ ssrData }) {
   const [isUnrestricted, setIsUnrestricted] = useState(false);
   // Result State:
   const [items, setItems] = useState([]);
+  const [terms, setTerms] = useState([]);
   const [apiError, setApiError] = useState('');
   const [options, setOptions] = useState({});
   const [count, setCount] = useState(0);
@@ -54,7 +56,7 @@ export default function SearchPage({ ssrData }) {
       const updatedParams = new URLSearchParams(searchParams);
       for (const [name, value] of Object.entries(newParams)) {
         if (value) updatedParams.set(name, value.toString());
-        else updatedParams.delete(name)  
+        else updatedParams.delete(name)
       }
       updatedParams.delete('index')
       router.push(`${pathname}?${updatedParams}`)
@@ -83,7 +85,9 @@ export default function SearchPage({ ssrData }) {
     fetch(`/api/search/collections?${apiParams}`)
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         setItems(data?.data || []);
+        setTerms(data?.terms || []);
         setApiError(data?.error || '');
         setOptions(data?.options || {});
         setCount(data?.metadata?.count || 0);
@@ -295,7 +299,7 @@ export default function SearchPage({ ssrData }) {
                         <span
                           key={i}
                           className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
-                          >
+                        >
                           {filter[1]}
                           <button
                             type="button"
@@ -313,7 +317,20 @@ export default function SearchPage({ ssrData }) {
                 }
               </div>
             )}
-
+            {
+              terms?.length > 0 && (
+                <div className="grid grid-cols-1 gap-6 mt-4 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
+                  {
+                    terms?.length > 0 && terms.map(
+                      (term, i) =>
+                        term && (
+                          <TermCard term={term} />
+                        )
+                    )
+                  }
+                </div>
+              )
+            }
             <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
               {
                 isLoading && (
@@ -359,7 +376,7 @@ export default function SearchPage({ ssrData }) {
         </div>
 
       </section>
-    </Layout>
+    </Layout >
   )
 }
 
