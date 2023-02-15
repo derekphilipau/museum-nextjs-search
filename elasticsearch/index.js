@@ -126,7 +126,7 @@ async function transformData() {
 async function run() {
   //await transformData();
   console.log('transformed data')
-  await importData('collections', outputPath);
+  await importData('collections', outputPath, 'id');
 }
 
 run();

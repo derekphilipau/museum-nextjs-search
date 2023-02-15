@@ -77,7 +77,7 @@ function existsIndex(index) {
   return client.indices.exists({index})
 }
 
-async function bulk(index, documents, idFieldName = 'id', method = 'index') {
+async function bulk(index, documents, idFieldName, method = 'index') {
   let operations = null
   if (method === 'index') {
     console.log('bulk inserting ' + documents.length)
@@ -118,17 +118,17 @@ async function bulk(index, documents, idFieldName = 'id', method = 'index') {
   //console.log('bulk ' + documents.length + ' total: ' + await countIndex(index));
 }
 
-export async function importData(index, dataFilename) {
+export async function importData(index, dataFilename, idFieldName) {
   const bulkLimit = config.get('elasticsearch.bulkLimit');
   await createIndex(index)
   const inputFile = await fs.open(dataFilename);
   let documents = [];
   for await (const line of inputFile.readLines()) {
     const obj = JSON.parse(line);
-    if (!obj?.id) continue;
+    //if (!obj?.id) continue;
     documents.push(obj);
     if (documents.length >= bulkLimit) {
-      await bulk(index, documents, 'id', 'index');
+      await bulk(index, documents, idFieldName, 'index');
       documents = [];
       await snooze(2);
     }
@@ -137,4 +137,46 @@ export async function importData(index, dataFilename) {
     await bulk(index, documents);
   }
   return;
+}
+
+
+export async function options(params, size) {
+  const {
+    index, field, q
+  } = params;
+
+  if (!index || !field) { return }
+
+  const request = {
+    index,
+    size: 0,
+    aggs: {
+      [field]: {
+        terms: {
+          field,
+          size
+        }
+      }
+    }
+  }
+
+  if (q) {
+    request.query = {
+      wildcard: {
+        [field]: {
+          value: '*' + q + '*',
+          case_insensitive: true
+        }
+      }
+    }
+  }
+
+  const client = getClient();
+  const response = await client.search(request)
+  console.log(JSON.stringify(response, null, 2))
+  if (response.aggregations[field].buckets) {
+    return response.aggregations[field].buckets
+  } else {
+    return []
+  }
 }

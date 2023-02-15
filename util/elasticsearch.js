@@ -27,7 +27,7 @@ function getClient() {
 }
 */
 
-function getClient() {
+export function getClient() {
   const clientSettings = {
     cloud: {
       id: 'elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==',
@@ -297,12 +297,10 @@ function getResponseOptions(response) {
   return options
 };
 
-export async function options(params) {
+export async function options(params, size = OPTIONS_PAGE_SIZE) {
   const {
     index, field, q
   } = params;
-
-  const size = OPTIONS_PAGE_SIZE;
 
   if (!index || !field) { return }
 

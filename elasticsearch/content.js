@@ -32,7 +32,7 @@ async function transformData() {
 async function run() {
   await transformData();
   console.log('transformed data')
-  await importData('content', outputPath);
+  await importData('content', outputPath, 'id');
 }
 
 
