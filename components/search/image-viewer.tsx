@@ -7,7 +7,6 @@ import {
   getSmallOrRestrictedImageUrl,
   getLargeImageUrl
 } from '@/util/image.js';
-
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { getCaption } from "@/util/various";
 
 const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
   ssr: false
@@ -26,23 +26,6 @@ export function ImageViewer({ item }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
-
-  /**
-   * Alma W. Thomas (American, 1891-1978). Wind, Sunshine and Flowers, 1968. Acrylic on canvas, 71 3/4 x 51 7/8 in. (182.2 x 131.8 cm). Brooklyn Museum, Gift of Mr. and Mrs. David K. Anderson, 76.120. © artist or artist's estate (Photo: Brooklyn Museum, 76.120_PS2.jpg)
-   */
-  function getCaption(item, filename) {
-    let caption = '';
-    caption += item?.primaryConstituent ? `${item.primaryConstituent}. ` : '';
-    caption += item?.title ? `${item.title}, ` : '';
-    caption += item?.date ? `${item.date}. ` : '';
-    caption += item?.medium ? `${item.medium}, ` : '';
-    caption += item?.dimensions ? `${item.dimensions}. ` : '';
-    caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
-    caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
-    caption += item?.copyright ? `${item.copyright}` : '';
-    caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
-    return caption;
-  }
 
   /**
    * Sometimes the item's main image (item.image) is ranked at the same level

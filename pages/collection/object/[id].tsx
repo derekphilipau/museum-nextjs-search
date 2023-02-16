@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { getDocument, similar } from "@/util/elasticsearch";
 import { getSchemaVisualArtwork } from "@/util/schema"
 import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
+import { getSmallOrRestrictedImageUrl } from "@/util/image";
+import { getCaption } from "@/util/various.js";
 
 export default function IndexPage({ item, similar }) {
   const searchParams = useSearchParams();
@@ -18,6 +20,8 @@ export default function IndexPage({ item, similar }) {
 
   const [visibleSimilar, setVisibleSimilar] = useState([]);
   const [showAllSimilar, setShowAllSimilar] = useState(false);
+
+  const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted)
 
   useEffect(() => {
     if (showAllSimilar)
@@ -38,6 +42,10 @@ export default function IndexPage({ item, similar }) {
           name="description"
           content="Elasticsearch + Next.js Search Prototype"
         />
+        <meta name="description" content={getCaption(item)} key="desc" />
+        <meta property="og:title" content={item?.title} />
+        <meta property="og:description" content={getCaption(item)} />
+        <meta property="og:image" content={thumb} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
         <script type="application/ld+json">
