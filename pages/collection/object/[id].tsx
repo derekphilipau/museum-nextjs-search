@@ -73,7 +73,7 @@ export default function IndexPage({ item, similar }) {
             <ObjectDescription item={item} />
           </div>
           <div>
-            <LanguageDisclaimer />
+            <LanguageDisclaimer item={item} />
           </div>
         </div>
       </section>
@@ -104,7 +104,6 @@ export default function IndexPage({ item, similar }) {
             </Button>
           )
         }
-
       </section>
     </Layout>
   )
