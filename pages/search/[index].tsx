@@ -11,44 +11,41 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
-import { indicesMeta, getSearchParams } from "@/util/search.js";
+import { indicesMeta, getSearchParamsFromQuery, getBooleanValue } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
-export default function SearchPage({ ssrData }) {
+export default function SearchPage({ ssrQuery, ssrData }) {
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   // Search State:
-  const [previousSearchParamsStr, setPreviousSearchParamsStr] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [index, setIndex] = useState('');
-  const [q, setQ] = useState('');
-  const [query, setQuery] = useState('');
-  const [p, setP] = useState(0);
-  const [size, setSize] = useState('');
-  const [filters, setFilters] = useState({});
-  const [filterArr, setFilterArr] = useState([]);
-  const [hasPhoto, setHasPhoto] = useState(false);
-  const [onView, setOnView] = useState(false);
-  const [isUnrestricted, setIsUnrestricted] = useState(false);
+  const cleanParams = getSearchParamsFromQuery(ssrQuery);
+  const [index, setIndex] = useState(cleanParams?.index || 'all');
+  const [q, setQ] = useState(cleanParams?.q || '');
+  const [query, setQuery] = useState(cleanParams?.q || '');
+  const [p, setP] = useState(cleanParams?.p || 1);
+  const [size, setSize] = useState(cleanParams?.size || 24);
+  const [filters, setFilters] = useState(cleanParams?.filters || {});
+  const [filterArr, setFilterArr] = useState(Object.entries(cleanParams?.filters || {}));
+  const [hasPhoto, setHasPhoto] = useState(getBooleanValue(cleanParams?.hasPhoto));
+  const [onView, setOnView] = useState(cleanParams?.onView || false);
+  const [isUnrestricted, setIsUnrestricted] = useState(cleanParams?.isUnrestricted || false);
+
   // Result State:
-  const [items, setItems] = useState([]);
-  const [terms, setTerms] = useState([]);
-  const [apiError, setApiError] = useState('');
-  const [options, setOptions] = useState({});
-  const [count, setCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [items, setItems] = useState(ssrData?.data || []);
+  const [terms, setTerms] = useState(ssrData?.terms || []);
+  const [apiError, setApiError] = useState(ssrData?.error || '');
+  const [options, setOptions] = useState(ssrData?.options || {});
+  const [count, setCount] = useState(ssrData?.metadata?.count || 0);
+  const [totalPages, setTotalPages] = useState(ssrData?.metadata?.pages || 0);
+
   // UI State:
   const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
-
-  function getApiUrl() {
-    const apiParams = new URLSearchParams(searchParams);
-    return `/api/search/collections?${apiParams}`
-  }
 
   function pushRouteWithParams(newParams) {
     //declare const transitionOptions: TransitionOptions;
@@ -65,36 +62,28 @@ export default function SearchPage({ ssrData }) {
   }
 
   useEffect(() => {
-    const currentSearchParams = getSearchParams(searchParams);
-    const searchParamsStr = JSON.stringify(currentSearchParams);
-    if (previousSearchParamsStr === searchParamsStr) return;
-    setPreviousSearchParamsStr(searchParamsStr);
-    setIndex(currentSearchParams.index);
-    setQ(currentSearchParams.q);
-    setQuery(currentSearchParams.q);
-    setP(currentSearchParams.p);
-    setSize(currentSearchParams.size);
-    setFilters(currentSearchParams.filters);
-    setFilterArr(Object.entries(currentSearchParams.filters));
-    setHasPhoto(currentSearchParams.hasPhoto);
-    setOnView(currentSearchParams.onView);
-    setIsUnrestricted(currentSearchParams.isUnrestricted);
-    const apiParams = new URLSearchParams(searchParams);
-    setIsLoading(true)
-    console.log(`FETCH: /api/search/collections?${apiParams}`)
-    fetch(`/api/search/collections?${apiParams}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        setItems(data?.data || []);
-        setTerms(data?.terms || []);
-        setApiError(data?.error || '');
-        setOptions(data?.options || {});
-        setCount(data?.metadata?.count || 0);
-        setTotalPages(data?.metadata?.pages || 0);
-        setIsLoading(false);
-      })
-  }, [searchParams, previousSearchParamsStr]);
+    // Result State:
+    setItems(ssrData?.data || []);
+    setTerms(ssrData?.terms || []);
+    setApiError(ssrData?.error || '');
+    setOptions(ssrData?.options || {});
+    setCount(ssrData?.metadata?.count || 0);
+    setTotalPages(ssrData?.metadata?.pages || 0);
+  }, [ssrData])
+
+  useEffect(() => {
+    const cleanParams = getSearchParamsFromQuery(ssrQuery);
+    setIndex(cleanParams?.index || 'all');
+    setQ(cleanParams?.q || '');
+    setQuery(cleanParams?.q || '');
+    setP(cleanParams?.p || 1);
+    setSize(cleanParams?.size || 24);
+    setFilters(cleanParams?.filters || {});
+    setFilterArr(Object.entries(cleanParams?.filters || {}));
+    setHasPhoto(cleanParams?.hasPhoto || false);
+    setOnView(cleanParams?.onView || false);
+    setIsUnrestricted(cleanParams?.isUnrestricted || false);
+  }, [ssrQuery])
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
@@ -104,20 +93,32 @@ export default function SearchPage({ ssrData }) {
     return () => clearTimeout(debounceQuery);
   }, [query, q]);
 
-  useEffect(() => {
-    pushRouteWithParams({
-      p: null, hasPhoto, onView, isUnrestricted
-    });
-  }, [hasPhoto, onView, isUnrestricted]);
-
-  function updatePageIndex(p) {
-    setP(p);
-    pushRouteWithParams({ p });
+  function updateHasPhoto(checked) {
+    const v = getBooleanValue(checked);
+    if (v !== hasPhoto)
+      pushRouteWithParams({ hasPhoto: v, p: null });
   }
 
-  function updatePageSize(size) {
-    setSize(size);
-    pushRouteWithParams({ size, p: null });
+  function updateOnView(checked) {
+    const v = getBooleanValue(checked);
+    if (v !== onView)
+      pushRouteWithParams({ onView: v, p: null });
+  }
+
+  function updateIsUnrestricted(checked) {
+    const v = getBooleanValue(checked);
+    if (v !== isUnrestricted)
+      pushRouteWithParams({ isUnrestricted: v, p: null });
+  }
+
+  function updatePageIndex(page) {
+    if (p !== page)
+    pushRouteWithParams({ p: page });
+  }
+
+  function updatePageSize(s) {
+    if (s !== size)
+     pushRouteWithParams({ size: s, p: null });
   }
 
   function changeIndex(newIndex: string) {
@@ -127,7 +128,7 @@ export default function SearchPage({ ssrData }) {
   }
 
   function setFilter(name: string, key: string, checked) {
-    if (checked) pushRouteWithParams({ [name]: key, p: null });
+    if (getBooleanValue(checked)) pushRouteWithParams({ [name]: key, p: null });
     else pushRouteWithParams({ [name]: null, p: null });
   }
 
@@ -148,7 +149,6 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'all' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('all')}
-            disabled={isLoading}
           >
             All
           </Button>
@@ -156,7 +156,6 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'content' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('content')}
-            disabled={isLoading}
           >
             Pages
           </Button>
@@ -164,7 +163,6 @@ export default function SearchPage({ ssrData }) {
             variant={index === 'collections' ? 'outline' : 'ghost'}
             className="text-lg"
             onClick={() => changeIndex('collections')}
-            disabled={isLoading}
           >
             Collection
           </Button>
@@ -178,21 +176,8 @@ export default function SearchPage({ ssrData }) {
               <div className="flex flex-wrap gap-x-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="onView"
-                    onCheckedChange={(checked) => setOnView(checked ? true : false)}
-                    checked={onView}
-                  />
-                  <label
-                    htmlFor="onView"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    On View
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
                     id="hasPhoto"
-                    onCheckedChange={(checked) => setHasPhoto(checked ? true : false)}
+                    onCheckedChange={(checked) => updateHasPhoto(checked)}
                     checked={hasPhoto}
                   />
                   <label
@@ -204,8 +189,21 @@ export default function SearchPage({ ssrData }) {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
+                    id="onView"
+                    onCheckedChange={(checked) => updateOnView(checked)}
+                    checked={onView}
+                  />
+                  <label
+                    htmlFor="onView"
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    On View
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
                     id="isUnrestricted"
-                    onCheckedChange={(checked) => setIsUnrestricted(checked ? true : false)}
+                    onCheckedChange={(checked) => updateIsUnrestricted(checked)}
                     checked={isUnrestricted}
                   />
                   <label
@@ -319,12 +317,12 @@ export default function SearchPage({ ssrData }) {
             )}
             {
               terms?.length > 0 && (
-                <div className="grid grid-cols-1 gap-6 mt-4 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
+                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
                   {
                     terms?.length > 0 && terms.map(
                       (term, i) =>
                         term && (
-                          <TermCard term={term} />
+                          <TermCard key={i} term={term} />
                         )
                     )
                   }
@@ -332,12 +330,6 @@ export default function SearchPage({ ssrData }) {
               )
             }
             <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
-              {
-                isLoading && (
-                  <div className="absolute z-10 flex h-full w-full items-center justify-center bg-white dark:bg-neutral-900 bg-opacity-50 dark:bg-opacity-50">
-                  </div>
-                )
-              }
               {
                 items?.length > 0 && items.map(
                   (item, i) =>
@@ -382,5 +374,5 @@ export default function SearchPage({ ssrData }) {
 
 export async function getServerSideProps(context) {
   const data = await search(context.query);
-  return { props: { ssrData: data } }
+  return { props: { ssrQuery: context.query, ssrData: data } }
 }
