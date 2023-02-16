@@ -48,17 +48,13 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   const [isShowFilters, setIsShowFilters] = useState(false);
 
   function pushRouteWithParams(newParams) {
-    //declare const transitionOptions: TransitionOptions;
-    const debouncePush = setTimeout(() => {
-      const updatedParams = new URLSearchParams(searchParams);
-      for (const [name, value] of Object.entries(newParams)) {
-        if (value) updatedParams.set(name, value.toString());
-        else updatedParams.delete(name)
-      }
-      updatedParams.delete('index')
-      router.push(`${pathname}?${updatedParams}`)
-    }, 200);
-    return () => clearTimeout(debouncePush);
+    const updatedParams = new URLSearchParams(searchParams);
+    for (const [name, value] of Object.entries(newParams)) {
+      if (value) updatedParams.set(name, value.toString());
+      else updatedParams.delete(name)
+    }
+    updatedParams.delete('index')
+    router.push(`${pathname}?${updatedParams}`)
   }
 
   useEffect(() => {
@@ -113,12 +109,12 @@ export default function SearchPage({ ssrQuery, ssrData }) {
 
   function updatePageIndex(page) {
     if (p !== page)
-    pushRouteWithParams({ p: page });
+      pushRouteWithParams({ p: page });
   }
 
   function updatePageSize(s) {
     if (s !== size)
-     pushRouteWithParams({ size: s, p: null });
+      pushRouteWithParams({ size: s, p: null });
   }
 
   function changeIndex(newIndex: string) {
@@ -169,7 +165,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-4">
           <div className="grow">
-            <Input name="query" placeholder="Search" defaultValue={q} onChange={(e) => setQuery(e.target.value)} />
+            <Input name="query" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
           {
             index === 'collections' && (
@@ -317,16 +313,20 @@ export default function SearchPage({ ssrQuery, ssrData }) {
             )}
             {
               terms?.length > 0 && (
-                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
-                  {
-                    terms?.length > 0 && terms.map(
-                      (term, i) =>
-                        term && (
-                          <TermCard key={i} term={term} />
-                        )
-                    )
-                  }
-                </div>
+                <>
+                  <h4 className="mt-4 mb-2 text-lg text-neutral-900 dark:text-white">Did you mean:</h4>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
+
+                    {
+                      terms?.length > 0 && terms.map(
+                        (term, i) =>
+                          term && (
+                            <TermCard key={i} term={term} />
+                          )
+                      )
+                    }
+                  </div>
+                </>
               )
             }
             <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">

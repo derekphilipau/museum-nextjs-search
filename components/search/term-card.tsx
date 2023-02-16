@@ -18,9 +18,9 @@ export function TermCard({ term }) {
 
   return (
     <Link href={href}>
-      <div className="bg-neutral-100 p-4 hover:bg-neutral-50 dark:bg-neutral-800 dark:hover:bg-neutral-700">
-        <h4 className="text-lg font-semibold text-neutral-900 dark:text-white">{term.value}</h4>
-        <h5 className="text-base text-neutral-900 dark:text-white">{name}</h5>
+      <div className="bg-neutral-100 p-2 hover:bg-neutral-50 dark:bg-neutral-800 dark:hover:bg-neutral-700">
+        <h4 className="font-semibold text-neutral-900 dark:text-white">{term.value}</h4>
+        <h5 className="text-sm text-neutral-900 dark:text-white">{name}</h5>
       </div>
     </Link>
   )
