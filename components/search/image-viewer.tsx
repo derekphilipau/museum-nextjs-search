@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import dynamic from 'next/dynamic'
 import Link from "next/link"
 import Image from 'next/image'
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog"
 import { getCaption } from "@/util/various";
 
+import useEmblaCarousel from 'embla-carousel-react'
+
 const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
   ssr: false
 })
@@ -26,20 +28,33 @@ export function ImageViewer({ item }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [emblaRef, embla] = useEmblaCarousel({ loop: false })
 
   /**
    * Sometimes the item's main image (item.image) is ranked at the same level
    * as other item images.  Force the main image to have the highest rank (0).
    */
-  function getSortedImages(item) {
+   function getSortedImages(item) {
     if (item?.images?.length) {
       if (item.image) {
         const index = item.images.findIndex(o => o.filename === item.image);
-        if ( index !== -1 && item.images[index]?.rank) { item.images[index].rank = 0; }
+        if (index !== -1 && item.images[index]?.rank) { item.images[index].rank = 0; }
       }
       return item?.images?.sort((a, b) => a.rank - b.rank) || [];
     }
   }
+
+  const onSelect = useCallback(() => {
+    if (!embla) return;
+    setSelectedImageIndex(embla.selectedScrollSnap());
+  }, [embla]);
+
+  useEffect(() => {
+    if (!embla) return;
+    embla.on("select", onSelect);
+    onSelect();
+  }, [embla, onSelect]);
 
   useEffect(() => {
     setSortedImages(getSortedImages(item))
@@ -60,63 +75,73 @@ export function ImageViewer({ item }) {
     return base
   }
 
+  function clickImage(index) {
+    setSelectedImageIndex(index);
+    if (!isCopyrightRestricted) setOpen(true);
+  }
+
+  function clickThumbnail(index) {
+    setSelectedImageIndex(index);
+    if (!embla) return;
+    embla.scrollTo(index);
+  }
+
   return (
     <div className="flex flex-col items-center">
-      {selectedImage && (
-        <div>
-          {isCopyrightRestricted ? (
-            <>
-              <figure>
-                <Image
-                  src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
-                  className="max-h-96 object-contain"
-                  alt=""
-                  width={800}
-                  height={800}
-                />
-                <figcaption className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
-                  {getCaption(item, selectedImage?.filename)}
-                </figcaption>
-              </figure>
-              <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
-                This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
-                The Brooklyn Museum respects the rights of artists who retain the copyright to their work
-              </p>
-            </>
-          ) : (
-            <Dialog>
-              <DialogTrigger>
-                <figure>
-                  <Image
-                    src={getSmallOrRestrictedImageUrl(selectedImage?.filename, isCopyrightRestricted)}
-                    className="max-h-96 object-contain"
-                    alt=""
-                    width={800}
-                    height={800}
-                  />
-                  <figcaption className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
-                    {getCaption(item, selectedImage?.filename)}
-                  </figcaption>
-                </figure>
-              </DialogTrigger>
-              <DialogContent className="h-full min-w-full">
-                <DialogHeader className="">
-                  <DialogTitle className="z-50">
-                    <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
-                      {item.title}
-                    </span>
-                  </DialogTitle>
-                  <DialogDescription>
-                    <div>
-                      {item?.image && (
-                        <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
+      {sortedImages.length > 0 && (
+        <div className="">
+          <div className="embla overflow-hidden" ref={emblaRef}>
+            <div className="embla__container flex">
+              {sortedImages.map(
+                (image, index) =>
+                  image.filename && (
+                    <div
+                      key={index}
+                      className="embla__slide min-w-0"
+                      style={{ flex: '0 0 100%' }}
+                      onClick={() => clickImage(index)}
+                    >
+                      <figure key={index}>
+                        <Image
+                          src={getSmallOrRestrictedImageUrl(image?.filename, isCopyrightRestricted)}
+                          className={isCopyrightRestricted ? 'max-h-96 object-contain' : 'max-h-96 cursor-pointer object-contain'}
+                          alt=""
+                          width={800}
+                          height={800}
+                        />
+                        <figcaption className="break-all whitespace-normal mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+                          {getCaption(item, image?.filename)}
+                        </figcaption>
+                      </figure>
+                      {isCopyrightRestricted && (
+                        <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
+                          This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
+                          The Brooklyn Museum respects the rights of artists who retain the copyright to their work
+                        </p>
                       )}
                     </div>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          )}
+                  )
+              )}
+            </div>
+          </div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="h-full min-w-full">
+              <DialogHeader className="">
+                <DialogTitle className="z-50">
+                  <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
+                    {item.title}
+                  </span>
+                </DialogTitle>
+                <DialogDescription>
+                  <div>
+                    {item?.image && (
+                      <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
+                    )}
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
       {sortedImages.length > 1 && (
@@ -127,7 +152,7 @@ export function ImageViewer({ item }) {
                 <div
                   key={index}
                   className={getThumbnailClass(image.filename)}
-                  onClick={() => setSelectedImageIndex(index)}
+                  onClick={() => clickThumbnail(index)}
                 >
                   <figure key={index}>
                     <Image

@@ -21,7 +21,7 @@ export function getCaption(item, filename = null) {
   caption += item?.dimensions ? `${stripLineBreaks(item.dimensions)}. ` : '';
   caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
   caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
-  caption += item?.copyright ? `${item.copyright}` : '';
+  caption += item?.copyright ? `${item.copyright} ` : '';
   caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
-  return caption;
+  return stripBasicHtml(caption?.trim());
 }
