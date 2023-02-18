@@ -1,13 +1,6 @@
 'use client'
 import { ReactNode } from "react";
 import { ThemeProvider } from 'next-themes'
-import { Inter } from "@next/font/google"
-
-const fontSans = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: 'swap',
-})
 
 // import { OtherProvider } from "./context/OtherContext";
 
@@ -21,11 +14,6 @@ const fontSans = Inter({
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <style jsx global>{`
-				:root {
-					--font-sans: ${fontSans.style.fontFamily};
-				}
-			}`}</style>
       {/*<OtherProvider>*/}
         {children}
       {/*</OtherProvider>*/}
