@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Head from "next/head"
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
@@ -16,47 +16,24 @@ import { SearchIndexButton } from "@/components/search/search-index-button";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
-  // Search State:
   const cleanParams = getSearchParamsFromQuery(ssrQuery);
-  const [index, setIndex] = useState(cleanParams?.index || 'all');
-  const [q, setQ] = useState(cleanParams?.q || '');
-  const [p, setP] = useState(cleanParams?.p || 1);
-  const [size, setSize] = useState(cleanParams?.size || 24);
-  const [filters, setFilters] = useState(cleanParams?.filters || {});
-  const [filterArr, setFilterArr] = useState(Object.entries(cleanParams?.filters || {}));
+  const index = cleanParams?.index || 'all';
+  const q = cleanParams?.q || '';
+  const p = cleanParams?.p || 1;
+  const size = cleanParams?.size || 24;
+  const filters = cleanParams?.filters || {};
+  const filterArr = Object.entries(cleanParams?.filters || {});
 
-  // Result State:
-  const [items, setItems] = useState(ssrData?.data || []);
-  const [terms, setTerms] = useState(ssrData?.terms || []);
-  const [apiError, setApiError] = useState(ssrData?.error || '');
-  const [options, setOptions] = useState(ssrData?.options || {});
-  const [count, setCount] = useState(ssrData?.metadata?.count || 0);
-  const [totalPages, setTotalPages] = useState(ssrData?.metadata?.pages || 0);
+  const items = ssrData?.data || [];
+  const terms = ssrData?.terms || [];
+  const apiError = ssrData?.error || '';
+  const options = ssrData?.options || {};
+  const count = ssrData?.metadata?.count || 0;
+  const totalPages = ssrData?.metadata?.pages || 0;
 
   // UI State:
   const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
-
-  useEffect(() => {
-    // Result State:
-    setItems(ssrData?.data || []);
-    setTerms(ssrData?.terms || []);
-    setApiError(ssrData?.error || '');
-    setOptions(ssrData?.options || {});
-    setCount(ssrData?.metadata?.count || 0);
-    setTotalPages(ssrData?.metadata?.pages || 0);
-  }, [ssrData])
-
-  useEffect(() => {
-    const cleanParams = getSearchParamsFromQuery(ssrQuery);
-    setIndex(cleanParams?.index || 'all');
-    if (cleanParams?.index !== 'collections') setIsShowFilters(false);
-    setQ(cleanParams?.q || '');
-    setP(cleanParams?.p || 1);
-    setSize(cleanParams?.size || 24);
-    setFilters(cleanParams?.filters || {});
-    setFilterArr(Object.entries(cleanParams?.filters || {}));
-  }, [ssrQuery])
 
   return (
     <Layout>
