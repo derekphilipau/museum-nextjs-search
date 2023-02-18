@@ -133,13 +133,9 @@ export function ImageViewer({ item }) {
                     {item.title}
                   </span>
                 </DialogTitle>
-                <DialogDescription>
-                  <div>
-                    {item?.image && (
-                      <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
-                    )}
-                  </div>
-                </DialogDescription>
+                {item?.image && (
+                  <OpenSeaDragonViewer image={getLargeImageUrl(selectedImage?.filename)} />
+                )}
               </DialogHeader>
             </DialogContent>
           </Dialog>
