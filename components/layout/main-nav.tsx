@@ -54,7 +54,7 @@ export function MainNav({ items }: MainNavProps) {
             variant="ghost"
             className="-ml-4 text-base hover:bg-transparent focus:ring-0 md:hidden"
           >
-            <Icons.menu className="h-5 w-5 mr-4" />
+            <Icons.menu className="mr-4 h-5 w-5" />
             <Icons.logo className="mr-2 w-48 fill-current" />
           </Button>
         </DropdownMenuTrigger>

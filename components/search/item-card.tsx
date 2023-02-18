@@ -35,7 +35,7 @@ export function ItemCard({ item }) {
           <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">{item.title}</h4>
           {
             item.date && (
-              <p className="font-normal text-neutral-700 dark:text-neutral-400 text-xs">
+              <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
                 {item.date}
               </p>  
             )

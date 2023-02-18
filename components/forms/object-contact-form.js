@@ -18,7 +18,7 @@ export default function ObjectContactForm({item}) {
       <input type='hidden' id='objectId' name='objectId' value={item?.id} />
       <input type='hidden' id='objectTitle' name='objectTitle' value={item?.title} />
       <div className='mb-6'>
-        Please send us your concerns or corrections about <span className='italic inline-block'>&quot;{item?.title}&quot;</span> here.
+        Please send us your concerns or corrections about <span className='inline-block italic'>&quot;{item?.title}&quot;</span> here.
       </div>
       <div className='grid w-full max-w-sm items-center gap-1.5'>
         <Label className='mb-2' htmlFor='email'>Email (optional)</Label>

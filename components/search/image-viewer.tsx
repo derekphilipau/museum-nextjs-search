@@ -110,7 +110,7 @@ export function ImageViewer({ item }) {
                           width={800}
                           height={800}
                         />
-                        <figcaption className="break-all whitespace-normal mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+                        <figcaption className="mt-4 whitespace-normal break-all text-xs text-neutral-500 dark:text-neutral-400">
                           {getCaption(item, image?.filename)}
                         </figcaption>
                       </figure>
@@ -129,7 +129,7 @@ export function ImageViewer({ item }) {
             <DialogContent className="h-full min-w-full">
               <DialogHeader className="">
                 <DialogTitle className="z-50">
-                  <span className="rounded-lg bg-white bg-opacity-50 px-4 py-3 dark:bg-neutral-900">
+                  <span className="bg-opacity/50 rounded-lg bg-white px-4 py-3 dark:bg-neutral-900">
                     {item.title}
                   </span>
                 </DialogTitle>
