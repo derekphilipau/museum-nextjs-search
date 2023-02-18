@@ -6,7 +6,6 @@ import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
@@ -14,6 +13,7 @@ import { indicesMeta, getSearchParamsFromQuery, getBooleanValue } from "@/util/s
 import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { SearchQueryInput } from "@/components/search/search-query-input";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
@@ -24,7 +24,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   const cleanParams = getSearchParamsFromQuery(ssrQuery);
   const [index, setIndex] = useState(cleanParams?.index || 'all');
   const [q, setQ] = useState(cleanParams?.q || '');
-  const [query, setQuery] = useState(cleanParams?.q || '');
   const [p, setP] = useState(cleanParams?.p || 1);
   const [size, setSize] = useState(cleanParams?.size || 24);
   const [filters, setFilters] = useState(cleanParams?.filters || {});
@@ -69,7 +68,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     const cleanParams = getSearchParamsFromQuery(ssrQuery);
     setIndex(cleanParams?.index || 'all');
     setQ(cleanParams?.q || '');
-    setQuery(cleanParams?.q || '');
     setP(cleanParams?.p || 1);
     setSize(cleanParams?.size || 24);
     setFilters(cleanParams?.filters || {});
@@ -78,14 +76,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     setOnView(cleanParams?.onView || false);
     setIsUnrestricted(cleanParams?.isUnrestricted || false);
   }, [ssrQuery])
-
-  useEffect(() => {
-    const debounceQuery = setTimeout(() => {
-      if (query !== q)
-        pushRouteWithParams({ q: query, p: null });
-    }, 400);
-    return () => clearTimeout(debounceQuery);
-  }, [query, q]);
 
   function updateHasPhoto(checked) {
     const v = getBooleanValue(checked);
@@ -163,7 +153,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-4">
           <div className="grow">
-            <Input name="query" placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <SearchQueryInput pathname={pathname} params={ssrQuery} />
           </div>
           {
             index === 'collections' && (
