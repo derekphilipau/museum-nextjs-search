@@ -25,10 +25,13 @@ export default async function Head({ params }) {
       <meta property="og:image" content={thumb} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href="/favicon.ico" />
+      {/*
+      https://github.com/vercel/next.js/issues/42519
       <Script
         id="json-ld-script"
         type="application/ld+json"
       >{jsonLd}</Script>
+       */}
     </>
   )
 }
