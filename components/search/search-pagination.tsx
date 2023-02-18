@@ -27,47 +27,52 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
   const router = useRouter();
   const pathname = usePathname();
 
-  const [originalIsShowFilters, setOriginalIsShowFilters] = useState(getBooleanValue(params?.f));
-  const [myIsShowFilters, setMyIsShowFilters] = useState(getBooleanValue(params?.f));
+  const [originalIsShowFilters, setOriginalIsShowFilters] = useState(isShowFilters);
+  const [originalPage, setOriginalPage] = useState(p);
+  const [originalSize, setOriginalSize] = useState(size);
 
-  const [originalPage, setOriginalPage] = useState(parseInt(params?.p) || 1);
-  const [myPage, setMyPage] = useState(parseInt(params?.p) || 1);
-
-  const [originalSize, setOriginalSize] = useState(params?.size || '24');
-  const [mySize, setMySize] = useState(params?.size || '24');
-
-  useEffect(() => {
-    if (originalPage !== myPage) {
-      console.log('pagination go: ' + originalPage + ' new: ' + myPage)
-      setOriginalPage(myPage); // Make sure we remember the most recent value
+  function pageClick(newPage) {
+    console.log('pagination go: ' + originalPage + ' new: ' + newPage)
+    if (originalPage !== newPage) {
+      setOriginalPage(newPage); // Make sure we remember the most recent value
       const updatedParams = new URLSearchParams(params);
-      if (myPage > 1) updatedParams.set('p', myPage + '');
+      if (newPage > 1) updatedParams.set('p', newPage + '');
       else updatedParams.delete('p');
       router.push(`${pathname}?${updatedParams}`)
     }
-  }, [myPage, originalPage, router, params, pathname]);
+  }
 
-  useEffect(() => {
-    if (originalSize !== mySize) {
-      console.log('size go: ' + originalSize + ' new: ' + mySize)
-      setOriginalSize(mySize); // Make sure we remember the most recent value
+  function sizeChange(value) {
+    if (originalSize !== value) {
+      console.log('size go: ' + originalSize + ' new: ' + value)
+      setOriginalSize(value); // Make sure we remember the most recent value
+      setOriginalPage(1);
       const updatedParams = new URLSearchParams(params);
-      if (mySize && mySize != '24') updatedParams.set('size', mySize);
+      if (value && value != '24') updatedParams.set('size', value);
       else updatedParams.delete('size');
       updatedParams.delete('p');
       router.push(`${pathname}?${updatedParams}`)
     }
-  }, [mySize, originalSize, router, params, pathname]);
+  }
+
+  function clickShowFilters() {
+    setOriginalIsShowFilters(true); // Make sure we remember the most recent value
+    const updatedParams = new URLSearchParams(params);
+    updatedParams.set('f', 'true');
+    router.push(`${pathname}?${updatedParams}`)
+  }
 
   useEffect(() => {
-    if (originalIsShowFilters !== myIsShowFilters) {
-      setOriginalIsShowFilters(myIsShowFilters); // Make sure we remember the most recent value
-      const updatedParams = new URLSearchParams(params);
-      if (myIsShowFilters) updatedParams.set('f', 'true');
-      else updatedParams.delete('f');
-      router.push(`${pathname}?${updatedParams}`)
-    }
-  }, [originalIsShowFilters, myIsShowFilters, router, params, pathname]);
+    setOriginalIsShowFilters(isShowFilters);
+  }, [isShowFilters]);
+
+  useEffect(() => {
+    setOriginalPage(p);
+  }, [p]);
+
+  useEffect(() => {
+    setOriginalSize(size);
+  }, [size]);
 
   return (
     <nav
@@ -78,7 +83,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
         {!originalIsShowFilters && index === 'collections' && (
         <div className="hidden sm:block">
           <Button
-            onClick={() => setMyIsShowFilters(true)}
+            onClick={() => clickShowFilters()}
             variant="ghost"
             size="sm"
           >
@@ -88,7 +93,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
         </div>
         )}
         <div className="flex w-16">
-          <Select value={size} onValueChange={(value) => setMySize(value)}>
+          <Select value={size} onValueChange={(value) => sizeChange(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="" />
             </SelectTrigger>
@@ -106,7 +111,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
       <div className="flex items-center justify-end gap-x-4">
         <Button
           disabled={p <= 1}
-          onClick={() => setMyPage(p - 1)}
+          onClick={() => pageClick(p - 1)}
           variant="ghost"
           size="sm"
         >
@@ -115,7 +120,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
         </Button>
         <Button
           disabled={p >= totalPages}
-          onClick={() => setMyPage(p + 1)}
+          onClick={() => pageClick(p + 1)}
           variant="ghost"
           size="sm"
         >
