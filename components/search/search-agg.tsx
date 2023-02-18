@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
-import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
 
@@ -18,16 +17,16 @@ import {
 
 interface SearchAggProps {
   params: any,
-  index?: string,
   agg?: Agg,
   options?: AggOption[],
   filters?: any,
-  checked?: boolean,
 }
 
-export function SearchAgg({ params, index, agg, options, filters }: SearchAggProps) {
+export function SearchAgg({ params, agg, options, filters }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [index, setIndex] = useState(params?.index || 'all')
 
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
@@ -108,16 +107,16 @@ export function SearchAgg({ params, index, agg, options, filters }: SearchAggPro
           <Input name="query" placeholder={`Search ${agg.displayName}`} onChange={(e) => setQuery(e.target.value)} />
         </div>
         {searchOptions?.length > 0 && searchOptions?.map(
-          (option, index) =>
+          (option, i) =>
             option && (
-              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
+              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${i}`}>
                 <Checkbox
-                  id={`terms-${agg.name}-${index}`}
+                  id={`terms-${agg.name}-${i}`}
                   onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   defaultChecked={checked.includes(option.key)}
                 />
                 <label
-                  htmlFor={`terms-${agg.name}-${index}`}
+                  htmlFor={`terms-${agg.name}-${i}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
@@ -126,16 +125,16 @@ export function SearchAgg({ params, index, agg, options, filters }: SearchAggPro
             )
         )}
         {searchOptions?.length === 0 && options?.length > 0 && options?.map(
-          (option, index) =>
+          (option, i) =>
             option && (
-              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
+              <div className="flex items-center space-x-2" key={`agg-${agg.name}-${i}`}>
                 <Checkbox
-                  id={`terms-${agg.name}-${index}`}
+                  id={`terms-${agg.name}-${i}`}
                   onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   defaultChecked={checked.includes(option.key)}
                 />
                 <label
-                  htmlFor={`terms-${agg.name}-${index}`}
+                  htmlFor={`terms-${agg.name}-${i}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}

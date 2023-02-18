@@ -14,6 +14,7 @@ import { SearchQueryInput } from "@/components/search/search-query-input";
 import { SearchCheckbox } from "@/components/search/search-checkbox";
 import { SearchIndexButton } from "@/components/search/search-index-button";
 import { SearchFilterTag } from "@/components/search/search-filter-tag";
+import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
@@ -32,8 +33,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   const count = ssrData?.metadata?.count || 0;
   const totalPages = ssrData?.metadata?.pages || 0;
 
-  // UI State:
-  const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
 
   return (
@@ -77,31 +76,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
           {
             index === 'collections' && (
               <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-                <div className="pb-4">
-                  <button
-                    type="button"
-                    className="flex h-9 w-full items-center justify-between rounded-md bg-transparent p-1 text-sm font-medium transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-transparent"
-                    onClick={() => setIsMobileFilter(!isMobileFilter)}
-                  >
-                    {isMobileFilter ? (
-                      <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-                        Hide Filters
-                        <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
-                      </div>
-                    ) : (
-                      <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-                        Show Filters
-                        <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
-                      </div>
-                    )}
-                  </button>
-                </div>
-                {isMobileFilter && indicesMeta.collections?.aggs?.map(
-                  (agg, i) =>
-                    agg && options[agg.name]?.length > 0 && (
-                      <SearchAgg params={ssrQuery} key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} />
-                    )
-                )}
+                <SearchAggSectionMobile params={ssrQuery} filters={filters} options={options} />
               </div>
             )
           }
@@ -120,7 +95,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
               {indicesMeta.collections?.aggs?.map(
                 (agg, i) =>
                   agg && options[agg.name]?.length > 0 && (
-                    <SearchAgg params={ssrQuery} key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} />
+                    <SearchAgg params={ssrQuery} key={i} agg={agg} options={options[agg.name]} filters={filters} />
                   )
               )}
             </div>
@@ -149,7 +124,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
                   filterArr?.length > 0 && filterArr.map(
                     (filter, i) =>
                       filter && (
-                        <SearchFilterTag params={ssrQuery} name={filter[0]} value={filter[1]} />
+                        <SearchFilterTag key={i} params={ssrQuery} name={filter[0]} value={filter[1]} />
                       )
                   )
                 }
