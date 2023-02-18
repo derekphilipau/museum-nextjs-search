@@ -22,7 +22,6 @@ export default async function Page({ params, searchParams }) {
   const isShowFilters = cleanParams?.isShowFilters;
 
   // Query Elasticsearch
-  console.log('fetching2: ', cleanParams);
   const response = await search({index, ...searchParams});
   const items = response?.data || [];
   const terms = response?.terms || [];

@@ -130,11 +130,8 @@ export async function search(params) {
     ]  
   }
 
-  console.log(esQuery)
-
   const client = getClient();
   const response = await client.search(esQuery);
-  console.log(response)
 
   const options = getResponseOptions(response)
 
@@ -265,11 +262,9 @@ export async function searchCollections(params) {
     }
     esQuery.aggs = aggs;
   }
-  console.log(esQuery)
 
   const client = getClient();
   const response = await client.search(esQuery);
-  console.log(response)
 
   const options = getResponseOptions(response)
 
@@ -334,7 +329,7 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
 
   const client = getClient();
   const response = await client.search(request)
-  console.log(JSON.stringify(response, null, 2))
+
   if (response.aggregations[field].buckets) {
     return response.aggregations[field].buckets
   } else {
@@ -356,11 +351,9 @@ export async function terms(query, size = TERMS_PAGE_SIZE, client = null) {
     from: 0,
     size,
   }
-  console.log('xxxx', request)
 
   if (!client) client = getClient();
   const response = await client.search(request)
-  console.log(JSON.stringify(response, null, 2))
 
   return response.hits.hits.map(h => h._source)
 }
@@ -410,7 +403,6 @@ export async function similar(id) {
   addShouldTerms(document, esQuery, 'exhibitions', 1)
   addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
 
-  console.log(JSON.stringify(esQuery))
   const client = getClient();
   const response = await client.search(esQuery)
   if (!response?.hits?.hits?.length) {
