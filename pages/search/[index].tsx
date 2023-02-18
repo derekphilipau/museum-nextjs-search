@@ -13,6 +13,7 @@ import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { SearchQueryInput } from "@/components/search/search-query-input";
 import { SearchCheckbox } from "@/components/search/search-checkbox";
+import { SearchIndexButton } from "@/components/search/search-index-button";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
@@ -55,6 +56,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   useEffect(() => {
     const cleanParams = getSearchParamsFromQuery(ssrQuery);
     setIndex(cleanParams?.index || 'all');
+    if (cleanParams?.index !== 'collections') setIsShowFilters(false);
     setQ(cleanParams?.q || '');
     setP(cleanParams?.p || 1);
     setSize(cleanParams?.size || 24);
@@ -64,12 +66,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     setOnView(cleanParams?.onView || false);
     setIsUnrestricted(cleanParams?.isUnrestricted || false);
   }, [ssrQuery])
-
-  function changeIndex(newIndex: string) {
-    if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
-    if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`)
-    else router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`)
-  }
 
   return (
     <Layout>
@@ -84,27 +80,9 @@ export default function SearchPage({ ssrQuery, ssrData }) {
       </Head>
       <section className="container pt-4 md:pt-6">
         <div className="flex flex-wrap gap-x-2 pb-2">
-          <Button
-            variant={index === 'all' ? 'outline' : 'ghost'}
-            className="text-lg"
-            onClick={() => changeIndex('all')}
-          >
-            All
-          </Button>
-          <Button
-            variant={index === 'content' ? 'outline' : 'ghost'}
-            className="text-lg"
-            onClick={() => changeIndex('content')}
-          >
-            Pages
-          </Button>
-          <Button
-            variant={index === 'collections' ? 'outline' : 'ghost'}
-            className="text-lg"
-            onClick={() => changeIndex('collections')}
-          >
-            Collection
-          </Button>
+          <SearchIndexButton params={ssrQuery} name='all' label='All' />
+          <SearchIndexButton params={ssrQuery} name='content' label='Pages' />
+          <SearchIndexButton params={ssrQuery} name='collections' label='Collection' />
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-4">
           <div className="grow">
