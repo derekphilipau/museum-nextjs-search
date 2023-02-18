@@ -24,11 +24,9 @@ export default function RootLayout({
       */}
       <head />
       <body className="min-h-screen bg-white font-sans text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-50">
-        <Providers>
           <SiteHeader />
             <main>{children}</main>
           <Footer />
-        </Providers>
       </body>
     </html>
   )
