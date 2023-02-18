@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react";
 import Head from "next/head"
-import Link from "next/link"
 import { useSearchParams } from 'next/navigation';
 import { Layout } from "@/components/layout/layout"
 import { ObjectDescription } from "@/components/search/object-description";
 import { ImageViewer } from "@/components/search/image-viewer";
-import { SimilarItemCard } from "@/components/search/similar-item-card";
-import { Button } from "@/components/ui/button";
 import { getDocument, similar } from "@/util/elasticsearch";
 import { getSchemaVisualArtwork } from "@/util/schema"
 import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
 import { getSmallOrRestrictedImageUrl } from "@/util/image";
 import { getCaption } from "@/util/various.js";
+import { SimilarObjects } from "@/components/object/similar-objects";
 
 export default function IndexPage({ item, similar }) {
   const searchParams = useSearchParams();
   const urlParams = new URLSearchParams(searchParams);
   const id = urlParams.get('id');
 
-  const [visibleSimilar, setVisibleSimilar] = useState([]);
-  const [showAllSimilar, setShowAllSimilar] = useState(false);
-
   const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted)
-
-  useEffect(() => {
-    if (showAllSimilar)
-      setVisibleSimilar(similar);
-    else
-      setVisibleSimilar(similar.slice(0, 12));
-  }, [similar, showAllSimilar]);
-
-  useEffect(() => {
-    setShowAllSimilar(false);
-  }, [id]);
 
   return (
     <Layout>
@@ -89,29 +72,7 @@ export default function IndexPage({ item, similar }) {
         <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
           Similar Objects
         </h2>
-        <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
-          {
-            visibleSimilar?.length > 0 && visibleSimilar.map(
-              (item, i) =>
-                item && (
-                  <div className="" key={i}>
-                    <SimilarItemCard item={item} />
-                  </div>
-                )
-            )
-          }
-        </div>
-        {
-          !showAllSimilar && (
-            <Button
-              onClick={() => setShowAllSimilar(true)}
-              variant="default"
-              size="sm"
-            >
-              Show more
-            </Button>
-          )
-        }
+        <SimilarObjects similar={similar} />
       </section>
     </Layout>
   )
