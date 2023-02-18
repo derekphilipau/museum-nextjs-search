@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
 import Head from "next/head"
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
@@ -20,7 +19,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
 
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // Search State:
   const cleanParams = getSearchParamsFromQuery(ssrQuery);
@@ -48,7 +46,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   const [isShowFilters, setIsShowFilters] = useState(false);
 
   function pushRouteWithParams(newParams) {
-    const updatedParams = new URLSearchParams(searchParams);
+    const updatedParams = new URLSearchParams(ssrQuery);
     for (const [name, value] of Object.entries(newParams)) {
       if (value) updatedParams.set(name, value.toString());
       else updatedParams.delete(name)
