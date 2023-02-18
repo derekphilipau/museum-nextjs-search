@@ -6,7 +6,6 @@ import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
-import { Checkbox } from "@/components/ui/checkbox"
 import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
 import { indicesMeta, getSearchParamsFromQuery, getBooleanValue } from "@/util/search.js";
@@ -14,6 +13,7 @@ import { search } from "@/util/elasticsearch.js";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { SearchQueryInput } from "@/components/search/search-query-input";
+import { SearchCheckbox } from "@/components/search/search-checkbox";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
@@ -77,34 +77,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     setIsUnrestricted(cleanParams?.isUnrestricted || false);
   }, [ssrQuery])
 
-  function updateHasPhoto(checked) {
-    const v = getBooleanValue(checked);
-    if (v !== hasPhoto)
-      pushRouteWithParams({ hasPhoto: v, p: null });
-  }
-
-  function updateOnView(checked) {
-    const v = getBooleanValue(checked);
-    if (v !== onView)
-      pushRouteWithParams({ onView: v, p: null });
-  }
-
-  function updateIsUnrestricted(checked) {
-    const v = getBooleanValue(checked);
-    if (v !== isUnrestricted)
-      pushRouteWithParams({ isUnrestricted: v, p: null });
-  }
-
-  function updatePageIndex(page) {
-    if (p !== page)
-      pushRouteWithParams({ p: page });
-  }
-
-  function updatePageSize(s) {
-    if (s !== size)
-      pushRouteWithParams({ size: s, p: null });
-  }
-
   function changeIndex(newIndex: string) {
     if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
     if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`)
@@ -153,49 +125,19 @@ export default function SearchPage({ ssrQuery, ssrData }) {
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-4">
           <div className="grow">
-            <SearchQueryInput pathname={pathname} params={ssrQuery} />
+            <SearchQueryInput params={ssrQuery} />
           </div>
           {
             index === 'collections' && (
               <div className="flex flex-wrap gap-x-4">
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="hasPhoto"
-                    onCheckedChange={(checked) => updateHasPhoto(checked)}
-                    checked={hasPhoto}
-                  />
-                  <label
-                    htmlFor="hasPhoto"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Has Photo
-                  </label>
+                  <SearchCheckbox params={ssrQuery} name='hasPhoto' label='Has Photo' />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="onView"
-                    onCheckedChange={(checked) => updateOnView(checked)}
-                    checked={onView}
-                  />
-                  <label
-                    htmlFor="onView"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    On View
-                  </label>
+                  <SearchCheckbox params={ssrQuery} name='onView' label='On View' />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="isUnrestricted"
-                    onCheckedChange={(checked) => updateIsUnrestricted(checked)}
-                    checked={isUnrestricted}
-                  />
-                  <label
-                    htmlFor="isUnrestricted"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Open Access
-                  </label>
+                  <SearchCheckbox params={ssrQuery} name='isUnrestricted' label='Open Access' />
                 </div>
               </div>
             )
@@ -262,14 +204,13 @@ export default function SearchPage({ ssrQuery, ssrData }) {
             }
 
             <SearchPagination
+              params={ssrQuery}
               index={index}
               count={count}
               p={p}
               size={size}
               totalPages={totalPages}
               isShowFilters={isShowFilters}
-              onPageChangeHandler={updatePageIndex}
-              onSizeChangeHandler={updatePageSize}
               onShowFilters={() => setIsShowFilters(true)} />
 
             {filterArr?.length > 0 && (
@@ -349,8 +290,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
               size={size}
               totalPages={totalPages}
               isShowFilters={true}
-              onPageChangeHandler={updatePageIndex}
-              onSizeChangeHandler={updatePageSize}
             />
           </div>
         </div>

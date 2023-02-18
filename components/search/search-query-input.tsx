@@ -1,23 +1,25 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input"
 
 interface SearchQueryInputProps {
-  pathname: string,
   params?: any
 }
 
-export function SearchQueryInput({pathname, params}: SearchQueryInputProps) {
+export function SearchQueryInput({params}: SearchQueryInputProps) {
   const router = useRouter();
-  const [originalQuery, setOriginalQuery] = useState(params.q || '');
-  const [myQuery, setMyQuery] = useState(params.q || '');
+  const pathname = usePathname();
+
+  const [originalQuery, setOriginalQuery] = useState(params?.q || '');
+  const [myQuery, setMyQuery] = useState(params?.q || '');
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
-      const updatedParams = new URLSearchParams(params);    
       if (myQuery !== originalQuery) {
         setOriginalQuery(myQuery); // Make sure we remember the most recent query.
+        const updatedParams = new URLSearchParams(params);
         if (myQuery) updatedParams.set('q', myQuery);
         else updatedParams.delete('q');
         updatedParams.delete('p');
