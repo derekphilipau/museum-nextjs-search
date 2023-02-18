@@ -2,8 +2,8 @@ import OpenSeaDragon from "openseadragon";
 import React, { useEffect, useState } from "react";
 const OpenSeaDragonViewer = ({ image }) => {
   const [viewer, setViewer] = useState(null);
-  const InitOpenseadragon = () => {
-    viewer && viewer.destroy();
+  
+  useEffect(() => {
     setViewer(
       OpenSeaDragon({
         id: "openSeaDragon",
@@ -23,13 +23,8 @@ const OpenSeaDragonViewer = ({ image }) => {
         }
       })
     );
-  };
-  useEffect(() => {
-    InitOpenseadragon();
-    return () => {
-      viewer && viewer.destroy();
-    };
-  }, []);
+  }, [image]);
+
   return (
     <div
       id="openSeaDragon"
@@ -51,4 +46,3 @@ const OpenSeaDragonViewer = ({ image }) => {
   );
 };
 export default OpenSeaDragonViewer;
-//export { OpenSeaDragonViewer };
