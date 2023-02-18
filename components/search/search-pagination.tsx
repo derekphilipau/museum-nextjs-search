@@ -49,6 +49,7 @@ export function SearchPagination({ params, count, p, size, totalPages, isShowFil
       const updatedParams = new URLSearchParams(params);
       if (mySize && mySize != '24') updatedParams.set('size', mySize);
       else updatedParams.delete('size');
+      updatedParams.delete('p');
       router.push(`${pathname}?${updatedParams}`)
     }
   }, [mySize, originalSize, router, params, pathname]);

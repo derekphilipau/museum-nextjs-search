@@ -13,7 +13,7 @@ export function SearchIndexButton({ index, params, name, label }: SearchIndexBut
   const router = useRouter();
 
   function buttonClick() {
-    if (params?.index !== name) {
+    if (index !== name) {
       console.log('go to index: ' + name)
       let qs = name === 'collections' ? `hasPhoto=true` : '';
       qs += qs && params?.q ? '&' : ''
@@ -25,7 +25,7 @@ export function SearchIndexButton({ index, params, name, label }: SearchIndexBut
   return (
     <>
       <Button
-        variant={params?.index === name ? 'outline' : 'ghost'}
+        variant={index === name ? 'outline' : 'ghost'}
         className="text-lg"
         onClick={() => buttonClick()}
       >
