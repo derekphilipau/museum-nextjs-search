@@ -14,7 +14,6 @@ import {
 
 interface SearchPaginationProps {
   params: any,
-  index: string,
   count: number,
   p: number,
   size: string,
@@ -22,12 +21,12 @@ interface SearchPaginationProps {
   isShowFilters: boolean
 }
 
-export function SearchPagination({ params, index, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
+export function SearchPagination({ params, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [originalPage, setOriginalPage] = useState(params?.p || 1);
-  const [myPage, setMyPage] = useState(params?.p || 1);
+  const [originalPage, setOriginalPage] = useState(parseInt(params?.p) || 1);
+  const [myPage, setMyPage] = useState(parseInt(params?.p) || 1);
 
   const [originalSize, setOriginalSize] = useState(params?.size || '24');
   const [mySize, setMySize] = useState(params?.size || '24');
@@ -39,7 +38,6 @@ export function SearchPagination({ params, index, count, p, size, totalPages, is
       const updatedParams = new URLSearchParams(params);
       if (myPage > 1) updatedParams.set('p', myPage + '');
       else updatedParams.delete('p');
-      updatedParams.delete('index')
       router.push(`${pathname}?${updatedParams}`)
     }
   }, [myPage, originalPage, router, params, pathname]);
@@ -51,7 +49,6 @@ export function SearchPagination({ params, index, count, p, size, totalPages, is
       const updatedParams = new URLSearchParams(params);
       if (mySize && mySize != '24') updatedParams.set('size', mySize);
       else updatedParams.delete('size');
-      updatedParams.delete('index')
       router.push(`${pathname}?${updatedParams}`)
     }
   }, [mySize, originalSize, router, params, pathname]);

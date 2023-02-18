@@ -16,17 +16,16 @@ import {
 } from "@/components/ui/collapsible"
 
 interface SearchAggProps {
+  index: string,
   params: any,
   agg?: Agg,
   options?: AggOption[],
   filters?: any,
 }
 
-export function SearchAgg({ params, agg, options, filters }: SearchAggProps) {
+export function SearchAgg({ index, params, agg, options, filters }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const [index, setIndex] = useState(params?.index || 'all')
 
   const [query, setQuery] = useState('');
   const [realQuery, setRealQuery] = useState('');
@@ -41,7 +40,6 @@ export function SearchAgg({ params, agg, options, filters }: SearchAggProps) {
       if (checked) updatedParams.set(agg.name, key);
       else updatedParams.delete(agg.name);
       updatedParams.delete('p');
-      updatedParams.delete('index')
       router.push(`${pathname}?${updatedParams}`)
     }
   }

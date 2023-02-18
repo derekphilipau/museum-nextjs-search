@@ -3,12 +3,13 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 
 interface SearchIndexButtonProps {
+  index: string,
   params?: any,
   name: string,
   label: string
 }
 
-export function SearchIndexButton({ params, name, label }: SearchIndexButtonProps) {
+export function SearchIndexButton({ index, params, name, label }: SearchIndexButtonProps) {
   const router = useRouter();
 
   function buttonClick() {

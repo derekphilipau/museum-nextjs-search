@@ -23,7 +23,6 @@ export function SearchQueryInput({params}: SearchQueryInputProps) {
         if (myQuery) updatedParams.set('q', myQuery);
         else updatedParams.delete('q');
         updatedParams.delete('p');
-        updatedParams.delete('index');
         router.push(`${pathname}?${updatedParams}`);
       }
     }, 1000);
