@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
 import Head from "next/head"
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
@@ -18,7 +17,6 @@ import { SearchCheckbox } from "@/components/search/search-checkbox";
 export default function SearchPage({ ssrQuery, ssrData }) {
 
   const router = useRouter();
-  const pathname = usePathname();
 
   // Search State:
   const cleanParams = getSearchParamsFromQuery(ssrQuery);
@@ -43,16 +41,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   // UI State:
   const [isMobileFilter, setIsMobileFilter] = useState(false);
   const [isShowFilters, setIsShowFilters] = useState(false);
-
-  function pushRouteWithParams(newParams) {
-    const updatedParams = new URLSearchParams(ssrQuery);
-    for (const [name, value] of Object.entries(newParams)) {
-      if (value) updatedParams.set(name, value.toString());
-      else updatedParams.delete(name)
-    }
-    updatedParams.delete('index')
-    router.push(`${pathname}?${updatedParams}`)
-  }
 
   useEffect(() => {
     // Result State:
@@ -81,11 +69,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     if (newIndex !== index && newIndex !== 'collections') setIsShowFilters(false);
     if (newIndex === 'collections') router.push(`/search/${newIndex}?hasPhoto=true${q ? `&q=${q}` : ''}`)
     else router.push(`/search/${newIndex}?${q ? `q=${q}` : ''}`)
-  }
-
-  function setFilter(name: string, key: string, checked) {
-    if (getBooleanValue(checked)) pushRouteWithParams({ [name]: key, p: null });
-    else pushRouteWithParams({ [name]: null, p: null });
   }
 
   return (
@@ -169,7 +152,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
                 {isMobileFilter && indicesMeta.collections?.aggs?.map(
                   (agg, i) =>
                     agg && options[agg.name]?.length > 0 && (
-                      <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                      <SearchAgg params={ssrQuery} key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} />
                     )
                 )}
               </div>
@@ -190,7 +173,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
               {indicesMeta.collections?.aggs?.map(
                 (agg, i) =>
                   agg && options[agg.name]?.length > 0 && (
-                    <SearchAgg key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} onChangeHandler={setFilter} />
+                    <SearchAgg params={ssrQuery} key={i} index={index} agg={agg} options={options[agg.name]} filters={filters} checked={false} />
                   )
               )}
             </div>

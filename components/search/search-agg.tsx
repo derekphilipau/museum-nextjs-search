@@ -1,7 +1,7 @@
+"use client"
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-//import { useSearchParams } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown, Plus, X } from "lucide-react"
@@ -17,15 +17,15 @@ import {
 } from "@/components/ui/collapsible"
 
 interface SearchAggProps {
+  params: any,
   index?: string,
   agg?: Agg,
   options?: AggOption[],
   filters?: any,
   checked?: boolean,
-  onChangeHandler?: any,
 }
 
-export function SearchAgg({ index, agg, options, filters, onChangeHandler }: SearchAggProps) {
+export function SearchAgg({ params, index, agg, options, filters }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -33,6 +33,19 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
   const [realQuery, setRealQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchOptions, setSearchOptions] = useState([]);
+
+  function checkboxChange(key, checked) {
+    const option = options.find(o => o.key === key);
+    if (option) {
+      console.log('agg go: ' + agg.name + ' key: ' + key + ' checked: ' + checked)
+      const updatedParams = new URLSearchParams(params);
+      if (checked) updatedParams.set(agg.name, key);
+      else updatedParams.delete(agg.name);
+      updatedParams.delete('p');
+      updatedParams.delete('index')
+      router.push(`${pathname}?${updatedParams}`)
+    }
+  }
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
@@ -100,7 +113,7 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
               <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
                 <Checkbox
                   id={`terms-${agg.name}-${index}`}
-                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)}
+                  onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   defaultChecked={checked.includes(option.key)}
                 />
                 <label
@@ -118,7 +131,7 @@ export function SearchAgg({ index, agg, options, filters, onChangeHandler }: Sea
               <div className="flex items-center space-x-2" key={`agg-${agg.name}-${index}`}>
                 <Checkbox
                   id={`terms-${agg.name}-${index}`}
-                  onCheckedChange={(checked) => onChangeHandler(agg.name, option.key, checked)}
+                  onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   defaultChecked={checked.includes(option.key)}
                 />
                 <label
