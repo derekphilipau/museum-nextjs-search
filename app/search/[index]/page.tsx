@@ -11,6 +11,8 @@ import { SearchFilterTag } from "@/components/search/search-filter-tag";
 import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
 import { SearchFilters } from "@/components/search/search-filters";
 
+export const dynamic='force-dynamic'; // https://github.com/vercel/next.js/issues/43077
+
 export default async function Page({ params, searchParams }) {
   const cleanParams = getSearchParamsFromQuery(params, searchParams);
   const index = cleanParams?.index || 'all';
