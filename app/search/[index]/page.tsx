@@ -2,17 +2,15 @@
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
-import { SearchAgg } from "@/components/search/search-agg"
 import { SearchPagination } from "@/components/search/search-pagination";
-import { indicesMeta, getSearchParamsFromQuery } from "@/util/search.js";
+import { getSearchParamsFromQuery } from "@/util/search.js";
 import { search } from "@/util/elasticsearch.js";
-import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { SearchQueryInput } from "@/components/search/search-query-input";
 import { SearchCheckbox } from "@/components/search/search-checkbox";
 import { SearchIndexButton } from "@/components/search/search-index-button";
 import { SearchFilterTag } from "@/components/search/search-filter-tag";
 import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
+import { SearchFilters } from "@/components/search/search-filters";
 
 export default async function Page({ params, searchParams }) {
   const cleanParams = getSearchParamsFromQuery(params, searchParams);
@@ -21,6 +19,7 @@ export default async function Page({ params, searchParams }) {
   const size = cleanParams?.size || 24;
   const filters = cleanParams?.filters || {};
   const filterArr = Object.entries(cleanParams?.filters || {});
+  const isShowFilters = cleanParams?.isShowFilters;
 
   // Query Elasticsearch
   console.log('fetching2: ', cleanParams);
@@ -31,11 +30,6 @@ export default async function Page({ params, searchParams }) {
   const options = response?.options || {};
   const count = response?.metadata?.count || 0;
   const totalPages = response?.metadata?.pages || 0;
-
-//  const [isShowFilters, setIsShowFilters] = useState(false);
-// TODO
-  let isShowFilters = false;
-  function setIsShowFilters() { isShowFilters = true; }
 
   return (
     <section className="container pt-4 md:pt-6">
@@ -74,26 +68,10 @@ export default async function Page({ params, searchParams }) {
         }
         {isShowFilters && (
           <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
-            <div className="">
-              <Button
-                onClick={() => setIsShowFilters()}
-                variant='ghost'
-                size="sm"
-              >
-                <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-                Hide Filters
-              </Button>
-            </div>
-            {indicesMeta.collections?.aggs?.map(
-              (agg, i) =>
-                agg && options[agg.name]?.length > 0 && (
-                  <SearchAgg index={index} params={searchParams} key={i} agg={agg} options={options[agg.name]} filters={filters} />
-                )
-            )}
+            <SearchFilters index={index} params={searchParams} options={options} filters={filters} />
           </div>
         )}
         <div className={isShowFilters ? 'sm:col-span-2 md:col-span-3' : 'sm:col-span-3 md:col-span-4'}>
-
           {apiError?.length > 0 &&
             <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
               {apiError}
@@ -101,6 +79,7 @@ export default async function Page({ params, searchParams }) {
           }
 
           <SearchPagination
+            index={index}
             params={searchParams}
             count={count}
             p={p}
@@ -165,6 +144,7 @@ export default async function Page({ params, searchParams }) {
             }
           </div>
           <SearchPagination
+            index={index}
             params={searchParams}
             count={count}
             p={p}

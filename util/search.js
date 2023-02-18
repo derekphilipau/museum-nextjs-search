@@ -26,6 +26,7 @@ export function getSearchParamsFromQuery(params, searchParams) {
   const isUnrestricted = getBooleanValue(searchParams?.isUnrestricted);
   const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
   const onView = getBooleanValue(searchParams?.onView);
+  const isShowFilters = getBooleanValue(searchParams?.f);
   const filters = {};
   if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
     for (const agg of indicesMeta[index].aggs) {
@@ -34,7 +35,7 @@ export function getSearchParamsFromQuery(params, searchParams) {
       }
     }  
   }
-  return { index, q, p, size, isUnrestricted, hasPhoto, onView, filters }
+  return { index, q, p, size, isUnrestricted, hasPhoto, onView, isShowFilters, filters }
 }
 
 export function getBooleanValue(x) {

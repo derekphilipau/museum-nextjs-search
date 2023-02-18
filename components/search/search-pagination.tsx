@@ -10,9 +10,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { getBooleanValue } from "@/util/search";
 
 interface SearchPaginationProps {
+  index: string,
   params: any,
   count: number,
   p: number,
@@ -21,9 +23,12 @@ interface SearchPaginationProps {
   isShowFilters: boolean
 }
 
-export function SearchPagination({ params, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
+export function SearchPagination({ index, params, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [originalIsShowFilters, setOriginalIsShowFilters] = useState(getBooleanValue(params?.f));
+  const [myIsShowFilters, setMyIsShowFilters] = useState(getBooleanValue(params?.f));
 
   const [originalPage, setOriginalPage] = useState(parseInt(params?.p) || 1);
   const [myPage, setMyPage] = useState(parseInt(params?.p) || 1);
@@ -54,17 +59,26 @@ export function SearchPagination({ params, count, p, size, totalPages, isShowFil
     }
   }, [mySize, originalSize, router, params, pathname]);
 
+  useEffect(() => {
+    if (originalIsShowFilters !== myIsShowFilters) {
+      setOriginalIsShowFilters(myIsShowFilters); // Make sure we remember the most recent value
+      const updatedParams = new URLSearchParams(params);
+      if (myIsShowFilters) updatedParams.set('f', 'true');
+      else updatedParams.delete('f');
+      router.push(`${pathname}?${updatedParams}`)
+    }
+  }, [originalIsShowFilters, myIsShowFilters, router, params, pathname]);
+
   return (
     <nav
       className="items-center justify-between gap-x-4 sm:flex"
       aria-label="Pagination"
       >
       <div className="flex items-center justify-start gap-x-4">
-          {/*
-        {!isShowFilters && index === 'collections' && (
+        {!originalIsShowFilters && index === 'collections' && (
         <div className="hidden sm:block">
           <Button
-            onClick={() => onShowFilters(true)}
+            onClick={() => setMyIsShowFilters(true)}
             variant="ghost"
             size="sm"
           >
@@ -73,7 +87,6 @@ export function SearchPagination({ params, count, p, size, totalPages, isShowFil
           </Button>
         </div>
         )}
-        */}
         <div className="flex w-16">
           <Select value={size} onValueChange={(value) => setMySize(value)}>
             <SelectTrigger className="w-[180px]">
