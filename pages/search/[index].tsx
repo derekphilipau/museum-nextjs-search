@@ -199,6 +199,7 @@ export default function SearchPage({ ssrQuery, ssrData }) {
               }
             </div>
             <SearchPagination
+              params={ssrQuery}
               index={index}
               count={count}
               p={p}
