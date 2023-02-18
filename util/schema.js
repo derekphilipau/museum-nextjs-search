@@ -50,3 +50,7 @@ export function getSchemaVisualArtwork(item) {
   if (item.keywords) schema.keywords = item.keywords;
   return schema;
 }
+
+export function getSchemaVisualArtworkJson(item) {
+  return JSON.stringify(getSchemaVisualArtwork(item), null, 2);
+}

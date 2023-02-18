@@ -1,13 +1,16 @@
+import Script from 'next/script';
 import { getDocument } from "@/util/elasticsearch";
-import { getSchemaVisualArtwork } from "@/util/schema"
+import { getSchemaVisualArtworkJson } from "@/util/schema"
 import { getCaption } from "@/util/various.js";
 import { getSmallOrRestrictedImageUrl } from "@/util/image";
 
 export default async function Head({ params }) {
   const { id } = params;
-  const item : any = await getDocument('collections', id);
+  const data = await getDocument('collections', id);
+  const item : any = data?.data;
 
-  const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted)
+  const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted);
+  const jsonLd = getSchemaVisualArtworkJson(item);
 
   return (
     <>
@@ -22,9 +25,10 @@ export default async function Head({ params }) {
       <meta property="og:image" content={thumb} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href="/favicon.ico" />
-      <script type="application/ld+json">
-        {JSON.stringify(getSchemaVisualArtwork(item), null, 2)}
-      </script>
+      <Script
+        id="json-ld-script"
+        type="application/ld+json"
+      >{jsonLd}</Script>
     </>
   )
 }
