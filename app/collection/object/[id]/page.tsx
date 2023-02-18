@@ -1,40 +1,21 @@
-import Head from "next/head"
-import { useSearchParams } from 'next/navigation';
-import { Layout } from "@/components/layout/layout"
 import { ObjectDescription } from "@/components/search/object-description";
 import { ImageViewer } from "@/components/search/image-viewer";
 import { getDocument, similar } from "@/util/elasticsearch";
-import { getSchemaVisualArtwork } from "@/util/schema"
 import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
 import { getSmallOrRestrictedImageUrl } from "@/util/image";
-import { getCaption } from "@/util/various.js";
 import { SimilarObjects } from "@/components/object/similar-objects";
 
-export default function IndexPage({ item, similar }) {
-  const searchParams = useSearchParams();
-  const urlParams = new URLSearchParams(searchParams);
-  const id = urlParams.get('id');
+export default async function Page({ params }) {
+
+  const { id } = params;
+  const data = await getDocument('collections', id);
+  const item : any = data?.data;
+  const similarItems = await similar(id);
 
   const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted)
 
   return (
-    <Layout>
-      <Head>
-        <title>{item?.title} : Brooklyn Museum</title>
-        <meta
-          name="description"
-          content="Elasticsearch + Next.js Search Prototype"
-        />
-        <meta name="description" content={getCaption(item)} key="desc" />
-        <meta property="og:title" content={item?.title} />
-        <meta property="og:description" content={getCaption(item)} />
-        <meta property="og:image" content={thumb} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <script type="application/ld+json">
-          {JSON.stringify(getSchemaVisualArtwork(item), null, 2)}
-        </script>
-      </Head>
+    <>
       <section className="container grid gap-y-6 gap-x-12 pt-6 pb-8 md:grid-cols-2 md:py-10 lg:grid-cols-8">
         <div className="flex items-start justify-center md:col-span-1 lg:col-span-3">
           <ImageViewer item={item} />
@@ -58,7 +39,7 @@ export default function IndexPage({ item, similar }) {
             )}
           </h4>
           <div className="mb-4 text-neutral-700 dark:text-neutral-400"
-            dangerouslySetInnerHTML={{ __html: item?.description }}>
+            dangerouslySetInnerHTML={{ __html: item?.description || '' }}>
           </div>
           <div className="pt-4">
             <ObjectDescription item={item} />
@@ -72,15 +53,8 @@ export default function IndexPage({ item, similar }) {
         <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
           Similar Objects
         </h2>
-        <SimilarObjects similar={similar} />
+        <SimilarObjects similar={similarItems} />
       </section>
-    </Layout>
+    </>
   )
-}
-
-export async function getServerSideProps(context) {
-  const { id } = context.query;
-  const item = await getDocument('collections', id);
-  const similarItems = await similar(id);
-  return { props: { item: item.data, similar: similarItems } }
 }

@@ -9,7 +9,7 @@ interface SimilarObjectsProps {
 
 export function SimilarObjects({ similar }: SimilarObjectsProps) {
 
-  const [visibleSimilar, setVisibleSimilar] = useState(similar.slice(0, 12));
+  const [visibleSimilar, setVisibleSimilar] = useState(similar?.slice(0, 12));
   const [showAllSimilar, setShowAllSimilar] = useState(false);
 
   useEffect(() => {

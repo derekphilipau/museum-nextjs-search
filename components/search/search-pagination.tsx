@@ -19,19 +19,18 @@ interface SearchPaginationProps {
   p: number,
   size: string,
   totalPages: number,
-  isShowFilters: boolean,
-  onShowFilters?: any,
+  isShowFilters: boolean
 }
 
-export function SearchPagination({ params, index, count, p, size, totalPages, isShowFilters, onShowFilters }: SearchPaginationProps) {
+export function SearchPagination({ params, index, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [originalPage, setOriginalPage] = useState(params?.p);
-  const [myPage, setMyPage] = useState(params?.p);
+  const [originalPage, setOriginalPage] = useState(params?.p || 1);
+  const [myPage, setMyPage] = useState(params?.p || 1);
 
-  const [originalSize, setOriginalSize] = useState(params?.size);
-  const [mySize, setMySize] = useState(params?.size);
+  const [originalSize, setOriginalSize] = useState(params?.size || '24');
+  const [mySize, setMySize] = useState(params?.size || '24');
 
   useEffect(() => {
     if (originalPage !== myPage) {
@@ -63,6 +62,7 @@ export function SearchPagination({ params, index, count, p, size, totalPages, is
       aria-label="Pagination"
       >
       <div className="flex items-center justify-start gap-x-4">
+          {/*
         {!isShowFilters && index === 'collections' && (
         <div className="hidden sm:block">
           <Button
@@ -75,6 +75,7 @@ export function SearchPagination({ params, index, count, p, size, totalPages, is
           </Button>
         </div>
         )}
+        */}
         <div className="flex w-16">
           <Select value={size} onValueChange={(value) => setMySize(value)}>
             <SelectTrigger className="w-[180px]">
