@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
 import Head from "next/head"
 import { Layout } from "@/components/layout/layout"
 import { ItemCard } from "@/components/search/item-card";
@@ -17,8 +16,6 @@ import { SearchIndexButton } from "@/components/search/search-index-button";
 
 export default function SearchPage({ ssrQuery, ssrData }) {
 
-  const router = useRouter();
-
   // Search State:
   const cleanParams = getSearchParamsFromQuery(ssrQuery);
   const [index, setIndex] = useState(cleanParams?.index || 'all');
@@ -27,9 +24,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
   const [size, setSize] = useState(cleanParams?.size || 24);
   const [filters, setFilters] = useState(cleanParams?.filters || {});
   const [filterArr, setFilterArr] = useState(Object.entries(cleanParams?.filters || {}));
-  const [hasPhoto, setHasPhoto] = useState(getBooleanValue(cleanParams?.hasPhoto));
-  const [onView, setOnView] = useState(cleanParams?.onView || false);
-  const [isUnrestricted, setIsUnrestricted] = useState(cleanParams?.isUnrestricted || false);
 
   // Result State:
   const [items, setItems] = useState(ssrData?.data || []);
@@ -62,9 +56,6 @@ export default function SearchPage({ ssrQuery, ssrData }) {
     setSize(cleanParams?.size || 24);
     setFilters(cleanParams?.filters || {});
     setFilterArr(Object.entries(cleanParams?.filters || {}));
-    setHasPhoto(cleanParams?.hasPhoto || false);
-    setOnView(cleanParams?.onView || false);
-    setIsUnrestricted(cleanParams?.isUnrestricted || false);
   }, [ssrQuery])
 
   return (
