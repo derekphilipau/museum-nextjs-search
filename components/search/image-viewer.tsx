@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect, useCallback } from "react";
 import dynamic from 'next/dynamic'
 import Link from "next/link"
@@ -24,7 +25,7 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 })
 
 export function ImageViewer({ item }) {
-  const [sortedImages, setSortedImages] = useState([]);
+  const [sortedImages, setSortedImages] = useState(getSortedImages(item));
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
@@ -63,7 +64,7 @@ export function ImageViewer({ item }) {
   }, [item])
 
   useEffect(() => {
-    setSelectedImage(sortedImages[selectedImageIndex])
+    setSelectedImage(sortedImages?.[selectedImageIndex])
   }, [selectedImageIndex, sortedImages])
 
   if (!item?.id || !(item?.images?.length > 0)) return;
@@ -88,7 +89,7 @@ export function ImageViewer({ item }) {
 
   return (
     <div className="flex flex-col items-center">
-      {sortedImages.length > 0 && (
+      {sortedImages?.length > 0 && (
         <div className="">
           <div className="embla overflow-hidden" ref={emblaRef}>
             <div className="embla__container flex">

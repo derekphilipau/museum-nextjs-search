@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react"
 import { Icons } from "../icons";
 import ObjectContactForm from "@/components/forms/object-contact-form";

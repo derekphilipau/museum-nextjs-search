@@ -26,7 +26,6 @@ export function SearchCheckbox({ params, name, label }: SearchCheckboxProps) {
       if (myValue) updatedParams.set(name, myValue + '');
       else updatedParams.delete(name);
       updatedParams.delete('p');
-      updatedParams.delete('index')
       router.push(`${pathname}?${updatedParams}`)
     }
   }, [myValue, originalValue,router, params, name, pathname]);

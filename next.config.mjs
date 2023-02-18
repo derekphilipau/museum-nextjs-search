@@ -11,7 +11,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    // appDir: true,
+    appDir: true,
     fontLoaders: [
       {
         loader: "@next/font/google",

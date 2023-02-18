@@ -18,23 +18,24 @@ export const indicesMeta = {
   }
 }
 
-export function getSearchParamsFromQuery(query) {
-  const index = query?.index || 'all';
-  const q = query?.q || '';
-  const p = parseInt(query?.p) || 1;
-  const size = query?.size || '24';
-  const isUnrestricted = getBooleanValue(query?.isUnrestricted);
-  const hasPhoto = getBooleanValue(query?.hasPhoto);
-  const onView = getBooleanValue(query?.onView);
+export function getSearchParamsFromQuery(params, searchParams) {
+  const index = params?.index || 'all';
+  const q = searchParams?.q || '';
+  const p = parseInt(searchParams?.p) || 1;
+  const size = searchParams?.size || '24';
+  const isUnrestricted = getBooleanValue(searchParams?.isUnrestricted);
+  const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
+  const onView = getBooleanValue(searchParams?.onView);
+  const isShowFilters = getBooleanValue(searchParams?.f);
   const filters = {};
-  if (query && Array.isArray(indicesMeta[index]?.aggs)) {
+  if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
     for (const agg of indicesMeta[index].aggs) {
-      if (query[agg.name]) {
-        filters[agg.name] = query[agg.name] || '';
+      if (searchParams[agg.name]) {
+        filters[agg.name] = searchParams[agg.name] || '';
       }
     }  
   }
-  return { index, q, p, size, isUnrestricted, hasPhoto, onView, filters }
+  return { index, q, p, size, isUnrestricted, hasPhoto, onView, isShowFilters, filters }
 }
 
 export function getBooleanValue(x) {

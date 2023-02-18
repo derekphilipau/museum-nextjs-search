@@ -5,12 +5,13 @@ import { Icons } from "@/components/icons";
 import { indicesMeta } from "@/util/search.js";
 
 interface SearchAggSectionMobileProps {
+  index: string,
   params?: any,
   filters: any,
   options: any,
 }
 
-export function SearchAggSectionMobile({ params, filters, options }: SearchAggSectionMobileProps) {
+export function SearchAggSectionMobile({ index, params, filters, options }: SearchAggSectionMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -37,7 +38,7 @@ export function SearchAggSectionMobile({ params, filters, options }: SearchAggSe
       {isOpen && indicesMeta.collections?.aggs?.map(
         (agg, i) =>
           agg && options[agg.name]?.length > 0 && (
-            <SearchAgg params={params} key={i} agg={agg} options={options[agg.name]} filters={filters} />
+            <SearchAgg index={index} params={params} key={i} agg={agg} options={options[agg.name]} filters={filters} />
           )
       )}
     </>
