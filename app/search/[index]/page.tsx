@@ -17,6 +17,7 @@ import { SearchAggSectionMobile } from "@/components/search/search-agg-section-m
 export default async function Page({ params, searchParams }) {
   const cleanParams = getSearchParamsFromQuery(params, searchParams);
   const index = cleanParams?.index || 'all';
+  const allParams = {index, ...searchParams};
   const p = cleanParams?.p || 1;
   const size = cleanParams?.size || 24;
   const filters = cleanParams?.filters || {};
@@ -24,7 +25,7 @@ export default async function Page({ params, searchParams }) {
 
   // Query Elasticsearch
   console.log('fetching2: ', cleanParams);
-  const response = await search(cleanParams);
+  const response = await search(allParams);
   const items = response?.data || [];
   const terms = response?.terms || [];
   const apiError = response?.error || '';
@@ -40,25 +41,25 @@ export default async function Page({ params, searchParams }) {
   return (
     <section className="container pt-4 md:pt-6">
       <div className="flex flex-wrap gap-x-2 pb-2">
-        <SearchIndexButton params={params} name='all' label='All' />
-        <SearchIndexButton params={params} name='content' label='Pages' />
-        <SearchIndexButton params={params} name='collections' label='Collection' />
+        <SearchIndexButton params={allParams} name='all' label='All' />
+        <SearchIndexButton params={allParams} name='content' label='Pages' />
+        <SearchIndexButton params={allParams} name='collections' label='Collection' />
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4">
         <div className="grow">
-          <SearchQueryInput params={params} />
+          <SearchQueryInput params={allParams} />
         </div>
         {
           index === 'collections' && (
             <div className="flex flex-wrap gap-x-4">
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={params} name='hasPhoto' label='Has Photo' />
+                <SearchCheckbox params={allParams} name='hasPhoto' label='Has Photo' />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={params} name='onView' label='On View' />
+                <SearchCheckbox params={allParams} name='onView' label='On View' />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={params} name='isUnrestricted' label='Open Access' />
+                <SearchCheckbox params={allParams} name='isUnrestricted' label='Open Access' />
               </div>
             </div>
           )
@@ -68,7 +69,7 @@ export default async function Page({ params, searchParams }) {
         {
           index === 'collections' && (
             <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-              <SearchAggSectionMobile params={params} filters={filters} options={options} />
+              <SearchAggSectionMobile params={allParams} filters={filters} options={options} />
             </div>
           )
         }
@@ -87,7 +88,7 @@ export default async function Page({ params, searchParams }) {
             {indicesMeta.collections?.aggs?.map(
               (agg, i) =>
                 agg && options[agg.name]?.length > 0 && (
-                  <SearchAgg params={params} key={i} agg={agg} options={options[agg.name]} filters={filters} />
+                  <SearchAgg params={allParams} key={i} agg={agg} options={options[agg.name]} filters={filters} />
                 )
             )}
           </div>
@@ -101,7 +102,7 @@ export default async function Page({ params, searchParams }) {
           }
 
           <SearchPagination
-            params={params}
+            params={allParams}
             index={index}
             count={count}
             p={p}
@@ -116,7 +117,7 @@ export default async function Page({ params, searchParams }) {
                 filterArr?.length > 0 && filterArr.map(
                   (filter, i) =>
                     filter && (
-                      <SearchFilterTag key={i} params={params} name={filter[0]} value={filter[1]} />
+                      <SearchFilterTag key={i} params={allParams} name={filter[0]} value={filter[1]} />
                     )
                 )
               }
@@ -166,7 +167,7 @@ export default async function Page({ params, searchParams }) {
             }
           </div>
           <SearchPagination
-            params={params}
+            params={allParams}
             index={index}
             count={count}
             p={p}
