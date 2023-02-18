@@ -68,7 +68,7 @@ export function SearchAgg({ index, params, agg, options, filters }: SearchAggPro
           setLoading(false)
         })
     }
-  }, [realQuery]);
+  }, [realQuery, agg.name, index]);
 
   let hasCheckedValues = false;
   let checked = []
@@ -90,7 +90,7 @@ export function SearchAgg({ index, params, agg, options, filters }: SearchAggPro
       className="w-full space-y-2"
     >
       <CollapsibleTrigger asChild>
-        <Button variant="ghost" size="sm" className="p-1 flex items-center justify-between w-full">
+        <Button variant="ghost" size="sm" className="flex w-full items-center justify-between p-1">
           <h4 className="text-sm font-semibold">
             {agg.displayName}
           </h4>
@@ -100,7 +100,7 @@ export function SearchAgg({ index, params, agg, options, filters }: SearchAggPro
           </div>
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2 w-full">
+      <CollapsibleContent className="w-full space-y-2">
         <div className="mb-2">
           <Input name="query" placeholder={`Search ${agg.displayName}`} onChange={(e) => setQuery(e.target.value)} />
         </div>

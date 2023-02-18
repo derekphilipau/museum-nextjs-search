@@ -8,17 +8,18 @@ import { getBooleanValue } from "@/util/search";
 interface SearchCheckboxProps {
   params?: any,
   name: string,
-  label: string
+  value: boolean,
+  label: string,
 }
 
-export function SearchCheckbox({ params, name, label }: SearchCheckboxProps) {
+export function SearchCheckbox({ params, name, value, label }: SearchCheckboxProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [originalValue, setOriginalValue] = useState(getBooleanValue(params?.[name]));
-  const [myValue, setMyValue] = useState(getBooleanValue(params?.[name]));
+  const [originalValue, setOriginalValue] = useState(getBooleanValue(value));
 
-  useEffect(() => {
+  function checkValue(checked) {
+    const myValue = checked ? true : false;
     if (originalValue !== myValue) {
       console.log('checkbox go: ' + originalValue + ' new: ' + myValue)
       setOriginalValue(myValue);  // Make sure we remember the most recent value
@@ -28,14 +29,18 @@ export function SearchCheckbox({ params, name, label }: SearchCheckboxProps) {
       updatedParams.delete('p');
       router.push(`${pathname}?${updatedParams}`)
     }
-  }, [myValue, originalValue,router, params, name, pathname]);
+  }
+
+  useEffect(() => {
+    setOriginalValue(value);
+  }, [value]);
 
   return (
     <>
       <Checkbox
         id={name}
-        onCheckedChange={(checked) => setMyValue(checked ? true : false)}
-        checked={myValue}
+        onCheckedChange={(checked) => checkValue(checked)}
+        checked={value}
       />
       <label
         htmlFor={name}

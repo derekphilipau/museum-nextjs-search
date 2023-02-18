@@ -1,4 +1,3 @@
-//import { useState } from "react";
 import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
@@ -20,6 +19,9 @@ export default async function Page({ params, searchParams }) {
   const filters = cleanParams?.filters || {};
   const filterArr = Object.entries(cleanParams?.filters || {});
   const isShowFilters = cleanParams?.isShowFilters;
+  const hasPhoto = cleanParams?.hasPhoto;
+  const onView = cleanParams?.onView;
+  const isUnrestricted = cleanParams?.isUnrestricted;
 
   // Query Elasticsearch
   const response = await search({index, ...searchParams});
@@ -45,13 +47,13 @@ export default async function Page({ params, searchParams }) {
           index === 'collections' && (
             <div className="flex flex-wrap gap-x-4">
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='hasPhoto' label='Has Photo' />
+                <SearchCheckbox params={searchParams} name='hasPhoto' value={hasPhoto} label='Has Photo' />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='onView' label='On View' />
+                <SearchCheckbox params={searchParams} name='onView' value={onView} label='On View' />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='isUnrestricted' label='Open Access' />
+                <SearchCheckbox params={searchParams} name='isUnrestricted' value={isUnrestricted} label='Open Access' />
               </div>
             </div>
           )
