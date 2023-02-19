@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/layout/site-header"
 import { Footer } from "@/components/layout/footer"
-import { Providers } from "./providers";
+import { Providers } from "./layoutProviders";
 import './globals.css'
 import { Inter } from '@next/font/google';
 
