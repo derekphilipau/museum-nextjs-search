@@ -50,7 +50,7 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
       {indicesMeta.collections?.aggs?.map(
         (agg, i) =>
           agg && options[agg.name]?.length > 0 && (
-            <SearchAgg index={index} params={params} key={i} agg={agg} options={options[agg.name]} filters={filters} />
+            <SearchAgg index={index} params={params} key={i} aggDisplayName={agg?.displayName} aggName={agg?.name} options={options[agg.name]} filters={filters} />
           )
       )}
     </>

@@ -40,7 +40,7 @@ export function SearchAggSectionMobile({ index, params, filters, options }: Sear
       {isOpen && indicesMeta.collections?.aggs?.map(
         (agg, i) =>
           agg && options[agg.name]?.length > 0 && (
-            <SearchAgg index={index} params={params} key={i} agg={agg} options={options[agg.name]} filters={filters} />
+            <SearchAgg index={index} params={params} key={i} aggDisplayName={agg?.displayName} aggName={agg?.name} options={options[agg.name]} filters={filters} />
           )
       )}
     </>
