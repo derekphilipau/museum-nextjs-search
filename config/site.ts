@@ -4,8 +4,8 @@ interface SiteConfig {
   defaultLocale: string
   mainNav: NavItem[]
   links: {
-    twitter?: string
-    instagram?: string
+    twitter: string
+    instagram: string
   }
 }
 

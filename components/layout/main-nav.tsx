@@ -77,7 +77,7 @@ export function MainNav({ items }: MainNavProps) {
             (item, index) =>
               item.href && (
                 <DropdownMenuItem key={index} asChild>
-                  <Link href={item.href}>{item.title}</Link>
+                  <Link href={item.href}>{dict[item.dict]}</Link>
                 </DropdownMenuItem>
               )
           )}
