@@ -3,7 +3,7 @@ import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
 import { SearchPagination } from "@/components/search/search-pagination";
 import { getSearchParamsFromQuery } from "@/util/search.js";
-import { search } from "@/util/elasticsearch.js";
+import { search } from "@/util/elasticsearch";
 import { SearchQueryInput } from "@/components/search/search-query-input";
 import { SearchCheckbox } from "@/components/search/search-checkbox";
 import { SearchIndexButton } from "@/components/search/search-index-button";
@@ -11,7 +11,7 @@ import { SearchFilterTag } from "@/components/search/search-filter-tag";
 import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
 import { SearchFilters } from "@/components/search/search-filters";
 import { getDictionary } from '@/dictionaries/dictionaries';
-
+import type { ApiResponseSearch } from "@/types/apiResponseSearch";
 export const dynamic='force-dynamic'; // https://github.com/vercel/next.js/issues/43077
 
 export default async function Page({ params, searchParams }) {
@@ -28,7 +28,7 @@ export default async function Page({ params, searchParams }) {
   const isUnrestricted = cleanParams?.isUnrestricted;
 
   // Query Elasticsearch
-  const response = await search({index, ...searchParams});
+  const response: ApiResponseSearch = await search({index, ...searchParams});
   const items = response?.data || [];
   const terms = response?.terms || [];
   const apiError = response?.error || '';

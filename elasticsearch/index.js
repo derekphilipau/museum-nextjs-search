@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import {createWriteStream} from 'fs'
 import {readCsvFileToArray} from './csv.js';
-import {importData} from './elasticsearch.js';
+import {importData} from './elasticsearch';
 
 const inputPath = "./data/20221221_102750_object.jsonl";
 const outputPath = "./data/transformed.jsonl";

@@ -1,7 +1,9 @@
 'use strict'
-import { readFileSync } from 'fs'
 import { Client } from '@elastic/elasticsearch';
 import { indicesMeta } from "@/util/search.js";
+import type { ApiResponseDocument } from '@/types/apiResponseDocument';
+import type { ApiResponseSearch } from '@/types/apiResponseSearch';
+import * as T from '@elastic/elasticsearch/lib/api/types'
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
@@ -28,7 +30,16 @@ function getClient() {
 }
 */
 
-export function getClient() {
+interface Document {
+  // Elasticsearch types are hosed
+}
+
+interface Aggregations {
+  // Elasticsearch types are hosed
+  unique: T.AggregationsTermsAggregateBase<{ key: string }>
+}
+
+export function getClient(): Client {
   const clientSettings = {
     cloud: {
       id: 'elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==',
@@ -41,7 +52,7 @@ export function getClient() {
   return new Client(clientSettings);
 }
 
-async function countIndex(index, client) {
+async function countIndex(index, client: Client) {
   try {
     const res = await client.count({
       index,
@@ -55,7 +66,7 @@ async function countIndex(index, client) {
   }
 }
 
-export async function getDocument(index, id) {
+export async function getDocument(index: string, id: number): Promise<ApiResponseDocument> {
   const esQuery = {
     index,
     query: {
@@ -66,7 +77,7 @@ export async function getDocument(index, id) {
   };
 
   const client = getClient();
-  const response = await client.search(esQuery);
+  const response = await client.search<Document, Aggregations>(esQuery);
   return { query: esQuery, data: response?.hits?.hits[0]?._source }
 }
 
@@ -86,7 +97,7 @@ export async function search(params) {
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
-  const esQuery = {
+  const esQuery: any = {
     index,
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
@@ -131,7 +142,7 @@ export async function search(params) {
   }
 
   const client = getClient();
-  const response = await client.search(esQuery);
+  const response: any = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
 
@@ -141,7 +152,7 @@ export async function search(params) {
     pages: Math.ceil(count / size)
   }
   const data = response.hits.hits.map(h => h._source)
-  const res = { query: esQuery, data, options, metadata }
+  const res:ApiResponseSearch = { query: esQuery, data, options, metadata }
   if (q?.length > 3 && p === 1) {
     const t = await terms(q, size = TERMS_PAGE_SIZE, client);
     res.terms = t;
@@ -168,7 +179,7 @@ export async function searchCollections(params) {
   p = p || 1;
 
 
-  const esQuery = {
+  const esQuery: any = {
     index,
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
@@ -207,47 +218,22 @@ export async function searchCollections(params) {
     ];
   }
 
+  addQueryBoolFilterTerm(esQuery, 'primaryConstituent', primaryConstituent);
+  addQueryBoolFilterTerm(esQuery, 'classification', classification);
+  addQueryBoolFilterTerm(esQuery, 'medium', medium);
+  addQueryBoolFilterTerm(esQuery, 'period', period);
+  addQueryBoolFilterTerm(esQuery, 'dynasty', dynasty);
+  addQueryBoolFilterTerm(esQuery, 'museumLocation', museumLocation);
+  addQueryBoolFilterTerm(esQuery, 'section', section);
+  addQueryBoolFilterTerm(esQuery, 'geographicalLocations', geographicalLocations);
+  addQueryBoolFilterTerm(esQuery, 'exhibitions', exhibitions);
+  addQueryBoolFilterTerm(esQuery, 'collections', collections);
+  addQueryBoolFilterTerm(esQuery, 'isUnrestricted', isUnrestricted);
 
-  const filters = [];
-  if (primaryConstituent) filters.push({ name: 'primaryConstituent', value: primaryConstituent });
-  if (classification) filters.push({ name: 'classification', value: classification });
-  if (medium) filters.push({ name: 'medium', value: medium });
-  if (period) filters.push({ name: 'period', value: period });
-  if (dynasty) filters.push({ name: 'dynasty', value: dynasty });
-  if (museumLocation) filters.push({ name: 'museumLocation', value: museumLocation });
-  if (section) filters.push({ name: 'section', value: section });
-  if (geographicalLocations) filters.push({ name: 'geographicalLocations', value: geographicalLocations });
-  if (exhibitions) filters.push({ name: 'exhibitions', value: exhibitions });
-  if (collections) filters.push({ name: 'collections', value: collections });
-  if (isUnrestricted) filters.push({ name: 'copyrightRestricted', value: false });
-
-
-  if (filters.length > 0) {
-    esQuery.query.bool.filter = [];
-    for (const filter of filters) {
-      esQuery.query.bool.filter.push({
-        term: {
-          [filter.name]: filter.value,
-        }
-      })
-    }
-  }
-
-  if (hasPhoto) {
-    if (!(esQuery.query.bool?.filter?.length > 0)) esQuery.query.bool.filter = [];
-    esQuery.query.bool.filter.push({
-      exists: {
-        field: 'image'
-      }
-    });
-  }
+  if (hasPhoto) addQueryBoolFilterExists(esQuery, 'image');
 
   if (onView) {
-    esQuery.query.bool.must_not = {
-      term: {
-        museumLocation: 'This item is not on view'
-      }
-    };
+    addQueryBoolMustNotFilter(esQuery, 'museumLocation', 'This item is not on view');
   }
 
   if (indicesMeta[index]?.aggs?.length > 0) {
@@ -264,18 +250,19 @@ export async function searchCollections(params) {
   }
 
   const client = getClient();
-  const response = await client.search(esQuery);
+  const response = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
 
-  const count = response?.hits?.total?.value || 0;
+  let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
+  if (typeof count !== "number") count = count.value;
   const metadata = {
     count,
     pages: Math.ceil(count / size)
   }
 
   const data = response.hits.hits.map(h => h._source);
-  const res = { query: esQuery, data, options, metadata };
+  const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q?.length > 3 && p === 1) {
     const t = await terms(q, size = TERMS_PAGE_SIZE, client);
     res.terms = t;
@@ -303,7 +290,7 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
 
   if (!index || !field) { return }
 
-  const request = {
+  const request: any = {
     index,
     size: 0,
     aggs: {
@@ -328,16 +315,16 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
   }
 
   const client = getClient();
-  const response = await client.search(request)
+  const response = await client.search<Document, Aggregations>(request)
 
-  if (response.aggregations[field].buckets) {
+  if (response.aggregations?.[field].buckets) {
     return response.aggregations[field].buckets
   } else {
     return []
   }
 }
 
-export async function terms(query, size = TERMS_PAGE_SIZE, client = null) {
+export async function terms(query, size:number=TERMS_PAGE_SIZE, client:Client|null=null) {
   const request = {
     index: 'terms',
     query: {
@@ -353,7 +340,7 @@ export async function terms(query, size = TERMS_PAGE_SIZE, client = null) {
   }
 
   if (!client) client = getClient();
-  const response = await client.search(request)
+  const response = await client.search<Document, Aggregations>(request)
 
   return response.hits.hits.map(h => h._source)
 }
@@ -404,22 +391,56 @@ export async function similar(id) {
   addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
 
   const client = getClient();
-  const response = await client.search(esQuery)
+  const response = await client.search<Document, Aggregations>(esQuery)
   if (!response?.hits?.hits?.length) {
     return []
   }
   return response.hits.hits.map(h => h._source)
 }
 
-function addShouldTerms(document, esQuery, name, boost) {
+function addQueryBoolFilterTerm(esQuery: any, name: string, value: string | boolean | number | undefined): void {
+  if (!value) return;
+  if (!esQuery?.query) esQuery.query = {};
+  if (!esQuery.query?.bool) esQuery.query.bool = {};
+  if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
+  esQuery.query.bool.filter.push({
+    term: {
+      [name]: value
+    }
+  })
+}
+
+function addQueryBoolFilterExists(esQuery: any, name: string): void {
+  if (!esQuery?.query) esQuery.query = {};
+  if (!esQuery.query?.bool) esQuery.query.bool = {};
+  if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
+  esQuery.query.bool.filter.push({
+    exists: {
+      field: name
+    }
+  })
+}
+
+function addQueryBoolMustNotFilter(esQuery: any, name: string, value: string): void {
+  if (!value) return;
+  if (!esQuery?.query) esQuery.query = {};
+  if (!esQuery.query?.bool) esQuery.query.bool = {};
+  if (!esQuery.query.bool?.must_not) esQuery.query.bool.must_not = [];
+  esQuery.query.bool.must_not.push({
+    term: {
+      [name]: value
+    }
+  })
+}
+
+function addShouldTerms(document: any, esQuery: any, name: string, boost: number) {
   if (!(name in document)) return;
   let value = document[name];
   if (!(value?.length > 0)) return;
   if (!Array.isArray(value)) value = [value];
-  if (!('query' in esQuery)) esQuery.query = {};
-  if (!('bool' in esQuery.query)) esQuery.query.bool = {};
-  if (!('should' in esQuery.query.bool)) esQuery.query.bool.should = [];
-
+  if (!esQuery?.query) esQuery.query = {};
+  if (!esQuery.query?.bool) esQuery.query.bool = {};
+  if (!esQuery.query.bool?.should) esQuery.query.bool.should = [];
   esQuery.query.bool.should.push({
     terms: {
       [name]: value,

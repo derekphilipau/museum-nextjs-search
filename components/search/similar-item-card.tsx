@@ -1,9 +1,11 @@
 import * as React from "react"
 import Link from "next/link"
-import { isImageRestricted, getSmallOrRestrictedImageUrl } from '@/util/image.js';
+import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import Image from 'next/image'
 
 export function SimilarItemCard({ item }) {
+
+  if (!item) return null;
 
   let imageSrc = getSmallOrRestrictedImageUrl(item.image, item.copyrightRestricted);
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';

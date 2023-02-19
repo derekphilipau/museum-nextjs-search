@@ -7,7 +7,7 @@ import {
   getRestrictedImageUrl,
   getSmallOrRestrictedImageUrl,
   getLargeImageUrl
-} from '@/util/image.js';
+} from '@/util/image';
 import {
   Dialog,
   DialogContent,

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getSmallOrRestrictedImageUrl, NONE_IMG } from '@/util/image.js';
+import { NONE_IMG } from '@/util/image';
 import Image from 'next/image'
 
 export function ItemCard({ item }) {

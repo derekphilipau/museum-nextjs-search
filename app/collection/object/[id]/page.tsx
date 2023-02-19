@@ -7,20 +7,21 @@ import { getSmallOrRestrictedImageUrl } from "@/util/image";
 import { SimilarObjects } from "@/components/object/similar-objects";
 import { getSchemaVisualArtworkJson } from "@/util/schema";
 import type { Metadata } from 'next';
-import { getCaption } from "@/util/various.js";
+import { getCaption } from "@/util/various";
 import {encode} from 'html-entities';
+import type { CollectionObject } from '@/types/collectionObject';
 
-async function getItem(id) {
+async function getItem(id: number):Promise<CollectionObject | null> {
   const data = await getDocument('collections', id);
-  return data?.data;
+  return data?.data || null;
 }
 
 export async function generateMetadata({ params }): Promise<Metadata> {
-  const item : any = await getItem(params.id);
+  const item: CollectionObject | null = await getItem(params.id);
+  if (!item) return {};
+
   const caption = encode(getCaption(item));
   const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted);
-
-  if (!item) return {};
 
   return {
     title: item.title,
