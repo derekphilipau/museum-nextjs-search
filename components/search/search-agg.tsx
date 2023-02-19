@@ -31,12 +31,14 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
   const [realQuery, setRealQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
-  const [searchOptions, setSearchOptions] = useState([]);
+  const [searchOptions, setSearchOptions] = useState<AggOption[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   function checkboxChange(key: string, checked: string | boolean) {
     const myChecked = getBooleanValue(checked);
-    const option = options?.find(o => o.key === key);
+    let option = options?.find(o => o.key === key);
+    if (searchOptions && !option)
+      option = searchOptions?.find(o => o.key === key);
     if (option) {
       if (!aggName) return;
       if (checked) {
@@ -116,7 +118,7 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
           <Input name="query" placeholder={`Search ${aggDisplayName}`} onChange={(e) => setQuery(e.target.value)} />
         </div>
         {searchOptions?.length > 0 && searchOptions?.map(
-          (option: any, i) =>
+          (option: AggOption, i) =>
             option && (
               <div className="flex items-center space-x-2" key={`agg-${aggName}-${i}`}>
                 <Checkbox
@@ -134,7 +136,7 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
             )
         )}
         {searchOptions?.length === 0 && Array.isArray(options) && options?.length > 0 && options?.map(
-          (option, i) =>
+          (option: AggOption, i) =>
             option && (
               <div className="flex items-center space-x-2" key={`agg-${aggName}-${i}`}>
                 <Checkbox
