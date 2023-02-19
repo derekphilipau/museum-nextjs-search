@@ -11,7 +11,7 @@ import { ThemeProvider } from 'next-themes'
 // * This is not possible in the app.tsx file because it is rendered
 // * on both the server-side and the client-side.
 
-export default function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       {/*<OtherProvider>*/}
