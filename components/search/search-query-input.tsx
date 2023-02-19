@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input"
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchQueryInputProps {
   params?: any
 }
 
 export function SearchQueryInput({params}: SearchQueryInputProps) {
+  const dict = getDictionary();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -30,6 +32,6 @@ export function SearchQueryInput({params}: SearchQueryInputProps) {
   }, [myQuery, originalQuery, router, params, pathname]);
 
   return (
-    <Input name="query" placeholder="Search" value={myQuery} onChange={(e) => setMyQuery(e.target.value)} />
+    <Input name="query" placeholder={dict['search.search']} value={myQuery} onChange={(e) => setMyQuery(e.target.value)} />
   )
 }

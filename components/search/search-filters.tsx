@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { getBooleanValue } from "@/util/search";
 import { SearchAgg } from "@/components/search/search-agg";
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchFiltersProps {
   index: string,
@@ -17,6 +18,7 @@ interface SearchFiltersProps {
 }
 
 export function SearchFilters({ index, params, options, filters }: SearchFiltersProps) {
+  const dict = getDictionary();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -42,7 +44,7 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
           size="sm"
         >
           <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-          Hide Filters
+          {dict['search.hideFilters']}
         </Button>
       </div>
       {indicesMeta.collections?.aggs?.map(

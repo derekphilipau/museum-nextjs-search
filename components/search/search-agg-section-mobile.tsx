@@ -3,6 +3,7 @@ import { useState } from "react";
 import { SearchAgg } from "@/components/search/search-agg"
 import { Icons } from "@/components/icons";
 import { indicesMeta } from "@/util/search.js";
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchAggSectionMobileProps {
   index: string,
@@ -13,6 +14,7 @@ interface SearchAggSectionMobileProps {
 
 export function SearchAggSectionMobile({ index, params, filters, options }: SearchAggSectionMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dict = getDictionary();
 
   return (
     <>
@@ -24,12 +26,12 @@ export function SearchAggSectionMobile({ index, params, filters, options }: Sear
         >
           {isOpen ? (
             <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-              Hide Filters
+              {dict['search.hideFilters']}
               <Icons.chevronUp className="h-5 w-5" aria-hidden="true" />
             </div>
           ) : (
             <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
-              Show Filters
+              {dict['search.showFilters']}
               <Icons.chevronDown className="h-5 w-5" aria-hidden="true" />
             </div>
           )}

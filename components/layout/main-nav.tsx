@@ -2,7 +2,6 @@ import * as React from "react"
 import Link from "next/link"
 
 import { NavItem } from "@/types/nav"
-import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
@@ -16,17 +15,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { getDictionary } from '@/dictionaries/dictionaries';
+
 interface MainNavProps {
   items?: NavItem[]
 }
 
 export function MainNav({ items }: MainNavProps) {
+
+  const dict = getDictionary();
+
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
         <Icons.logo className="w-52 fill-current" />
         <span className="hidden font-bold">
-          {siteConfig.name}
+          {dict['site.title']}
         </span>
       </Link>
       {items?.length ? (
@@ -42,7 +46,7 @@ export function MainNav({ items }: MainNavProps) {
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  {item.title}
+                  {dict[item.dict]}
                 </Link>
               )
           )}
@@ -65,7 +69,7 @@ export function MainNav({ items }: MainNavProps) {
         >
           <DropdownMenuLabel>
             <Link href="/" className="flex items-center">
-              {siteConfig.name}
+              {dict['site.title']}
             </Link>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

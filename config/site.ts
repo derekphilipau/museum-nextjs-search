@@ -1,12 +1,7 @@
 import { NavItem } from "@/types/nav"
 
 interface SiteConfig {
-  name: string
-  description: string
-  organization?: {
-    address1?: string
-    address2?: string
-  }
+  defaultLocale: string
   mainNav: NavItem[]
   links: {
     twitter?: string
@@ -15,19 +10,14 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: "Brooklyn Museum",
-  description: "Elasticsearch + Next.js Search Prototype",
-  organization: {
-    address1: "200 Eastern Parkway",
-    address2: "Brooklyn, New York 11238-6052",
-  },
+  defaultLocale: "en",
   mainNav: [
     {
-      title: "Home",
+      dict: "nav.home",
       href: "/",
     },
     {
-      title: "Search",
+      dict: "nav.search",
       href: "/search/collections?hasPhoto=true",
     },
   ],

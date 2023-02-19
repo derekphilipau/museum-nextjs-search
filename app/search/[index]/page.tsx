@@ -10,10 +10,12 @@ import { SearchIndexButton } from "@/components/search/search-index-button";
 import { SearchFilterTag } from "@/components/search/search-filter-tag";
 import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
 import { SearchFilters } from "@/components/search/search-filters";
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 export const dynamic='force-dynamic'; // https://github.com/vercel/next.js/issues/43077
 
 export default async function Page({ params, searchParams }) {
+  const dict = getDictionary();
   const cleanParams = getSearchParamsFromQuery(params, searchParams);
   const index = cleanParams?.index || 'all';
   const p = cleanParams?.p || 1;
@@ -49,13 +51,13 @@ export default async function Page({ params, searchParams }) {
           index === 'collections' && (
             <div className="flex flex-wrap gap-x-4">
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='hasPhoto' value={hasPhoto} label='Has Photo' />
+                <SearchCheckbox params={searchParams} name='hasPhoto' value={hasPhoto} label={dict['search.hasPhoto']} />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='onView' value={onView} label='On View' />
+                <SearchCheckbox params={searchParams} name='onView' value={onView} label={dict['search.onView']} />
               </div>
               <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='isUnrestricted' value={isUnrestricted} label='Open Access' />
+                <SearchCheckbox params={searchParams} name='isUnrestricted' value={isUnrestricted} label={dict['search.openAccess']} />
               </div>
             </div>
           )

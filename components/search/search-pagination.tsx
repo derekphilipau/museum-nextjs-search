@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getBooleanValue } from "@/util/search";
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchPaginationProps {
   index: string,
@@ -26,7 +26,7 @@ interface SearchPaginationProps {
 export function SearchPagination({ index, params, count, p, size, totalPages, isShowFilters }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
-
+  const dict = getDictionary();
   const [originalIsShowFilters, setOriginalIsShowFilters] = useState(isShowFilters);
   const [originalPage, setOriginalPage] = useState(p);
   const [originalSize, setOriginalSize] = useState(size);
@@ -88,7 +88,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
             size="sm"
           >
             <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-            Show Filters
+            {dict['search.showFilters']}
           </Button>
         </div>
         )}
@@ -105,7 +105,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
           </Select>
         </div>
         <div className="text-xs">
-          {count} results, page {p} of {totalPages}.
+          {count} {dict['search.resultsPage']} {p} {dict['search.of']} {totalPages}.
         </div>
       </div>
       <div className="flex items-center justify-end gap-x-4">
@@ -116,7 +116,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
           size="sm"
         >
           <Icons.chevronLeft className="mr-2 h-5 w-5" aria-hidden="true" />
-          Previous
+          {dict['search.previous']}
         </Button>
         <Button
           disabled={p >= totalPages}
@@ -124,7 +124,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
           variant="ghost"
           size="sm"
         >
-          Next
+          {dict['search.next']}
           <Icons.chevronRight className="ml-2 h-5 w-5" aria-hidden="true" />
         </Button>
       </div>

@@ -1,8 +1,8 @@
 import { SiteHeader } from "@/components/layout/site-header"
 import { Footer } from "@/components/layout/footer"
 import { Providers } from "./layoutProviders";
-import './globals.css'
 import { Inter } from '@next/font/google';
+import './globals.css'
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
@@ -31,11 +31,12 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       {/*
@@ -43,10 +44,10 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body className="min-h-screen bg-white font-sans text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-50">
+      <body className="bg-white font-sans text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-50">
         <Providers>
           <SiteHeader />
-            <main>{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
       </body>
