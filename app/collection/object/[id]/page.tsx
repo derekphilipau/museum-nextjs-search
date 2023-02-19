@@ -8,7 +8,7 @@ import { SimilarObjects } from "@/components/object/similar-objects";
 import { getSchemaVisualArtworkJson } from "@/util/schema";
 import type { Metadata } from 'next';
 import { getCaption } from "@/util/various.js";
-
+import {encode} from 'html-entities';
 
 async function getItem(id) {
   const data = await getDocument('collections', id);
@@ -17,14 +17,16 @@ async function getItem(id) {
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   const item : any = await getItem(params.id);
-  const caption = getCaption(item);
+  const caption = encode(getCaption(item));
   const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted);
+
+  if (!item) return {};
 
   return {
     title: item.title,
     description: caption,
     openGraph: {
-      title: item.title,
+      title: item.title || '',
       description: caption,
       images: [
         {
@@ -32,13 +34,13 @@ export async function generateMetadata({ params }): Promise<Metadata> {
         }
       ]
     }
-  }
+  };
 }
 
 export default async function Page({ params }) {
 
   const { id } = params;
-  const item = await getItem(id);
+  const item : any = await getItem(id);
   const similarItems = await similar(id);
   const jsonLd = getSchemaVisualArtworkJson(item);
 

@@ -15,7 +15,7 @@ export function DescriptionRow({ name, displayName, value, item, isLink = false 
   let qs = ''
 
   let val = value ? value : item[name];
-  if (!name || !val || val.length === 0) return;
+  if (!name || !val || val.length === 0) return null;
   if (!Array.isArray(val)) val = [val];
 
   return (

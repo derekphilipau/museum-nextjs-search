@@ -15,13 +15,13 @@ export function getCaption(item, filename = null) {
   if (!item) return '';
   let caption = '';
   caption += item?.primaryConstituent ? `${item.primaryConstituent}. ` : '';
-  caption += item?.title ? `${stripLineBreaks(item.title)}, ` : '';
+  caption += item?.title ? `${item.title}, ` : '';
   caption += item?.date ? `${item.date}. ` : '';
-  caption += item?.medium ? `${stripLineBreaks(item.medium)}, ` : '';
-  caption += item?.dimensions ? `${stripLineBreaks(item.dimensions)}. ` : '';
+  caption += item?.medium ? `${item.medium}, ` : '';
+  caption += item?.dimensions ? `${item.dimensions}. ` : '';
   caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
   caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
   caption += item?.copyright ? `${item.copyright} ` : '';
   caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
-  return stripBasicHtml(caption?.trim());
+  return stripBasicHtml(stripLineBreaks(caption?.trim()));
 }

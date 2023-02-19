@@ -4,7 +4,7 @@ import { DescriptionRow } from "./description-row";
 
 export function ObjectDescription({ item }) {
 
-  if (!item?.id) return;
+  if (!item?.id) return null;
 
   const maker = item.primaryConstituent || 'Unknown';
 

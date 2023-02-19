@@ -27,7 +27,7 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 export function ImageViewer({ item }) {
   const [sortedImages, setSortedImages] = useState(getSortedImages(item));
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<any>({});
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
   const [open, setOpen] = useState(false);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false })
@@ -67,7 +67,7 @@ export function ImageViewer({ item }) {
     setSelectedImage(sortedImages?.[selectedImageIndex])
   }, [selectedImageIndex, sortedImages])
 
-  if (!item?.id || !(item?.images?.length > 0)) return;
+  if (!item?.id || !(item?.images?.length > 0)) return null;
 
   function getThumbnailClass(filename) {
     const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';
