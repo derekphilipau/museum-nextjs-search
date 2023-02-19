@@ -1,16 +1,46 @@
+import Script from 'next/script';
 import { ObjectDescription } from "@/components/search/object-description";
 import { ImageViewer } from "@/components/search/image-viewer";
 import { getDocument, similar } from "@/util/elasticsearch";
 import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
 import { getSmallOrRestrictedImageUrl } from "@/util/image";
 import { SimilarObjects } from "@/components/object/similar-objects";
+import { getSchemaVisualArtworkJson } from "@/util/schema";
+import type { Metadata } from 'next';
+import { getCaption } from "@/util/various.js";
+
+
+async function getItem(id) {
+  const data = await getDocument('collections', id);
+  return data?.data;
+}
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const item : any = await getItem(params.id);
+  const caption = getCaption(item);
+  const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted);
+
+  return {
+    title: item.title,
+    description: caption,
+    openGraph: {
+      title: item.title,
+      description: caption,
+      images: [
+        {
+          url: thumb
+        }
+      ]
+    }
+  }
+}
 
 export default async function Page({ params }) {
 
   const { id } = params;
-  const data = await getDocument('collections', id);
-  const item : any = data?.data;
+  const item = await getItem(id);
   const similarItems = await similar(id);
+  const jsonLd = getSchemaVisualArtworkJson(item);
 
   const thumb = getSmallOrRestrictedImageUrl(item?.image, item?.copyrightRestricted)
 
@@ -55,6 +85,11 @@ export default async function Page({ params }) {
         </h2>
         <SimilarObjects similar={similarItems} />
       </section>
+      {/* https://beta.nextjs.org/docs/guides/seo */}
+      <Script
+        id="json-ld-script"
+        type="application/ld+json"
+      >{jsonLd}</Script>
     </>
   )
 }

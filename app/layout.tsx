@@ -11,6 +11,26 @@ const inter = Inter({
   display: 'swap',
 })
 
+export const metadata = {
+  title: {
+    default: 'Brooklyn Museum',
+    template: '%s | Brooklyn Museum',
+  },
+  description: 'Elasticsearch + Next.js Search Prototype',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.ico',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        url: '/favicon.ico',
+        media: '(prefers-color-scheme: dark)',
+      }
+    ],
+  },
+}
+
 export default function RootLayout({
   children,
 }: {
