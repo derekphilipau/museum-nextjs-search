@@ -20,9 +20,9 @@ export function Footer() {
             </span>
           </Link>
           <p className="mb-2 text-xs">
-            200 Eastern Parkway
+            {siteConfig?.organization?.address1}
             <br />
-            Brooklyn, New York 11238-6052
+            {siteConfig?.organization?.address2}
           </p>
           <p className="text-xs">
             The Brooklyn Museum stands on land that is part of the unceded, ancestral homeland of the Lenape (Delaware) people.
