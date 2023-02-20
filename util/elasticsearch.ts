@@ -4,7 +4,7 @@ import { indicesMeta } from "@/util/search";
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import * as T from '@elastic/elasticsearch/lib/api/types'
-// import { readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
@@ -12,24 +12,6 @@ const OPTIONS_PAGE_SIZE = 20;
 const TERMS_PAGE_SIZE = 12;
 const SIMILAR_PAGE_SIZE = 24;
 const UNKNOWN_CONSTITUENT = 'Unknown';
-
-/*
-function getClient() {
-  const ca = readFileSync('./secrets/http_ca.crt');
-  const node = `https://localhost:9200`;
-  const clientSettings = {
-    node,
-    auth: {
-      apiKey: 'RkJUcU00WUJxWklLdlp3ZVlqOVY6aG1xc3VNMXVTMUt1MkJPQzNwSzVmQQ=='
-    },
-    tls: {
-      ca,
-      rejectUnauthorized: false
-    }
-  }
-  return new Client(clientSettings);
-}
-*/
 
 interface Document {
   // Elasticsearch types are hosed
@@ -40,31 +22,36 @@ interface Aggregations {
   unique: T.AggregationsTermsAggregateBase<{ key: string }>
 }
 
-export function getClient(): Client {
+export function getClient(): Client | undefined {
+
+  if (process.env.ELASTICSEARCH_USE_CLOUD === 'true') {
+    const id = process.env.ELASTICSEARCH_CLOUD_ID;
+    const username = process.env.ELASTICSEARCH_CLOUD_USERNAME;
+    const password = process.env.ELASTICSEARCH_CLOUD_PASSWORD;
+    if (!id || !username || !password) return undefined;
+    const clientSettings = {
+      cloud: { id },
+      auth: { username, password }
+    }
+    return new Client(clientSettings);
+  }
+
+  const caFile = process.env.ELASTICSEARCH_CA_FILE;
+  const node = `${process.env.ELASTICSEARCH_PROTOCOL}://${process.env.ELASTICSEARCH_HOST}:${process.env.ELASTICSEARCH_PORT}`;
+  const apiKey = process.env.ELASTICSEARCH_API_KEY;
+  if (!caFile || !node || !apiKey) return undefined;
+  const ca = readFileSync(caFile);
   const clientSettings = {
-    cloud: {
-      id: 'elastic-brooklyn-museum:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwOGE1MGVjZDViYzhjM2QwMSRjNmE2M2IwMmE3NDQ0YzU1YWU2YTg3YjI2ZTU5MzZmMg==',
-    },
+    node,
     auth: {
-      username: 'elastic',
-      password: 'pTsgwkbpVyDFUGYgWplDIJsl',
+      apiKey
+    },
+    tls: {
+      ca,
+      rejectUnauthorized: false
     }
   }
   return new Client(clientSettings);
-}
-
-async function countIndex(index, client: Client) {
-  try {
-    const res = await client.count({
-      index,
-      body: {
-        query: { match_all: {} }
-      }
-    });
-    return res?.count;
-  } catch (error) {
-    console.log('countIndex error', error)
-  }
 }
 
 export async function getDocument(index: string, id: number): Promise<ApiResponseDocument> {
@@ -78,6 +65,7 @@ export async function getDocument(index: string, id: number): Promise<ApiRespons
   };
 
   const client = getClient();
+  if (!client) return {};
   const response = await client.search<Document, Aggregations>(esQuery);
   const data = response?.hits?.hits[0]?._source;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
@@ -148,6 +136,7 @@ export async function search(params) {
   }
 
   const client = getClient();
+  if (!client) return {};
   const response: any = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
@@ -260,6 +249,7 @@ export async function searchCollections(params) {
   }
 
   const client = getClient();
+  if (!client) return {};
   const response = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
@@ -350,6 +340,7 @@ export async function terms(query, size:number=TERMS_PAGE_SIZE, client?:Client) 
   }
 
   if (!client) client = getClient();
+  if (!client) return {};
   const response = await client.search<Document, Aggregations>(request)
 
   return response.hits.hits.map(h => h._source)
@@ -404,6 +395,7 @@ async function similarCollectionObjects(document?: any, client?:Client) {
   addShouldTerms(document, esQuery, 'geographicalLocations', 1);
 
   if (!client) client = getClient();
+  if (!client) return {};
   const response = await client.search<Document, Aggregations>(esQuery)
   if (!response?.hits?.hits?.length) {
     return []
