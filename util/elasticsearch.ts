@@ -65,7 +65,7 @@ export async function getDocument(index: string, id: number): Promise<ApiRespons
   };
 
   const client = getClient();
-  if (!client) return {};
+  if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(esQuery);
   const data = response?.hits?.hits[0]?._source;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
@@ -136,7 +136,7 @@ export async function search(params) {
   }
 
   const client = getClient();
-  if (!client) return {};
+  if (client === undefined) return {};
   const response: any = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
@@ -249,7 +249,7 @@ export async function searchCollections(params) {
   }
 
   const client = getClient();
-  if (!client) return {};
+  if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(esQuery);
 
   const options = getResponseOptions(response)
@@ -315,6 +315,7 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
   }
 
   const client = getClient();
+  if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(request)
 
   if (response.aggregations?.[field].buckets) {
@@ -340,7 +341,7 @@ export async function terms(query, size:number=TERMS_PAGE_SIZE, client?:Client) 
   }
 
   if (!client) client = getClient();
-  if (!client) return {};
+  if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(request)
 
   return response.hits.hits.map(h => h._source)
@@ -395,7 +396,7 @@ async function similarCollectionObjects(document?: any, client?:Client) {
   addShouldTerms(document, esQuery, 'geographicalLocations', 1);
 
   if (!client) client = getClient();
-  if (!client) return {};
+  if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(esQuery)
   if (!response?.hits?.hits?.length) {
     return []
