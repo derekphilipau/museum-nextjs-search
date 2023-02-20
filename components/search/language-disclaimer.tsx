@@ -3,8 +3,10 @@ import * as React from "react"
 import { Icons } from "../icons";
 import ObjectContactForm from "@/components/forms/object-contact-form";
 import { Button } from "@/components/ui/button";
+import { getDictionary } from "@/dictionaries/dictionaries";
 
 export function LanguageDisclaimer({ item }) {
+  const dict = getDictionary();
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
@@ -18,7 +20,7 @@ export function LanguageDisclaimer({ item }) {
           </div>
           <div className="ml-3 flex-1 sm:flex sm:items-center sm:justify-between">
             <p className="text-sm">
-              Have a concern, a correction, or something to add?
+              {dict['object.languageDisclaimer.question']}
             </p>
             {
               !isOpen && (
@@ -28,7 +30,7 @@ export function LanguageDisclaimer({ item }) {
                   size="sm"
                   className="px-0 sm:p-3"
                 >
-                  Contact us
+                  {dict['object.languageDisclaimer.contactUs']}
                   <span className="sr-only">Contact Form Toggle</span>
                 </Button>
               )

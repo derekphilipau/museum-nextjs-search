@@ -1,18 +1,18 @@
 import * as React from "react"
 import Link from "next/link"
+import { getDictionary } from "@/dictionaries/dictionaries"
 
 interface DescriptionRowProps {
   name: string,
-  displayName: string,
   value?: any,
   item?: any,
   isLink?: boolean
 }
 
-export function DescriptionRow({ name, displayName, value, item, isLink = false }: DescriptionRowProps) {
-
-  const searchUrl = '/search/collections?'
-  let qs = ''
+export function DescriptionRow({ name, value, item, isLink = false }: DescriptionRowProps) {
+  const dict = getDictionary();
+  const displayName = dict?.[`object.field.${name}`] || 'Unknown field';
+  const searchUrl = '/search/collections?';
 
   let val = value ? value : item[name];
   if (!name || !val || val.length === 0) return null;

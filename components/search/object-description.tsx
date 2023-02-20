@@ -1,9 +1,7 @@
 import * as React from "react"
-import Link from "next/link"
 import { DescriptionRow } from "./description-row";
 
 export function ObjectDescription({ item }) {
-
   if (!item?.id) return null;
 
   const maker = item.primaryConstituent || 'Unknown';
@@ -11,21 +9,21 @@ export function ObjectDescription({ item }) {
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
-        <DescriptionRow name="primaryConstituent" displayName="Maker" value={maker} isLink={true} />
-        <DescriptionRow name="medium" displayName="Medium" item={item} isLink={true} />
-        <DescriptionRow name="geographicalLocations" displayName="Place Made" item={item} isLink={true} />
-        <DescriptionRow name="date" displayName="Dates" item={item} />
-        <DescriptionRow name="dynasty" displayName="Dynasty" item={item} isLink={true} />
-        <DescriptionRow name="period" displayName="Period" item={item} isLink={true} />
-        <DescriptionRow name="dimensions" displayName="Dimensions" item={item} />
-        <DescriptionRow name="signed" displayName="Signature" item={item} />
-        <DescriptionRow name="inscribed" displayName="Inscriptions" item={item} />
-        <DescriptionRow name="collections" displayName="Collections" item={item} isLink={true} />
-        <DescriptionRow name="accessionNumber" displayName="Accession Number" item={item} />
-        <DescriptionRow name="creditLine" displayName="Credit Line" item={item} />
-        <DescriptionRow name="exhibitions" displayName="Exhibitions" item={item} isLink={true} />
-        <DescriptionRow name="museumLocation" displayName="Museum Location" item={item} isLink={true} />
-        <DescriptionRow name="rightsType" displayName="Rights Statement" item={item} />
+        <DescriptionRow name="primaryConstituent" value={maker} isLink={true} />
+        <DescriptionRow name="medium" item={item} isLink={true} />
+        <DescriptionRow name="geographicalLocations" item={item} isLink={true} />
+        <DescriptionRow name="date" item={item} />
+        <DescriptionRow name="dynasty" item={item} isLink={true} />
+        <DescriptionRow name="period" item={item} isLink={true} />
+        <DescriptionRow name="dimensions" item={item} />
+        <DescriptionRow name="signed" item={item} />
+        <DescriptionRow name="inscribed" item={item} />
+        <DescriptionRow name="collections" item={item} isLink={true} />
+        <DescriptionRow name="accessionNumber" item={item} />
+        <DescriptionRow name="creditLine" item={item} />
+        <DescriptionRow name="exhibitions" item={item} isLink={true} />
+        <DescriptionRow name="museumLocation" item={item} isLink={true} />
+        <DescriptionRow name="rightsType" item={item} />
       </dl>
     </div>
   )
