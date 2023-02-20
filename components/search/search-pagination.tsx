@@ -38,7 +38,8 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
       const updatedParams = new URLSearchParams(params);
       if (newPage > 1) updatedParams.set('p', newPage + '');
       else updatedParams.delete('p');
-      router.push(`${pathname}?${updatedParams}`)
+      router.push(`${pathname}?${updatedParams}`);
+      window.scroll(0, 0);
     }
   }
 
@@ -51,7 +52,8 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
       if (value && value != '24') updatedParams.set('size', value);
       else updatedParams.delete('size');
       updatedParams.delete('p');
-      router.push(`${pathname}?${updatedParams}`)
+      router.push(`${pathname}?${updatedParams}`);
+      window.scroll(0, 0);
     }
   }
 
@@ -59,7 +61,7 @@ export function SearchPagination({ index, params, count, p, size, totalPages, is
     setOriginalIsShowFilters(true); // Make sure we remember the most recent value
     const updatedParams = new URLSearchParams(params);
     updatedParams.set('f', 'true');
-    router.push(`${pathname}?${updatedParams}`)
+    router.push(`${pathname}?${updatedParams}`);
   }
 
   useEffect(() => {
