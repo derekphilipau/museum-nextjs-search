@@ -30,7 +30,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
         className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
         onClick={() => buttonClick()}
       >
-        <span className="sr-only">Remove option</span>
+        <span className="sr-only">Remove filter option</span>
         <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
           <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
         </svg>

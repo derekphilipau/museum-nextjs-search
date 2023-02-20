@@ -51,6 +51,7 @@ export function SimilarObjects({ similar }: SimilarObjectsProps) {
               onClick={() => setShowAllSimilar(true)}
               variant="default"
               size="sm"
+              aria-label='Show More'
             >
               {dict['object.showMore']}
             </Button>

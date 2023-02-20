@@ -41,7 +41,7 @@ export default function ObjectContactForm({item}) {
         <ValidationError prefix='Email' field='email' errors={state.errors} />
       </div>
       <div className='mt-6 grid w-full max-w-sm items-center gap-1.5'>
-        <Button type='submit' disabled={state.submitting}>
+        <Button type='submit' aria-label='Submit Form' disabled={state.submitting}>
           {dict['object.contactForm.submit']}
         </Button>
         <ValidationError errors={state.errors} />

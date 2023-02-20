@@ -42,6 +42,7 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
           onClick={() => setMyIsShowFilters(false)}
           variant='ghost'
           size="sm"
+          aria-label='Hide Filters'
         >
           <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
           {dict['search.hideFilters']}

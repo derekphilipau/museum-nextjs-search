@@ -28,6 +28,7 @@ export function SearchIndexButton({ index, params, name, label }: SearchIndexBut
         variant={index === name ? 'outline' : 'ghost'}
         className="text-lg"
         onClick={() => buttonClick()}
+        aria-label={`Search within ${label}`}
       >
         {label}
       </Button>

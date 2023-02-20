@@ -103,7 +103,12 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
       className="w-full space-y-2"
     >
       <CollapsibleTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex w-full items-center justify-between p-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex w-full items-center justify-between p-1"
+          aria-label='Expand search filter'
+          >
           <h4 className="text-sm font-semibold">
             {aggDisplayName}
           </h4>

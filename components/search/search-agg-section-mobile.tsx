@@ -23,6 +23,7 @@ export function SearchAggSectionMobile({ index, params, filters, options }: Sear
           type="button"
           className="flex h-9 w-full items-center justify-between rounded-md bg-transparent p-1 text-sm font-medium transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-transparent dark:text-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-transparent"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label='Show search filters'
         >
           {isOpen ? (
             <div className="flex w-full items-center justify-between p-1 text-sm font-semibold">
