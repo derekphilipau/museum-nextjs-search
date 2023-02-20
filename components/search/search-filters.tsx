@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
-import { indicesMeta } from "@/util/search.js";
+import { indicesMeta } from "@/util/search";
 
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
-import { getBooleanValue } from "@/util/search";
+import { getBooleanValue } from "@/util/various";
 import { SearchAgg } from "@/components/search/search-agg";
 import { getDictionary } from '@/dictionaries/dictionaries';
 

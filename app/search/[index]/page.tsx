@@ -2,7 +2,6 @@ import { ItemCard } from "@/components/search/item-card";
 import { ObjectCard } from "@/components/search/object-card";
 import { TermCard } from "@/components/search/term-card";
 import { SearchPagination } from "@/components/search/search-pagination";
-import { getSearchParamsFromQuery } from "@/util/search.js";
 import { search } from "@/util/elasticsearch";
 import { SearchQueryInput } from "@/components/search/search-query-input";
 import { SearchCheckbox } from "@/components/search/search-checkbox";
@@ -12,20 +11,32 @@ import { SearchAggSectionMobile } from "@/components/search/search-agg-section-m
 import { SearchFilters } from "@/components/search/search-filters";
 import { getDictionary } from '@/dictionaries/dictionaries';
 import type { ApiResponseSearch } from "@/types/apiResponseSearch";
+import { indicesMeta } from "@/util/search";
+import { getBooleanValue } from "@/util/various";
+
 export const dynamic='force-dynamic'; // https://github.com/vercel/next.js/issues/43077
 
 export default async function Page({ params, searchParams }) {
+
   const dict = getDictionary();
-  const cleanParams = getSearchParamsFromQuery(params, searchParams);
-  const index = cleanParams?.index || 'all';
-  const p = cleanParams?.p || 1;
-  const size = cleanParams?.size || 24;
-  const filters = cleanParams?.filters || {};
-  const filterArr = Object.entries(cleanParams?.filters || {});
-  const isShowFilters = cleanParams?.isShowFilters;
-  const hasPhoto = cleanParams?.hasPhoto;
-  const onView = cleanParams?.onView;
-  const isUnrestricted = cleanParams?.isUnrestricted;
+
+  const index = params?.index || 'all';
+  const q = searchParams?.q || '';
+  const p = parseInt(searchParams?.p) || 1;
+  const size = searchParams?.size || '24';
+  const isUnrestricted = getBooleanValue(searchParams?.isUnrestricted);
+  const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
+  const onView = getBooleanValue(searchParams?.onView);
+  const isShowFilters = getBooleanValue(searchParams?.f);
+  const filters = {};
+  if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
+    for (const agg of indicesMeta[index].aggs) {
+      if (searchParams[agg.name]) {
+        filters[agg.name] = searchParams[agg.name] || '';
+      }
+    }  
+  }
+  const filterArr = Object.entries(filters);
 
   // Query Elasticsearch
   const response: ApiResponseSearch = await search({index, ...searchParams});

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 interface SearchFilterTagProps {
   params?: any,
   name: string,
-  value: string
+  value: any
 }
 
 export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
@@ -17,7 +17,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
     const updatedParams = new URLSearchParams(params);
     updatedParams.delete(name);
     updatedParams.delete('p');
-    router.push(`${pathname}?${updatedParams}`)
+    router.push(`${pathname}?${updatedParams}`);
   }
 
   return (

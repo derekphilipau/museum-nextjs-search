@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getBooleanValue } from "@/util/search";
+import { getBooleanValue } from "@/util/various";
 
 interface SearchCheckboxProps {
   params?: any,

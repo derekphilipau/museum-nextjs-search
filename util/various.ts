@@ -27,3 +27,9 @@ export function getCaption(item: CollectionObject, filename:string = ''): string
   caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
   return stripBasicHtml(stripLineBreaks(caption?.trim()));
 }
+
+export function getBooleanValue(x: any) {
+  if (typeof x === 'boolean') return x;
+  if (typeof x === 'string') return x === 'true';
+  return false;
+}

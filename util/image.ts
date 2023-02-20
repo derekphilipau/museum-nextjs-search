@@ -1,5 +1,4 @@
-import type { CollectionObject } from "@/types/collectionObject"
-import { getBooleanValue } from "./search"
+import { getBooleanValue } from "./various"
 
 const IMG_RESTRICTED_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/'
 const IMG_SM_BASE_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size3/'

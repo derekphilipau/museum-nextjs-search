@@ -1,6 +1,6 @@
 'use strict'
 import { Client } from '@elastic/elasticsearch';
-import { indicesMeta } from "@/util/search.js";
+import { indicesMeta } from "@/util/search";
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import * as T from '@elastic/elasticsearch/lib/api/types'

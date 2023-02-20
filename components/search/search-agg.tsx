@@ -12,7 +12,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { getBooleanValue } from "@/util/search";
+import { getBooleanValue } from "@/util/various";
 
 interface SearchAggProps {
   index: string,

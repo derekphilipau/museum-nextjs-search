@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { SearchAgg } from "@/components/search/search-agg"
 import { Icons } from "@/components/icons";
-import { indicesMeta } from "@/util/search.js";
+import { indicesMeta } from "@/util/search";
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchAggSectionMobileProps {
