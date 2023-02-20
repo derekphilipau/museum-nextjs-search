@@ -227,23 +227,22 @@
           }
         }
       },
+      "primaryConstituentDates": {
+        "type": "keyword"
+      },
       "primaryConstituentRole": {
         "type": "keyword"
       },
       "constituents": {
         "type": "text",
         "analyzer": "unaggregatedStandardAnalyzer"
-      },      
+      },
       "collections": {
         "type": "keyword",
         "fields": {
           "search": {
             "type": "text",
             "analyzer": "aggregatedKeywordAnalyzer"
-          },
-          "suggest": {
-            "type": "search_as_you_type",
-            "analyzer": "suggestAnalyzer"
           }
         }
       },
@@ -253,10 +252,6 @@
           "search": {
             "type": "text",
             "analyzer": "aggregatedKeywordAnalyzer"
-          },
-          "suggest": {
-            "type": "search_as_you_type",
-            "analyzer": "suggestAnalyzer"
           }
         }
       },
@@ -266,12 +261,38 @@
           "search": {
             "type": "text",
             "analyzer": "aggregatedKeywordAnalyzer"
-          },
-          "suggest": {
-            "type": "search_as_you_type",
-            "analyzer": "suggestAnalyzer"
           }
         }
+      },
+      "primaryGeographicalLocationContinent": {
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          }
+        }
+      },
+      "primaryGeographicalLocationCountry": {
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          }
+        }
+      },            
+      "primaryGeographicalLocation": {
+        "type": "keyword",
+        "fields": {
+          "search": {
+            "type": "text",
+            "analyzer": "aggregatedKeywordAnalyzer"
+          }
+        }
+      },
+      "primaryGeographicalLocationType": {
+        "type": "keyword"
       }
     }
   }

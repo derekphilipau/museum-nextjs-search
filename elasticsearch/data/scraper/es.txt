@@ -1,5 +1,0 @@
-https://cloud.elastic.co/deployments/8ea4ca13d6824c8b83f901d2245bc150/getting-started
-Username
-elastic
-Password
-Qtek3awhb8SMN9QWt84jDFyW

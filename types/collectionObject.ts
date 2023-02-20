@@ -37,9 +37,14 @@ export interface CollectionObject {
   rightsType?: string;
   labels?: string[];
   primaryConstituent?: string;
+  primaryConstituentDates?: string;
   primaryConstituentRole?: string;
   constituents?: string[];
   collections?: string[];
   exhibitions?: string[];
   geographicalLocations?: string[];
+  primaryGeographicalLocationContinent?: string;
+  primaryGeographicalLocationCountry?: string;
+  primaryGeographicalLocation?: string;
+  primaryGeographicalLocationType?: string;
 }

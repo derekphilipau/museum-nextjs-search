@@ -4,6 +4,7 @@ import { indicesMeta } from "@/util/search";
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import * as T from '@elastic/elasticsearch/lib/api/types'
+// import { readFileSync } from 'fs';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
@@ -170,7 +171,9 @@ export async function searchCollections(params) {
     index, p, size, q,
     isUnrestricted, hasPhoto, onView,
     primaryConstituent, classification, medium, period, dynasty,
-    museumLocation, section, geographicalLocations, exhibitions, collections
+    museumLocation, section, 
+    primaryGeographicalLocationContinent, primaryGeographicalLocationCountry, primaryGeographicalLocation,
+    exhibitions, collections
   } = params;
 
   // Coerce boolean vars
@@ -230,7 +233,9 @@ export async function searchCollections(params) {
   addQueryBoolFilterTerm(esQuery, 'dynasty', dynasty);
   addQueryBoolFilterTerm(esQuery, 'museumLocation', museumLocation);
   addQueryBoolFilterTerm(esQuery, 'section', section);
-  addQueryBoolFilterTerm(esQuery, 'geographicalLocations', geographicalLocations);
+  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocationContinent', primaryGeographicalLocationContinent);
+  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocationCountry', primaryGeographicalLocationCountry);
+  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocation', primaryGeographicalLocation);
   addQueryBoolFilterTerm(esQuery, 'exhibitions', exhibitions);
   addQueryBoolFilterTerm(esQuery, 'collections', collections);
   addQueryBoolFilterTerm(esQuery, 'isUnrestricted', isUnrestricted);

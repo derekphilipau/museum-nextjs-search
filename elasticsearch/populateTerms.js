@@ -1,6 +1,5 @@
-import fs from 'fs/promises';
 import {createWriteStream} from 'fs'
-import {options, importData} from './elasticsearch';
+import {options, importData} from './elasticsearch.js';
 
 const outputPath = "./data/terms.jsonl";
 

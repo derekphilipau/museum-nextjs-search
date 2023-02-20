@@ -53,15 +53,22 @@ export default async function Page({ params }) {
           <ImageViewer item={collectionObject} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
-          <h1 className="mb-3 text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
+          <h1 className="mb-2 text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
             {collectionObject?.title}
           </h1>
           <div className="mb-4 text-neutral-700 dark:text-neutral-400">
             {collectionObject?.date}
           </div>
-          <h2 className="mb-4 text-lg md:text-xl">
+          <h2 className="text-lg md:text-xl">
             {collectionObject?.primaryConstituent || 'Maker Unknown'}
           </h2>
+          {
+            collectionObject?.primaryConstituentDates && (
+              <div className="mb-4 text-sm text-neutral-700 dark:text-neutral-400">
+                {collectionObject?.primaryConstituentDates}
+              </div>  
+            )        
+          }
           <h4 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
             {collectionObject?.collections?.map(
               (collection, i) =>

@@ -86,6 +86,10 @@
         "type": "text",
         "analyzer": "unaggregatedStandardAnalyzer"
       },
+      "constituents": {
+        "type": "text",
+        "analyzer": "unaggregatedStandardAnalyzer"
+      },
       "image": {
         "type": "keyword"
       },

@@ -18,17 +18,15 @@ const snooze = s => new Promise(resolve => setTimeout(resolve, (s * 1000)))
 
 /*
 function getClient() {
-  const node = `${config.get('elasticsearch.protocol')}://${config.get('elasticsearch.host')}:${config.get('elasticsearch.port')}`;
+  const ca = readFileSync('./secrets/http_ca.crt');
+  const node = `https://localhost:9200`;
   const clientSettings = {
     node,
     auth: {
-      username: config.get('elasticsearch.username'),
-      password: config.get('elasticsearch.password')
-    }
-  }
-  if (config.get('elasticsearch.auth') === 'tls') {
-    clientSettings.tls = {
-      ca: readFileSync(certificateFile),
+      apiKey: 'RkJUcU00WUJxWklLdlp3ZVlqOVY6aG1xc3VNMXVTMUt1MkJPQzNwSzVmQQ=='
+    },
+    tls: {
+      ca,
       rejectUnauthorized: false
     }
   }

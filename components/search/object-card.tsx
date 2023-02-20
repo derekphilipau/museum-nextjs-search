@@ -7,6 +7,7 @@ export function ObjectCard({ item }) {
   if (!item) return null;
 
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+
   const href = `/collection/object/${item.id}`;
 
   return (
@@ -37,11 +38,19 @@ export function ObjectCard({ item }) {
           </figure>
         </div>
         <div className="pt-3">
-          <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">{item.title}</h4>
-          <h5 className="mb-1 text-lg text-neutral-900 dark:text-white">{primaryConstituent}</h5>
-          <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
-            {item.date}
-          </p>
+          <h4 className="mb-2 text-xl font-semibold">
+            {item.title}{ item.date ? `, ${item.date}` : ''}
+          </h4>
+          <h5 className="text-lg">
+            {primaryConstituent}
+          </h5>
+          {
+            item.primaryConstituentDates && (
+              <span className="text-sm text-neutral-700 dark:text-neutral-400">
+                {item.primaryConstituentDates}
+              </span>  
+            )        
+          }
         </div>
       </div>
     </Link>

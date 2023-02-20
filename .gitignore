@@ -34,7 +34,4 @@ yarn-error.log*
 
 .contentlayer
 .env
-elasticsearch/data/20221221_102750_object.jsonl
-elasticsearch/data/object_images.csv
-elasticsearch/data/transformed.jsonl
-elasticsearch/data/transformed.jsonl.old
+elasticsearch/data/collections.jsonl
