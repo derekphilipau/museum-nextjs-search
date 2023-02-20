@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label";
 import { ChevronsUpDown, Plus, X } from "lucide-react"
 import { AggOption } from "@/types/aggOption";
 import { Button } from "@/components/ui/button"
@@ -130,13 +131,15 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
                   id={`terms-${aggName}-${i}`}
                   onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   checked={isChecked(option.key)}
+                  aria-labelledby={`terms-label-${aggName}-${i}`}
                 />
-                <label
+                <Label
                   htmlFor={`terms-${aggName}-${i}`}
+                  id={`terms-label-${aggName}-${i}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
-                </label>
+                </Label>
               </div>
             )
         )}
@@ -148,13 +151,15 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
                   id={`terms-${aggName}-${i}`}
                   onCheckedChange={(checked) => checkboxChange(option.key, checked)}
                   checked={isChecked(option.key)}
+                  aria-labelledby={`terms-label-${aggName}-${i}`}
                 />
-                <label
+                <Label
                   htmlFor={`terms-${aggName}-${i}`}
+                  id={`terms-label-${aggName}-${i}`}
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
-                </label>
+                </Label>
               </div>
             )
         )}

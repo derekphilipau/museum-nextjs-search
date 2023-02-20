@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { getBooleanValue } from "@/util/various";
 
 interface SearchCheckboxProps {
@@ -41,13 +42,15 @@ export function SearchCheckbox({ params, name, value, label }: SearchCheckboxPro
         id={name}
         onCheckedChange={(checked) => checkValue(checked)}
         checked={value}
+        aria-labelledby={`label-${name}`}
       />
-      <label
+      <Label
         htmlFor={name}
+        id={`label-${name}`}
         className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       >
         {label}
-      </label>
+      </Label>
     </>
   )
 }
