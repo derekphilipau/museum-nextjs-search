@@ -11,9 +11,9 @@ export function LanguageDisclaimer({ item }) {
 
   return (
     <div
-      className="mt-6 rounded-md bg-neutral-50 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+      className="mt-6 rounded-md bg-neutral-50 dark:bg-neutral-800"
     >
-      <div className="p-4">
+      <div className="p-4 text-neutral-500 dark:text-neutral-400">
         <div className="flex items-center">
           <div className="shrink-0">
             <Icons.info className="h-5 w-5" aria-hidden="true" />

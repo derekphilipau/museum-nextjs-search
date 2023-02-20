@@ -28,33 +28,36 @@ export function SimilarObjects({ similar }: SimilarObjectsProps) {
   if (!similar || similar.length === 0) return null;
 
   return (
-    <section className="container bg-neutral-100 pt-6 pb-8 dark:bg-neutral-800 md:py-8">
-      <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
-        {dict['object.similar']}
-      </h2>
-      <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
+    <div className="bg-neutral-100 dark:bg-neutral-800">
+      <section className="container pt-6 pb-8 md:py-8">
+        <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
+          {dict['object.similar']}
+        </h2>
+        <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
+          {
+            visibleSimilar?.length > 0 && visibleSimilar.map(
+              (item, i) =>
+                item && (
+                  <div className="" key={i}>
+                    <SimilarItemCard item={item} />
+                  </div>
+                )
+            )
+          }
+        </div>
         {
-          visibleSimilar?.length > 0 && visibleSimilar.map(
-            (item, i) =>
-              item && (
-                <div className="" key={i}>
-                  <SimilarItemCard item={item} />
-                </div>
-              )
+          !showAllSimilar && (
+            <Button
+              onClick={() => setShowAllSimilar(true)}
+              variant="default"
+              size="sm"
+            >
+              {dict['object.showMore']}
+            </Button>
           )
         }
-      </div>
-      {
-        !showAllSimilar && (
-          <Button
-            onClick={() => setShowAllSimilar(true)}
-            variant="default"
-            size="sm"
-          >
-            {dict['object.showMore']}
-          </Button>
-        )
-      }
-    </section>
+      </section>
+    </div>
+
   )
 }
