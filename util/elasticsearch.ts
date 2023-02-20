@@ -203,7 +203,7 @@ export async function searchCollections(params) {
         operator: 'and',
         fields: [
           'boostedKeywords^20',
-          'primaryConstituent^4',
+          'constituents^4', // TODO
           'title^2',
           'keywords^2',
           'description',
