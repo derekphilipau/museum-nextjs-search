@@ -25,6 +25,7 @@
   "object.showMore": "Show More",
   "object.languageDisclaimer.question": "Have a concern, a correction, or something to add?",
   "object.languageDisclaimer.contactUs": "Contact us",
+  "object.languageDisclaimer.toggle": "Contact Form Toggle",
   "object.contactForm.description": "Please send us your concerns or corrections about",
   "object.contactForm.email": "Email Address (optional)",
   "object.contactForm.emailPlaceholder": "Email Address",

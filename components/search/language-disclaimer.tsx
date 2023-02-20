@@ -31,7 +31,7 @@ export function LanguageDisclaimer({ item }) {
                   className="px-0 sm:p-3"
                 >
                   {dict['object.languageDisclaimer.contactUs']}
-                  <span className="sr-only">Contact Form Toggle</span>
+                  <span className="sr-only">{dict['object.languageDisclaimer.toggle']}</span>
                 </Button>
               )
             }
