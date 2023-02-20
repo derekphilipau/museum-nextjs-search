@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {similar} from '@/util/elasticsearch'
+import {similarCollectionObjectsById} from '@/util/elasticsearch'
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   try {
     const { id } = req.query
-    const result = await similar(id);
+    const result = await similarCollectionObjectsById(id);
     res.status(200).json(result)
   } catch (error) {
     res.status(500).json({ error })

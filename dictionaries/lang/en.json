@@ -20,5 +20,7 @@
   "search.next": "Next",
   "search.hasPhoto": "Has Photo",
   "search.onView": "On View",
-  "search.openAccess": "Open Access"
+  "search.openAccess": "Open Access",
+  "object.similar": "Similar Objects",
+  "object.showMore": "Show More"
 }

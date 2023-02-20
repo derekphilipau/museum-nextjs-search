@@ -78,7 +78,12 @@ export async function getDocument(index: string, id: number): Promise<ApiRespons
 
   const client = getClient();
   const response = await client.search<Document, Aggregations>(esQuery);
-  return { query: esQuery, data: response?.hits?.hits[0]?._source }
+  const data = response?.hits?.hits[0]?._source;
+  const apiResponse: ApiResponseDocument = { query: esQuery, data };
+  if (index === 'collections') {
+    apiResponse.similar = await similarCollectionObjects(data, client);
+  }
+  return apiResponse;
 }
 
 export async function search(params) {
@@ -324,7 +329,7 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
   }
 }
 
-export async function terms(query, size:number=TERMS_PAGE_SIZE, client:Client|null=null) {
+export async function terms(query, size:number=TERMS_PAGE_SIZE, client?:Client) {
   const request = {
     index: 'terms',
     query: {
@@ -345,10 +350,14 @@ export async function terms(query, size:number=TERMS_PAGE_SIZE, client:Client|nu
   return response.hits.hits.map(h => h._source)
 }
 
-export async function similar(id) {
+export async function similarCollectionObjectsById(id) {
   const docResponse = await getDocument('collections', id);
   const document = docResponse?.data;
-  if (!document) return;
+  if (document) return similarCollectionObjects(document)
+}
+
+async function similarCollectionObjects(document?: any, client?:Client) {
+  if (!document || !document.id) return [];
 
   const esQuery = {
     index: 'collections',
@@ -374,23 +383,22 @@ export async function similar(id) {
     document.primaryConstituent
     && document.primaryConstituent !== UNKNOWN_CONSTITUENT
   ) {
-    addShouldTerms(document, esQuery, 'primaryConstituent', 4)
+    addShouldTerms(document, esQuery, 'primaryConstituent', 4);
   }
-
   //addShouldTerms(esQuery, 'style', document.style, 3.5)
   //addShouldTerms(esQuery, 'movement', document.movement, 3)
   //addShouldTerms(esQuery, 'culture', document.culture, 3)
-  addShouldTerms(document, esQuery, 'dynasty', 2)
+  addShouldTerms(document, esQuery, 'dynasty', 2);
   //addShouldTerms(esQuery, 'reign', document.reign, 2)
-  addShouldTerms(document, esQuery, 'period', 2)
-  addShouldTerms(document, esQuery, 'classification', 1.5)
-  addShouldTerms(document, esQuery, 'medium', 1)
-  addShouldTerms(document, esQuery, 'collections', 1)
+  addShouldTerms(document, esQuery, 'period', 2);
+  addShouldTerms(document, esQuery, 'classification', 1.5);
+  addShouldTerms(document, esQuery, 'medium', 1);
+  addShouldTerms(document, esQuery, 'collections', 1);
   //addShouldTerms(esQuery, 'artistRole', document, 1)
-  addShouldTerms(document, esQuery, 'exhibitions', 1)
-  addShouldTerms(document, esQuery, 'geographicalLocations', 0.5)
+  addShouldTerms(document, esQuery, 'exhibitions', 1);
+  addShouldTerms(document, esQuery, 'geographicalLocations', 1);
 
-  const client = getClient();
+  if (!client) client = getClient();
   const response = await client.search<Document, Aggregations>(esQuery)
   if (!response?.hits?.hits?.length) {
     return []
