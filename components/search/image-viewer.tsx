@@ -115,7 +115,7 @@ export function ImageViewer({ item }) {
                         </figcaption>
                       </figure>
                       {isCopyrightRestricted && (
-                        <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-4 whitespace-normal break-all text-xs italic text-neutral-500 dark:text-neutral-400">
                           This image is presented as a &quot;thumbnail&quot; because it is protected by copyright.
                           The Brooklyn Museum respects the rights of artists who retain the copyright to their work
                         </p>
