@@ -11,7 +11,9 @@ export function ObjectDescription({ item }) {
       <dl className="divide-y divide-gray-200">
         <DescriptionRow name="primaryConstituent" value={maker} isLink={true} />
         <DescriptionRow name="medium" item={item} isLink={true} />
+        {/*
         <DescriptionRow name="geographicalLocations" item={item} isLink={true} />
+        */}
         <DescriptionRow name="date" item={item} />
         <DescriptionRow name="dynasty" item={item} isLink={true} />
         <DescriptionRow name="period" item={item} isLink={true} />
@@ -25,6 +27,9 @@ export function ObjectDescription({ item }) {
         <DescriptionRow name="museumLocation" item={item} isLink={true} />
         <DescriptionRow name="rightsType" item={item} />
       </dl>
+      <pre>
+        {item?.geographicalLocations}
+      </pre>
     </div>
   )
 }

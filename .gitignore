@@ -34,4 +34,6 @@ yarn-error.log*
 
 .contentlayer
 .env
-elasticsearch/data/collections.jsonl
+
+# data files too big
+data/collections.jsonl

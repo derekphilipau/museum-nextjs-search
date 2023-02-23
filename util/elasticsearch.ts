@@ -1,6 +1,6 @@
 'use strict'
 import { Client } from '@elastic/elasticsearch';
-import { indicesMeta } from "@/util/search";
+import { indicesMeta } from "./search";
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import * as T from '@elastic/elasticsearch/lib/api/types'
@@ -393,7 +393,7 @@ async function similarCollectionObjects(document?: any, client?:Client) {
   addShouldTerms(document, esQuery, 'collections', 1);
   //addShouldTerms(esQuery, 'artistRole', document, 1)
   addShouldTerms(document, esQuery, 'exhibitions', 1);
-  addShouldTerms(document, esQuery, 'geographicalLocations', 1);
+  addShouldTerms(document, esQuery, 'primaryGeographicalLocation', 1);
 
   if (!client) client = getClient();
   if (client === undefined) return {};

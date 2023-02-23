@@ -47,6 +47,8 @@ export default async function Page({ params, searchParams }) {
   const count = response?.metadata?.count || 0;
   const totalPages = response?.metadata?.pages || 0;
 
+//  console.log('yyyy ', items)
+
   return (
     <section className="container pt-4 md:pt-6">
       <div className="flex flex-wrap gap-x-2 pb-2">

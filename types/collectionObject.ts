@@ -42,7 +42,7 @@ export interface CollectionObject {
   constituents?: string[];
   collections?: string[];
   exhibitions?: string[];
-  geographicalLocations?: string[];
+  geographicalLocations?: any[];
   primaryGeographicalLocationContinent?: string;
   primaryGeographicalLocationCountry?: string;
   primaryGeographicalLocation?: string;

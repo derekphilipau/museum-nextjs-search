@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "preview": "next build && next start"
+    "preview": "next build && next start",
+    "import-data": "ts-node --compiler-options {\"module\":\"CommonJS\"} ./importElasticsearchData.ts"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.6.0",
@@ -69,6 +70,7 @@
     "postcss": "^8.4.14",
     "prettier": "^2.7.1",
     "tailwindcss": "^3.1.7",
+    "ts-node": "^10.9.1",
     "typescript": "^4.5.3"
   }
 }

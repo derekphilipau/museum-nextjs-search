@@ -3,6 +3,9 @@ import { NONE_IMG } from '@/util/image';
 import Image from 'next/image'
 
 export function ItemCard({ item }) {
+  console.log('YYY', item)
+
+  if (!item || !item.url) return null;
 
   return (
     <Link href={item.url}>
