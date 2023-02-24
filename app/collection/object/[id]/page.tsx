@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { getDocument } from '@/util/elasticsearch';
+import { getDocument } from '@/util/elasticsearch/search';
 import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import { getSchemaVisualArtworkJson } from '@/util/schema';
 import { getCaption } from '@/util/various';

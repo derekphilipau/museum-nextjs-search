@@ -1,6 +1,6 @@
 import { loadEnvConfig } from '@next/env';
 
-import { importData } from './util/elasticsearchImport';
+import { importData } from './util/elasticsearch/import';
 
 const collectionsDataFile = './data/collections.jsonl';
 const contentDataFile = './data/content.jsonl';

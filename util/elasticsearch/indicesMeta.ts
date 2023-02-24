@@ -1,4 +1,14 @@
-export const indicesMeta = {
+interface IndexMeta {
+  aggs: {
+    name: string;
+    displayName: string;
+  }[];
+}
+interface IndicesMeta {
+  [index: string]: IndexMeta;
+}
+
+export const indicesMeta: IndicesMeta = {
   collections: {
     aggs: [
       { name: 'primaryConstituent', displayName: 'Maker' },

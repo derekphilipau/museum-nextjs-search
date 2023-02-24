@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { indicesMeta } from '@/util/search';
+import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 
 import { Icons } from '@/components/icons';
 import { SearchAgg } from '@/components/search/search-agg';

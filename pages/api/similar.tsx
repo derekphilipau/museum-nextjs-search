@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { similarCollectionObjectsById } from '@/util/elasticsearch';
+import { similarCollectionObjectsById } from '@/util/elasticsearch/search';
 
 export default async function handler(
   req: NextApiRequest,

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { options } from '@/util/elasticsearch';
+import { options } from '@/util/elasticsearch/search';
 
 /*
 type ResponseData = {

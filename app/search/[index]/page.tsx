@@ -1,6 +1,6 @@
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { search } from '@/util/elasticsearch';
-import { indicesMeta } from '@/util/search';
+import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
+import { search } from '@/util/elasticsearch/search';
 import { getBooleanValue } from '@/util/various';
 
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';

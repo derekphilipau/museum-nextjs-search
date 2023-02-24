@@ -1,12 +1,12 @@
 'use strict';
 
 import { readFileSync } from 'fs';
+import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
-import { indicesMeta } from './search';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;

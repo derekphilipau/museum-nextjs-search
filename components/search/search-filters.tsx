@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { indicesMeta } from '@/util/search';
+import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { getBooleanValue } from '@/util/various';
 
 import { Icons } from '@/components/icons';
