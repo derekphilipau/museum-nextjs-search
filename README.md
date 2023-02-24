@@ -4,8 +4,7 @@ Powerful services & frameworks like [Elasticsearch](https://www.elastic.co/) & [
 
 ## Demo
 
-This project has been deployed on Vercel at https://museum-nextjs-search.vercel.app/
-
+This project has been deployed on Vercel at https://bkm-next-search.vercel.app/ or https://museum-nextjs-search.vercel.app/
 However, my Elasticsearch trial is running out and the demo will probably be dead by the time you read this.
 
 ## Dataset
@@ -32,14 +31,6 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 - [Tailwind CSS](https://tailwindcss.com/)
 - [next-themes](https://github.com/pacocoursey/next-themes) dark/light modes
 - [@next/font](https://nextjs.org/docs/api-reference/next/font) font loading
-
-Light mode example:
-
-![Light Mode Screenshot](./doc/img/ui_light.jpg)
-
-Dark mode example:
-
-![Dark Mode Screenshot](./doc/img/ui_dark.jpg)
 
 ## Adopt it yourself
 
@@ -96,3 +87,17 @@ The import process will take some time, as it inserts 100 documents at a time us
 ## License
 
 Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+
+## Screenshots
+
+Light mode example:
+
+![Light Mode Screenshot](./doc/img/ui_light.jpg)
+
+Dark mode example:
+
+![Dark Mode Screenshot](./doc/img/ui_dark.jpg)
+
+Object page example:
+
+![Object page sample](./doc/img/ui_object_view.jpg)
