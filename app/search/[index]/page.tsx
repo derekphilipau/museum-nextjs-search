@@ -30,9 +30,9 @@ export default async function Page({ params, searchParams }) {
   const isShowFilters = getBooleanValue(searchParams?.f);
   const filters = {};
   if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
-    for (const agg of indicesMeta[index].aggs) {
-      if (searchParams[agg.name]) {
-        filters[agg.name] = searchParams[agg.name] || '';
+    for (const aggName of indicesMeta[index].aggs) {
+      if (searchParams[aggName]) {
+        filters[aggName] = searchParams[aggName] || '';
       }
     }
   }

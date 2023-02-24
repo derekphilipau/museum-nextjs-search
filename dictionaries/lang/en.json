@@ -45,5 +45,17 @@
   "object.field.creditLine": "Credit Line",
   "object.field.exhibitions": "Exhibitions",
   "object.field.museumLocation": "Museum Location",
-  "object.field.rightsType": "Rights Statement"
+  "object.field.rightsType": "Rights Statement",
+  "index.collections.agg.primaryConstituent": "Maker/Artist",
+  "index.collections.agg.classification": "Classification",
+  "index.collections.agg.medium": "Medium",
+  "index.collections.agg.collections": "Collection",
+  "index.collections.agg.period": "Period",
+  "index.collections.agg.dynasty": "Dynasty",
+  "index.collections.agg.primaryGeographicalLocationContinent": "Continent",
+  "index.collections.agg.primaryGeographicalLocationCountry": "Country",
+  "index.collections.agg.primaryGeographicalLocation": "Location",
+  "index.collections.agg.museumLocation": "Museum Location",
+  "index.collections.agg.exhibitions": "Exhibitions",
+  "index.collections.agg.section": "Section"
 }

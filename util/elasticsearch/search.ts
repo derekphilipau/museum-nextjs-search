@@ -253,10 +253,10 @@ export async function searchCollections(params) {
 
   if (indicesMeta[index]?.aggs?.length > 0) {
     const aggs = {};
-    for (const agg of indicesMeta[index].aggs) {
-      aggs[agg.name] = {
+    for (const aggName of indicesMeta[index].aggs) {
+      aggs[aggName] = {
         terms: {
-          field: agg.name,
+          field: aggName,
           size: SEARCH_AGG_SIZE,
         },
       };

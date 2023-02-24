@@ -1,31 +1,40 @@
-interface IndexMeta {
-  aggs: {
-    name: string;
-    displayName: string;
-  }[];
-}
+/**
+ * Metadata for each index.
+ */
+
+/**
+ * The metadata for each index.
+ *
+ * @property [index] - The name of the index.
+ * @property [index].aggs - The aggregations that are available for this index.
+ */
 interface IndicesMeta {
-  [index: string]: IndexMeta;
+  [index: string]: {
+    aggs: string[];
+  };
 }
 
+/**
+ * The metadata for each index.
+ *
+ * @property collections - The metadata for the collections index.
+ * @property content - The metadata for the content index.
+ */
 export const indicesMeta: IndicesMeta = {
   collections: {
     aggs: [
-      { name: 'primaryConstituent', displayName: 'Maker' },
-      { name: 'classification', displayName: 'Classification' },
-      { name: 'medium', displayName: 'Medium' },
-      { name: 'collections', displayName: 'Collection' },
-      { name: 'period', displayName: 'Period' },
-      { name: 'dynasty', displayName: 'Dynasty' },
-      {
-        name: 'primaryGeographicalLocationContinent',
-        displayName: 'Continent',
-      },
-      { name: 'primaryGeographicalLocationCountry', displayName: 'Country' },
-      { name: 'primaryGeographicalLocation', displayName: 'Location' },
-      { name: 'museumLocation', displayName: 'Museum Location' },
-      { name: 'exhibitions', displayName: 'Exhibitions' },
-      { name: 'section', displayName: 'Section' },
+      'primaryConstituent',
+      'classification',
+      'medium',
+      'collections',
+      'period',
+      'dynasty',
+      'primaryGeographicalLocationContinent',
+      'primaryGeographicalLocationCountry',
+      'primaryGeographicalLocation',
+      'museumLocation',
+      'exhibitions',
+      'section',
     ],
   },
   content: {

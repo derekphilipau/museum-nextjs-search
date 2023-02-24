@@ -58,16 +58,16 @@ export function SearchFilters({
         </Button>
       </div>
       {indicesMeta.collections?.aggs?.map(
-        (agg, i) =>
-          agg &&
-          options[agg.name]?.length > 0 && (
+        (aggName, i) =>
+          aggName &&
+          options[aggName]?.length > 0 && (
             <SearchAgg
               index={index}
               params={params}
               key={i}
-              aggDisplayName={agg?.displayName}
-              aggName={agg?.name}
-              options={options[agg.name]}
+              aggDisplayName={dict[`index.collections.agg.${aggName}`]}
+              aggName={aggName}
+              options={options[aggName]}
               filters={filters}
             />
           )
