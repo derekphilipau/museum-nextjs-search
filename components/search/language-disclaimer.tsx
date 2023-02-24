@@ -7,7 +7,7 @@ import ObjectContactForm from '@/components/forms/object-contact-form';
 import { Button } from '@/components/ui/button';
 import { Icons } from '../icons';
 
-export function LanguageDisclaimer({ item }) {
+export function LanguageDisclaimer({ item, formId }) {
   const dict = getDictionary();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -41,7 +41,7 @@ export function LanguageDisclaimer({ item }) {
       </div>
       {isOpen && (
         <div className="p-4">
-          <ObjectContactForm item={item} />
+          <ObjectContactForm item={item} formId={formId} />
         </div>
       )}
     </div>

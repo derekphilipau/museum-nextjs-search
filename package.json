@@ -44,7 +44,7 @@
     "embla-carousel-react": "^7.0.9",
     "html-entities": "^2.3.3",
     "lucide-react": "0.105.0-alpha.4",
-    "next": "^13.1.7-canary.21",
+    "next": "^13.2.1-canary.0",
     "next-themes": "npm:@wits/next-themes@^0.2.16",
     "openseadragon": "^4.0.0",
     "react": "^18.2.0",

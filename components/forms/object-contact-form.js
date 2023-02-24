@@ -7,9 +7,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-export default function ObjectContactForm({ item }) {
+export default function ObjectContactForm({ item, formId }) {
   const dict = getDictionary();
-  const [state, handleSubmit] = useForm('mwkjldaw');
+  const [state, handleSubmit] = useForm(formId);
 
   if (state.succeeded) {
     return (

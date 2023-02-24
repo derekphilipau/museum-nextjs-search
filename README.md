@@ -48,6 +48,8 @@ Once you have a running Elasticsearch service, you can add the connection detail
 
 For local development, add a local `.env.local` file in the root directory. If `ELASTICSEARCH_USE_CLOUD` is "true", the Elastic Cloud vars will be used, otherwise the \_HOST, \_PROTOCOL, \_PORT, \_CA_FILE, and \_API_KEY vars will be used.
 
+On [Formspree](https://formspree.io/) you should set up a basic contact form and enter the `FORMSPREE_FORM_ID` env variable.
+
 For cloud deployments (for example on Vercel), add the same variables to the Environment Variables of your deployment.
 
 ```
@@ -60,6 +62,7 @@ ELASTICSEARCH_PROTOCOL=https
 ELASTICSEARCH_PORT=9200
 ELASTICSEARCH_CA_FILE=./secrets/http_ca.crt
 ELASTICSEARCH_API_KEY=DssaSLfdsFKJidsljfakslfjfLIJEWLiMkJPQzNwSzVmQQ==
+FORMSPREE_FORM_ID=mskbksar
 ```
 
 ### Download & Install

@@ -92,7 +92,10 @@ export default async function Page({ params }) {
             <ObjectDescription item={collectionObject} />
           </div>
           <div>
-            <LanguageDisclaimer item={collectionObject} />
+            <LanguageDisclaimer
+              item={collectionObject}
+              formId={process.env.FORMSPREE_FORM_ID}
+            />
           </div>
         </div>
       </section>
