@@ -1,10 +1,10 @@
-# bkm-next-search
+# museum-nextjs-search
 
 Powerful services & frameworks like [Elasticsearch](https://www.elastic.co/) & [Next.js](https://nextjs.org/) make it possible for museums to easily build performant, responsive and accessible faceted searches for their online collections.
 
 ## Demo
 
-This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
+This project has been deployed on Vercel at https://museum-nextjs-search.vercel.app/
 
 However, my Elasticsearch trial is running out and the demo will probably be dead by the time you read this.
 

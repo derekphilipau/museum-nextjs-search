@@ -1,5 +1,5 @@
 {
-  "name": "bkm-next-search",
+  "name": "museum-nextjs-search",
   "version": "0.0.1",
   "scripts": {
     "dev": "next dev",
