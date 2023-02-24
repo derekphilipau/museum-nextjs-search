@@ -1,23 +1,23 @@
-import { ItemCard } from "@/components/search/item-card";
-import { ObjectCard } from "@/components/search/object-card";
-import { TermCard } from "@/components/search/term-card";
-import { SearchPagination } from "@/components/search/search-pagination";
-import { search } from "@/util/elasticsearch";
-import { SearchQueryInput } from "@/components/search/search-query-input";
-import { SearchCheckbox } from "@/components/search/search-checkbox";
-import { SearchIndexButton } from "@/components/search/search-index-button";
-import { SearchFilterTag } from "@/components/search/search-filter-tag";
-import { SearchAggSectionMobile } from "@/components/search/search-agg-section-mobile";
-import { SearchFilters } from "@/components/search/search-filters";
 import { getDictionary } from '@/dictionaries/dictionaries';
-import type { ApiResponseSearch } from "@/types/apiResponseSearch";
-import { indicesMeta } from "@/util/search";
-import { getBooleanValue } from "@/util/various";
+import { search } from '@/util/elasticsearch';
+import { indicesMeta } from '@/util/search';
+import { getBooleanValue } from '@/util/various';
 
-export const dynamic='force-dynamic'; // https://github.com/vercel/next.js/issues/43077
+import type { ApiResponseSearch } from '@/types/apiResponseSearch';
+import { ItemCard } from '@/components/search/item-card';
+import { ObjectCard } from '@/components/search/object-card';
+import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
+import { SearchCheckbox } from '@/components/search/search-checkbox';
+import { SearchFilterTag } from '@/components/search/search-filter-tag';
+import { SearchFilters } from '@/components/search/search-filters';
+import { SearchIndexButton } from '@/components/search/search-index-button';
+import { SearchPagination } from '@/components/search/search-pagination';
+import { SearchQueryInput } from '@/components/search/search-query-input';
+import { TermCard } from '@/components/search/term-card';
+
+export const dynamic = 'force-dynamic'; // https://github.com/vercel/next.js/issues/43077
 
 export default async function Page({ params, searchParams }) {
-
   const dict = getDictionary();
 
   const index = params?.index || 'all';
@@ -34,12 +34,12 @@ export default async function Page({ params, searchParams }) {
       if (searchParams[agg.name]) {
         filters[agg.name] = searchParams[agg.name] || '';
       }
-    }  
+    }
   }
   const filterArr = Object.entries(filters);
 
   // Query Elasticsearch
-  const response: ApiResponseSearch = await search({index, ...searchParams});
+  const response: ApiResponseSearch = await search({ index, ...searchParams });
   const items = response?.data || [];
   const terms = response?.terms || [];
   const apiError = response?.error || '';
@@ -47,54 +47,96 @@ export default async function Page({ params, searchParams }) {
   const count = response?.metadata?.count || 0;
   const totalPages = response?.metadata?.pages || 0;
 
-//  console.log('yyyy ', items)
+  //  console.log('yyyy ', items)
 
   return (
     <section className="container pt-4 md:pt-6">
       <div className="flex flex-wrap gap-x-2 pb-2">
-        <SearchIndexButton index={index} params={searchParams} name='all' label='All' />
-        <SearchIndexButton index={index} params={searchParams} name='content' label='Pages' />
-        <SearchIndexButton index={index} params={searchParams} name='collections' label='Collection' />
+        <SearchIndexButton
+          index={index}
+          params={searchParams}
+          name="all"
+          label="All"
+        />
+        <SearchIndexButton
+          index={index}
+          params={searchParams}
+          name="content"
+          label="Pages"
+        />
+        <SearchIndexButton
+          index={index}
+          params={searchParams}
+          name="collections"
+          label="Collection"
+        />
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4">
         <div className="grow">
           <SearchQueryInput params={searchParams} />
         </div>
-        {
-          index === 'collections' && (
-            <div className="flex flex-wrap gap-x-4">
-              <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='hasPhoto' value={hasPhoto} label={dict['search.hasPhoto']} />
-              </div>
-              <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='onView' value={onView} label={dict['search.onView']} />
-              </div>
-              <div className="flex items-center space-x-2">
-                <SearchCheckbox params={searchParams} name='isUnrestricted' value={isUnrestricted} label={dict['search.openAccess']} />
-              </div>
+        {index === 'collections' && (
+          <div className="flex flex-wrap gap-x-4">
+            <div className="flex items-center space-x-2">
+              <SearchCheckbox
+                params={searchParams}
+                name="hasPhoto"
+                value={hasPhoto}
+                label={dict['search.hasPhoto']}
+              />
             </div>
-          )
-        }
-      </div>
-      <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
-        {
-          index === 'collections' && (
-            <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-              <SearchAggSectionMobile index={index} params={searchParams} filters={filters} options={options} />
+            <div className="flex items-center space-x-2">
+              <SearchCheckbox
+                params={searchParams}
+                name="onView"
+                value={onView}
+                label={dict['search.onView']}
+              />
             </div>
-          )
-        }
-        {isShowFilters && (
-          <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
-            <SearchFilters index={index} params={searchParams} options={options} filters={filters} />
+            <div className="flex items-center space-x-2">
+              <SearchCheckbox
+                params={searchParams}
+                name="isUnrestricted"
+                value={isUnrestricted}
+                label={dict['search.openAccess']}
+              />
+            </div>
           </div>
         )}
-        <div className={isShowFilters ? 'sm:col-span-2 md:col-span-3' : 'sm:col-span-3 md:col-span-4'}>
-          {apiError?.length > 0 &&
+      </div>
+      <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
+        {index === 'collections' && (
+          <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
+            <SearchAggSectionMobile
+              index={index}
+              params={searchParams}
+              filters={filters}
+              options={options}
+            />
+          </div>
+        )}
+        {isShowFilters && (
+          <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
+            <SearchFilters
+              index={index}
+              params={searchParams}
+              options={options}
+              filters={filters}
+            />
+          </div>
+        )}
+        <div
+          className={
+            isShowFilters
+              ? 'sm:col-span-2 md:col-span-3'
+              : 'sm:col-span-3 md:col-span-4'
+          }
+        >
+          {apiError?.length > 0 && (
             <h3 className="mb-6 text-lg font-extrabold leading-tight tracking-tighter text-red-800">
               {apiError}
             </h3>
-          }
+          )}
 
           <SearchPagination
             index={index}
@@ -104,62 +146,56 @@ export default async function Page({ params, searchParams }) {
             size={size}
             totalPages={totalPages}
             isShowFilters={isShowFilters}
-            />
+          />
 
           {filterArr?.length > 0 && (
             <div className="flex flex-wrap gap-x-2 pt-3">
-              {
-                filterArr?.length > 0 && filterArr.map(
+              {filterArr?.length > 0 &&
+                filterArr.map(
                   (filter, i) =>
                     filter && (
-                      <SearchFilterTag key={i} params={searchParams} name={filter[0]} value={filter[1]} />
+                      <SearchFilterTag
+                        key={i}
+                        params={searchParams}
+                        name={filter[0]}
+                        value={filter[1]}
+                      />
                     )
-                )
-              }
+                )}
             </div>
           )}
-          {
-            terms?.length > 0 && (
-              <>
-                <h4 className="mt-4 mb-2 text-lg text-neutral-900 dark:text-white">Did you mean:</h4>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
-
-                  {
-                    terms?.length > 0 && terms.map(
-                      (term, i) =>
-                        term && (
-                          <TermCard key={i} term={term} />
-                        )
-                    )
-                  }
-                </div>
-              </>
-            )
-          }
+          {terms?.length > 0 && (
+            <>
+              <h4 className="mt-4 mb-2 text-lg text-neutral-900 dark:text-white">
+                Did you mean:
+              </h4>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
+                {terms?.length > 0 &&
+                  terms.map(
+                    (term, i) => term && <TermCard key={i} term={term} />
+                  )}
+              </div>
+            </>
+          )}
           <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
-            {
-              items?.length > 0 && items.map(
-                (item : any, i) =>
+            {items?.length > 0 &&
+              items.map(
+                (item: any, i) =>
                   item && (
                     <div className="" key={i}>
-                      {
-                        item.type === 'object' ? (
-                          <ObjectCard item={item} />
-                        ) : (
-                          <ItemCard item={item} />
-                        )
-                      }
+                      {item.type === 'object' ? (
+                        <ObjectCard item={item} />
+                      ) : (
+                        <ItemCard item={item} />
+                      )}
                     </div>
                   )
-              )
-            }
-            {
-              !(items?.length > 0) && (
-                <h3 className="my-10 mb-4 text-lg md:text-xl">
-                  Sorry, we couldn’t find any results matching your criteria.
-                </h3>
-              )
-            }
+              )}
+            {!(items?.length > 0) && (
+              <h3 className="my-10 mb-4 text-lg md:text-xl">
+                Sorry, we couldn’t find any results matching your criteria.
+              </h3>
+            )}
           </div>
           <SearchPagination
             index={index}
@@ -173,5 +209,5 @@ export default async function Page({ params, searchParams }) {
         </div>
       </div>
     </section>
-  )
+  );
 }

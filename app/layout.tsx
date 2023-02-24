@@ -1,15 +1,16 @@
-import { SiteHeader } from "@/components/layout/site-header"
-import { Footer } from "@/components/layout/footer"
-import { Providers } from "./layoutProviders";
 import { Inter } from '@next/font/google';
-import './globals.css'
+
+import { Footer } from '@/components/layout/footer';
+import { SiteHeader } from '@/components/layout/site-header';
+import { Providers } from './layoutProviders';
+import './globals.css';
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
   subsets: ['latin'],
-  variable: "--font-sans",
+  variable: '--font-sans',
   display: 'swap',
-})
+});
 
 export const metadata = {
   title: {
@@ -26,17 +27,16 @@ export const metadata = {
       {
         url: '/favicon.ico',
         media: '(prefers-color-scheme: dark)',
-      }
+      },
     ],
   },
-}
+};
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       {/*
@@ -52,5 +52,5 @@ export default async function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

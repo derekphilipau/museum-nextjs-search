@@ -6,7 +6,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'd1lfxha3ugu3d4.cloudfront.net'
+        hostname: 'd1lfxha3ugu3d4.cloudfront.net',
       },
     ],
   },
@@ -14,11 +14,11 @@ const nextConfig = {
     appDir: true,
     fontLoaders: [
       {
-        loader: "@next/font/google",
-        options: { subsets: ["latin"] },
+        loader: '@next/font/google',
+        options: { subsets: ['latin'] },
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

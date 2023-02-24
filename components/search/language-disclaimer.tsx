@@ -1,18 +1,18 @@
-"use client"
-import * as React from "react"
-import { Icons } from "../icons";
-import ObjectContactForm from "@/components/forms/object-contact-form";
-import { Button } from "@/components/ui/button";
-import { getDictionary } from "@/dictionaries/dictionaries";
+'use client';
+
+import * as React from 'react';
+import { getDictionary } from '@/dictionaries/dictionaries';
+
+import ObjectContactForm from '@/components/forms/object-contact-form';
+import { Button } from '@/components/ui/button';
+import { Icons } from '../icons';
 
 export function LanguageDisclaimer({ item }) {
   const dict = getDictionary();
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div
-      className="mt-6 rounded-md bg-neutral-50 dark:bg-neutral-800"
-    >
+    <div className="mt-6 rounded-md bg-neutral-50 dark:bg-neutral-800">
       <div className="p-4 text-neutral-500 dark:text-neutral-400">
         <div className="flex items-center">
           <div className="shrink-0">
@@ -22,30 +22,28 @@ export function LanguageDisclaimer({ item }) {
             <p className="text-sm">
               {dict['object.languageDisclaimer.question']}
             </p>
-            {
-              !isOpen && (
-                <Button
-                  onClick={() => setIsOpen(true)}
-                  variant="ghost"
-                  size="sm"
-                  className="px-0 sm:p-3"
-                  aria-label='Display contact form'
-                >
-                  {dict['object.languageDisclaimer.contactUs']}
-                  <span className="sr-only">{dict['object.languageDisclaimer.toggle']}</span>
-                </Button>
-              )
-            }
+            {!isOpen && (
+              <Button
+                onClick={() => setIsOpen(true)}
+                variant="ghost"
+                size="sm"
+                className="px-0 sm:p-3"
+                aria-label="Display contact form"
+              >
+                {dict['object.languageDisclaimer.contactUs']}
+                <span className="sr-only">
+                  {dict['object.languageDisclaimer.toggle']}
+                </span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
-      {
-        isOpen && (
-          <div className="p-4">
-            <ObjectContactForm item={item} />
-          </div>
-        )
-      }
+      {isOpen && (
+        <div className="p-4">
+          <ObjectContactForm item={item} />
+        </div>
+      )}
     </div>
-  )
+  );
 }

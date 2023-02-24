@@ -1,11 +1,11 @@
-"use client"
-import { useRouter } from 'next/navigation';
-import { usePathname } from "next/navigation";
+'use client';
+
+import { usePathname, useRouter } from 'next/navigation';
 
 interface SearchFilterTagProps {
-  params?: any,
-  name: string,
-  value: any
+  params?: any;
+  name: string;
+  value: any;
 }
 
 export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
@@ -13,7 +13,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   const pathname = usePathname();
 
   function buttonClick() {
-    console.log('remove filter: ' + name + ' value: ' + value)
+    console.log('remove filter: ' + name + ' value: ' + value);
     const updatedParams = new URLSearchParams(params);
     updatedParams.delete(name);
     updatedParams.delete('p');
@@ -21,9 +21,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   }
 
   return (
-    <span
-      className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
-    >
+    <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
       {value}
       <button
         type="button"
@@ -31,10 +29,15 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
         onClick={() => buttonClick()}
       >
         <span className="sr-only">Remove filter option</span>
-        <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+        <svg
+          className="h-2 w-2"
+          stroke="currentColor"
+          fill="none"
+          viewBox="0 0 8 8"
+        >
           <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
         </svg>
       </button>
     </span>
-  )
+  );
 }

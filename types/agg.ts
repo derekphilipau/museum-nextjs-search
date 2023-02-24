@@ -1,7 +1,7 @@
-import { AggOption } from "./aggOption"
+import { AggOption } from './aggOption';
 
 export interface Agg {
-  name: string
-  displayName: string
-  options?: Array<AggOption>
+  name: string;
+  displayName: string;
+  options?: Array<AggOption>;
 }

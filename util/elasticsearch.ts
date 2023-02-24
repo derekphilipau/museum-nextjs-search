@@ -1,10 +1,12 @@
-'use strict'
+'use strict';
+
+import { readFileSync } from 'fs';
 import { Client } from '@elastic/elasticsearch';
-import { indicesMeta } from "./search";
+import * as T from '@elastic/elasticsearch/lib/api/types';
+
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
-import * as T from '@elastic/elasticsearch/lib/api/types'
-import { readFileSync } from 'fs';
+import { indicesMeta } from './search';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24;
 const SEARCH_AGG_SIZE = 20;
@@ -19,11 +21,10 @@ interface Document {
 
 interface Aggregations {
   // Elasticsearch types are hosed
-  unique: T.AggregationsTermsAggregateBase<{ key: string }>
+  unique: T.AggregationsTermsAggregateBase<{ key: string }>;
 }
 
 export function getClient(): Client | undefined {
-
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true') {
     const id = process.env.ELASTICSEARCH_CLOUD_ID;
     const username = process.env.ELASTICSEARCH_CLOUD_USERNAME;
@@ -31,8 +32,8 @@ export function getClient(): Client | undefined {
     if (!id || !username || !password) return undefined;
     const clientSettings = {
       cloud: { id },
-      auth: { username, password }
-    }
+      auth: { username, password },
+    };
     return new Client(clientSettings);
   }
 
@@ -44,24 +45,27 @@ export function getClient(): Client | undefined {
   const clientSettings = {
     node,
     auth: {
-      apiKey
+      apiKey,
     },
     tls: {
       ca,
-      rejectUnauthorized: false
-    }
-  }
+      rejectUnauthorized: false,
+    },
+  };
   return new Client(clientSettings);
 }
 
-export async function getDocument(index: string, id: number): Promise<ApiResponseDocument> {
+export async function getDocument(
+  index: string,
+  id: number
+): Promise<ApiResponseDocument> {
   const esQuery = {
     index,
     query: {
       match: {
-        id
-      }
-    }
+        id,
+      },
+    },
   };
 
   const client = getClient();
@@ -76,14 +80,11 @@ export async function getDocument(index: string, id: number): Promise<ApiRespons
 }
 
 export async function search(params) {
-
   if (params.index === 'collections') {
     return searchCollections(params);
   }
 
-  let {
-    index, p, size, q
-  } = params;
+  let { index, p, size, q } = params;
 
   index = index === 'content' ? 'content' : ['collections', 'content'];
 
@@ -96,11 +97,10 @@ export async function search(params) {
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
     size,
-    track_total_hits: true
+    track_total_hits: true,
   };
   if (q) {
-    esQuery.query.bool.must =
-    {
+    esQuery.query.bool.must = {
       multi_match: {
         query: q,
         type: 'best_fields',
@@ -111,15 +111,13 @@ export async function search(params) {
           'title^2',
           'keywords^2',
           'description',
-          'searchText'
-        ]
-      }
+          'searchText',
+        ],
+      },
     };
-  }
-  else {
-    esQuery.query.bool.must =
-    {
-      match_all: {}
+  } else {
+    esQuery.query.bool.must = {
+      match_all: {},
     };
     /*
     esQuery.sort = [
@@ -129,40 +127,50 @@ export async function search(params) {
   }
 
   if (index !== 'content') {
-    esQuery.indices_boost = [
-      { content: 4 },
-      { collections: 1 }
-    ]  
+    esQuery.indices_boost = [{ content: 4 }, { collections: 1 }];
   }
 
   const client = getClient();
   if (client === undefined) return {};
   const response: any = await client.search<Document, Aggregations>(esQuery);
 
-  const options = getResponseOptions(response)
+  const options = getResponseOptions(response);
 
   const count = response?.hits?.total?.value || 0;
   const metadata = {
     count,
-    pages: Math.ceil(count / size)
-  }
-  const data = response.hits.hits.map(h => h._source)
-  const res:ApiResponseSearch = { query: esQuery, data, options, metadata }
+    pages: Math.ceil(count / size),
+  };
+  const data = response.hits.hits.map((h) => h._source);
+  const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q?.length > 3 && p === 1) {
-    const t = await terms(q, size = TERMS_PAGE_SIZE, client);
+    const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
-  return res
+  return res;
 }
 
 export async function searchCollections(params) {
   let {
-    index, p, size, q,
-    isUnrestricted, hasPhoto, onView,
-    primaryConstituent, classification, medium, period, dynasty,
-    museumLocation, section, 
-    primaryGeographicalLocationContinent, primaryGeographicalLocationCountry, primaryGeographicalLocation,
-    exhibitions, collections
+    index,
+    p,
+    size,
+    q,
+    isUnrestricted,
+    hasPhoto,
+    onView,
+    primaryConstituent,
+    classification,
+    medium,
+    period,
+    dynasty,
+    museumLocation,
+    section,
+    primaryGeographicalLocationContinent,
+    primaryGeographicalLocationCountry,
+    primaryGeographicalLocation,
+    exhibitions,
+    collections,
   } = params;
 
   // Coerce boolean vars
@@ -175,20 +183,16 @@ export async function searchCollections(params) {
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
-
   const esQuery: any = {
     index,
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
     size,
-    sort: [
-      { startDate: 'desc' }
-    ],
-    track_total_hits: true
+    sort: [{ startDate: 'desc' }],
+    track_total_hits: true,
   };
   if (q) {
-    esQuery.query.bool.must =
-    {
+    esQuery.query.bool.must = {
       multi_match: {
         query: q,
         type: 'best_fields',
@@ -200,19 +204,15 @@ export async function searchCollections(params) {
           'keywords^2',
           'description',
           'searchText',
-          'accessionNumber'
-        ]
-      }
+          'accessionNumber',
+        ],
+      },
     };
-  }
-  else {
-    esQuery.query.bool.must =
-    {
-      match_all: {}
+  } else {
+    esQuery.query.bool.must = {
+      match_all: {},
     };
-    esQuery.sort = [
-      { startDate: 'desc' }
-    ];
+    esQuery.sort = [{ startDate: 'desc' }];
   }
 
   addQueryBoolFilterTerm(esQuery, 'primaryConstituent', primaryConstituent);
@@ -222,9 +222,21 @@ export async function searchCollections(params) {
   addQueryBoolFilterTerm(esQuery, 'dynasty', dynasty);
   addQueryBoolFilterTerm(esQuery, 'museumLocation', museumLocation);
   addQueryBoolFilterTerm(esQuery, 'section', section);
-  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocationContinent', primaryGeographicalLocationContinent);
-  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocationCountry', primaryGeographicalLocationCountry);
-  addQueryBoolFilterTerm(esQuery, 'primaryGeographicalLocation', primaryGeographicalLocation);
+  addQueryBoolFilterTerm(
+    esQuery,
+    'primaryGeographicalLocationContinent',
+    primaryGeographicalLocationContinent
+  );
+  addQueryBoolFilterTerm(
+    esQuery,
+    'primaryGeographicalLocationCountry',
+    primaryGeographicalLocationCountry
+  );
+  addQueryBoolFilterTerm(
+    esQuery,
+    'primaryGeographicalLocation',
+    primaryGeographicalLocation
+  );
   addQueryBoolFilterTerm(esQuery, 'exhibitions', exhibitions);
   addQueryBoolFilterTerm(esQuery, 'collections', collections);
   addQueryBoolFilterTerm(esQuery, 'isUnrestricted', isUnrestricted);
@@ -232,18 +244,22 @@ export async function searchCollections(params) {
   if (hasPhoto) addQueryBoolFilterExists(esQuery, 'image');
 
   if (onView) {
-    addQueryBoolMustNotFilter(esQuery, 'museumLocation', 'This item is not on view');
+    addQueryBoolMustNotFilter(
+      esQuery,
+      'museumLocation',
+      'This item is not on view'
+    );
   }
 
   if (indicesMeta[index]?.aggs?.length > 0) {
-    const aggs = {}
+    const aggs = {};
     for (const agg of indicesMeta[index].aggs) {
       aggs[agg.name] = {
         terms: {
           field: agg.name,
-          size: SEARCH_AGG_SIZE
-        }
-      }
+          size: SEARCH_AGG_SIZE,
+        },
+      };
     }
     esQuery.aggs = aggs;
   }
@@ -252,43 +268,43 @@ export async function searchCollections(params) {
   if (client === undefined) return {};
   const response = await client.search<Document, Aggregations>(esQuery);
 
-  const options = getResponseOptions(response)
+  const options = getResponseOptions(response);
 
   let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
-  if (typeof count !== "number") count = count.value;
+  if (typeof count !== 'number') count = count.value;
   const metadata = {
     count,
-    pages: Math.ceil(count / size)
-  }
+    pages: Math.ceil(count / size),
+  };
 
-  const data = response.hits.hits.map(h => h._source);
+  const data = response.hits.hits.map((h) => h._source);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q?.length > 3 && p === 1) {
-    const t = await terms(q, size = TERMS_PAGE_SIZE, client);
+    const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
   return res;
 }
 
 function getResponseOptions(response) {
-  const options = {}
+  const options = {};
   if (response?.aggregations) {
-    Object.keys(response?.aggregations).forEach(n => {
-      const agg = response.aggregations[n]
+    Object.keys(response?.aggregations).forEach((n) => {
+      const agg = response.aggregations[n];
       if (agg.buckets && agg.buckets.length) {
-        options[n] = agg.buckets
+        options[n] = agg.buckets;
       }
-    })
+    });
   }
-  return options
-};
+  return options;
+}
 
 export async function options(params, size = OPTIONS_PAGE_SIZE) {
-  const {
-    index, field, q
-  } = params;
+  const { index, field, q } = params;
 
-  if (!index || !field) { return }
+  if (!index || !field) {
+    return;
+  }
 
   const request: any = {
     index,
@@ -297,63 +313,67 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
       [field]: {
         terms: {
           field,
-          size
-        }
-      }
-    }
-  }
+          size,
+        },
+      },
+    },
+  };
 
   if (q) {
     request.query = {
       wildcard: {
         [field]: {
           value: '*' + q + '*',
-          case_insensitive: true
-        }
-      }
-    }
+          case_insensitive: true,
+        },
+      },
+    };
   }
 
   const client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(request)
+  const response = await client.search<Document, Aggregations>(request);
 
   if (response.aggregations?.[field].buckets) {
-    return response.aggregations[field].buckets
+    return response.aggregations[field].buckets;
   } else {
-    return []
+    return [];
   }
 }
 
-export async function terms(query, size:number=TERMS_PAGE_SIZE, client?:Client) {
+export async function terms(
+  query,
+  size: number = TERMS_PAGE_SIZE,
+  client?: Client
+) {
   const request = {
     index: 'terms',
     query: {
       match: {
         value: {
           query,
-          fuzziness: 'AUTO'
-        }
-      }
+          fuzziness: 'AUTO',
+        },
+      },
     },
     from: 0,
     size,
-  }
+  };
 
   if (!client) client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(request)
+  const response = await client.search<Document, Aggregations>(request);
 
-  return response.hits.hits.map(h => h._source)
+  return response.hits.hits.map((h) => h._source);
 }
 
 export async function similarCollectionObjectsById(id) {
   const docResponse = await getDocument('collections', id);
   const document = docResponse?.data;
-  if (document) return similarCollectionObjects(document)
+  if (document) return similarCollectionObjects(document);
 }
 
-async function similarCollectionObjects(document?: any, client?:Client) {
+async function similarCollectionObjects(document?: any, client?: Client) {
   if (!document || !document.id) return [];
 
   const esQuery = {
@@ -362,23 +382,23 @@ async function similarCollectionObjects(document?: any, client?:Client) {
       bool: {
         must_not: {
           term: {
-            id: document.id
-          }
+            id: document.id,
+          },
         },
         must: {
           exists: {
-            field: 'image'
-          }
-        }
-      }
+            field: 'image',
+          },
+        },
+      },
     },
     from: 0,
-    size: SIMILAR_PAGE_SIZE
-  }
+    size: SIMILAR_PAGE_SIZE,
+  };
 
   if (
-    document.primaryConstituent
-    && document.primaryConstituent !== UNKNOWN_CONSTITUENT
+    document.primaryConstituent &&
+    document.primaryConstituent !== UNKNOWN_CONSTITUENT
   ) {
     addShouldTerms(document, esQuery, 'primaryConstituent', 4);
   }
@@ -397,23 +417,27 @@ async function similarCollectionObjects(document?: any, client?:Client) {
 
   if (!client) client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(esQuery)
+  const response = await client.search<Document, Aggregations>(esQuery);
   if (!response?.hits?.hits?.length) {
-    return []
+    return [];
   }
-  return response.hits.hits.map(h => h._source)
+  return response.hits.hits.map((h) => h._source);
 }
 
-function addQueryBoolFilterTerm(esQuery: any, name: string, value: string | boolean | number | undefined): void {
+function addQueryBoolFilterTerm(
+  esQuery: any,
+  name: string,
+  value: string | boolean | number | undefined
+): void {
   if (!value) return;
   if (!esQuery?.query) esQuery.query = {};
   if (!esQuery.query?.bool) esQuery.query.bool = {};
   if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
   esQuery.query.bool.filter.push({
     term: {
-      [name]: value
-    }
-  })
+      [name]: value,
+    },
+  });
 }
 
 function addQueryBoolFilterExists(esQuery: any, name: string): void {
@@ -422,24 +446,33 @@ function addQueryBoolFilterExists(esQuery: any, name: string): void {
   if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
   esQuery.query.bool.filter.push({
     exists: {
-      field: name
-    }
-  })
+      field: name,
+    },
+  });
 }
 
-function addQueryBoolMustNotFilter(esQuery: any, name: string, value: string): void {
+function addQueryBoolMustNotFilter(
+  esQuery: any,
+  name: string,
+  value: string
+): void {
   if (!value) return;
   if (!esQuery?.query) esQuery.query = {};
   if (!esQuery.query?.bool) esQuery.query.bool = {};
   if (!esQuery.query.bool?.must_not) esQuery.query.bool.must_not = [];
   esQuery.query.bool.must_not.push({
     term: {
-      [name]: value
-    }
-  })
+      [name]: value,
+    },
+  });
 }
 
-function addShouldTerms(document: any, esQuery: any, name: string, boost: number) {
+function addShouldTerms(
+  document: any,
+  esQuery: any,
+  name: string,
+  boost: number
+) {
   if (!(name in document)) return;
   let value = document[name];
   if (!(value?.length > 0)) return;
@@ -450,7 +483,7 @@ function addShouldTerms(document: any, esQuery: any, name: string, boost: number
   esQuery.query.bool.should.push({
     terms: {
       [name]: value,
-      boost
-    }
-  })
+      boost,
+    },
+  });
 }

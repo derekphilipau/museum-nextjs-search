@@ -1,28 +1,28 @@
-import { NavItem } from "@/types/nav"
+import { NavItem } from '@/types/nav';
 
 interface SiteConfig {
-  defaultLocale: string
-  mainNav: NavItem[]
+  defaultLocale: string;
+  mainNav: NavItem[];
   links: {
-    twitter: string
-    instagram: string
-  }
+    twitter: string;
+    instagram: string;
+  };
 }
 
 export const siteConfig: SiteConfig = {
-  defaultLocale: "en",
+  defaultLocale: 'en',
   mainNav: [
     {
-      dict: "nav.home",
-      href: "/",
+      dict: 'nav.home',
+      href: '/',
     },
     {
-      dict: "nav.search",
-      href: "/search/collections?hasPhoto=true",
+      dict: 'nav.search',
+      href: '/search/collections?hasPhoto=true',
     },
   ],
   links: {
-    twitter: "https://twitter.com/brooklynmuseum",
-    instagram: "https://www.instagram.com/brooklynmuseum",
+    twitter: 'https://twitter.com/brooklynmuseum',
+    instagram: 'https://www.instagram.com/brooklynmuseum',
   },
-}
+};

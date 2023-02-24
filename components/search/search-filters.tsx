@@ -1,29 +1,38 @@
-"use client"
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
-import { usePathname } from "next/navigation";
-import { indicesMeta } from "@/util/search";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
-import { getBooleanValue } from "@/util/various";
-import { SearchAgg } from "@/components/search/search-agg";
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
+import { indicesMeta } from '@/util/search';
+import { getBooleanValue } from '@/util/various';
+
+import { Icons } from '@/components/icons';
+import { SearchAgg } from '@/components/search/search-agg';
+import { Button } from '@/components/ui/button';
 
 interface SearchFiltersProps {
-  index: string,
-  params: any,
-  options: any,
-  filters: any
+  index: string;
+  params: any;
+  options: any;
+  filters: any;
 }
 
-export function SearchFilters({ index, params, options, filters }: SearchFiltersProps) {
+export function SearchFilters({
+  index,
+  params,
+  options,
+  filters,
+}: SearchFiltersProps) {
   const dict = getDictionary();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isShowFilters, setIsShowFilters] = useState(getBooleanValue(params?.f));
-  const [myIsShowFilters, setMyIsShowFilters] = useState(getBooleanValue(params?.f));
+  const [isShowFilters, setIsShowFilters] = useState(
+    getBooleanValue(params?.f)
+  );
+  const [myIsShowFilters, setMyIsShowFilters] = useState(
+    getBooleanValue(params?.f)
+  );
 
   useEffect(() => {
     if (isShowFilters !== myIsShowFilters) {
@@ -31,7 +40,7 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
       const updatedParams = new URLSearchParams(params);
       if (myIsShowFilters) updatedParams.set('f', 'true');
       else updatedParams.delete('f');
-      router.push(`${pathname}?${updatedParams}`)
+      router.push(`${pathname}?${updatedParams}`);
     }
   }, [isShowFilters, myIsShowFilters, router, params, pathname]);
 
@@ -40,9 +49,9 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
       <div className="">
         <Button
           onClick={() => setMyIsShowFilters(false)}
-          variant='ghost'
+          variant="ghost"
           size="sm"
-          aria-label='Hide Filters'
+          aria-label="Hide Filters"
         >
           <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
           {dict['search.hideFilters']}
@@ -50,10 +59,19 @@ export function SearchFilters({ index, params, options, filters }: SearchFilters
       </div>
       {indicesMeta.collections?.aggs?.map(
         (agg, i) =>
-          agg && options[agg.name]?.length > 0 && (
-            <SearchAgg index={index} params={params} key={i} aggDisplayName={agg?.displayName} aggName={agg?.name} options={options[agg.name]} filters={filters} />
+          agg &&
+          options[agg.name]?.length > 0 && (
+            <SearchAgg
+              index={index}
+              params={params}
+              key={i}
+              aggDisplayName={agg?.displayName}
+              aggName={agg?.name}
+              options={options[agg.name]}
+              filters={filters}
+            />
           )
       )}
     </>
-  )
+  );
 }

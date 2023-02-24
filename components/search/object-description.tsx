@@ -1,7 +1,8 @@
-import { Geo } from "@next/font/google";
-import * as React from "react"
-import { DescriptionRow } from "./description-row";
-import { GeographicalDescriptionRow } from "./geographical-description-row";
+import * as React from 'react';
+import { Geo } from '@next/font/google';
+
+import { DescriptionRow } from './description-row';
+import { GeographicalDescriptionRow } from './geographical-description-row';
 
 export function ObjectDescription({ item }) {
   if (!item?.id) return null;
@@ -28,7 +29,7 @@ export function ObjectDescription({ item }) {
         <DescriptionRow name="rightsType" item={item} />
       </dl>
     </div>
-  )
+  );
 }
 
 /*

@@ -1,6 +1,7 @@
-import Link from "next/link"
-import { buttonVariants } from "@/components/ui/button"
+import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
+
+import { buttonVariants } from '@/components/ui/button';
 
 export default function Page() {
   const dict = getDictionary();
@@ -18,11 +19,11 @@ export default function Page() {
       <div className="flex gap-4">
         <Link
           href={dict['home.button.link']}
-          className={buttonVariants({ size: "lg" })}
+          className={buttonVariants({ size: 'lg' })}
         >
           {dict['home.button.label']}
         </Link>
       </div>
     </section>
-  )
+  );
 }

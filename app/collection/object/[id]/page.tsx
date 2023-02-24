@@ -1,18 +1,19 @@
-import Script from 'next/script';
-import { ObjectDescription } from "@/components/search/object-description";
-import { ImageViewer } from "@/components/search/image-viewer";
-import { getDocument } from "@/util/elasticsearch";
-import { LanguageDisclaimer } from "@/components/search/language-disclaimer";
-import { getSmallOrRestrictedImageUrl } from "@/util/image";
-import { SimilarObjects } from "@/components/object/similar-objects";
-import { getSchemaVisualArtworkJson } from "@/util/schema";
 import type { Metadata } from 'next';
-import { getCaption } from "@/util/various";
-import {encode} from 'html-entities';
-import type { CollectionObject } from '@/types/collectionObject';
-import type { ApiResponseDocument } from '@/types/apiResponseDocument';
+import Script from 'next/script';
+import { getDocument } from '@/util/elasticsearch';
+import { getSmallOrRestrictedImageUrl } from '@/util/image';
+import { getSchemaVisualArtworkJson } from '@/util/schema';
+import { getCaption } from '@/util/various';
+import { encode } from 'html-entities';
 
-async function getCollectionObject(id: number):Promise<ApiResponseDocument> {
+import type { ApiResponseDocument } from '@/types/apiResponseDocument';
+import type { CollectionObject } from '@/types/collectionObject';
+import { SimilarObjects } from '@/components/object/similar-objects';
+import { ImageViewer } from '@/components/search/image-viewer';
+import { LanguageDisclaimer } from '@/components/search/language-disclaimer';
+import { ObjectDescription } from '@/components/search/object-description';
+
+async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
   const data = await getDocument('collections', id);
   return data;
 }
@@ -23,7 +24,10 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   if (!collectionObject) return {};
 
   const caption = encode(getCaption(collectionObject));
-  const thumb = getSmallOrRestrictedImageUrl(collectionObject?.image, collectionObject?.copyrightRestricted);
+  const thumb = getSmallOrRestrictedImageUrl(
+    collectionObject?.image,
+    collectionObject?.copyrightRestricted
+  );
 
   return {
     title: collectionObject.title,
@@ -33,10 +37,10 @@ export async function generateMetadata({ params }): Promise<Metadata> {
       description: caption,
       images: [
         {
-          url: thumb
-        }
-      ]
-    }
+          url: thumb,
+        },
+      ],
+    },
   };
 }
 
@@ -62,24 +66,28 @@ export default async function Page({ params }) {
           <h2 className="text-lg md:text-xl">
             {collectionObject?.primaryConstituent || 'Maker Unknown'}
           </h2>
-          {
-            collectionObject?.primaryConstituentDates && (
-              <div className="mb-4 text-sm text-neutral-700 dark:text-neutral-400">
-                {collectionObject?.primaryConstituentDates}
-              </div>  
-            )        
-          }
+          {collectionObject?.primaryConstituentDates && (
+            <div className="mb-4 text-sm text-neutral-700 dark:text-neutral-400">
+              {collectionObject?.primaryConstituentDates}
+            </div>
+          )}
           <h4 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
             {collectionObject?.collections?.map(
               (collection, i) =>
                 collection && (
-                  <span key={i}>{collection}{(i > 0) ? ', ' : ''}</span>
+                  <span key={i}>
+                    {collection}
+                    {i > 0 ? ', ' : ''}
+                  </span>
                 )
             )}
           </h4>
-          <div className="mb-4 text-neutral-700 dark:text-neutral-400"
-            dangerouslySetInnerHTML={{ __html: collectionObject?.description || '' }}>
-          </div>
+          <div
+            className="mb-4 text-neutral-700 dark:text-neutral-400"
+            dangerouslySetInnerHTML={{
+              __html: collectionObject?.description || '',
+            }}
+          ></div>
           <div className="pt-4">
             <ObjectDescription item={collectionObject} />
           </div>
@@ -90,10 +98,9 @@ export default async function Page({ params }) {
       </section>
       <SimilarObjects similar={similarCollectionObjects} />
       {/* https://beta.nextjs.org/docs/guides/seo */}
-      <Script
-        id="json-ld-script"
-        type="application/ld+json"
-      >{jsonLd}</Script>
+      <Script id="json-ld-script" type="application/ld+json">
+        {jsonLd}
+      </Script>
     </>
-  )
+  );
 }

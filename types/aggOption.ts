@@ -1,4 +1,4 @@
 export interface AggOption {
-  key: string
-  doc_count: number
+  key: string;
+  doc_count: number;
 }

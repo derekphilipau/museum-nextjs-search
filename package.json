@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "preview": "next build && next start",
-    "import-data": "ts-node --compiler-options {\"module\":\"CommonJS\"} ./importElasticsearchData.ts"
+    "format": "prettier --check --ignore-path .gitignore ."
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.6.0",

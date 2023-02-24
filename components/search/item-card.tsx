@@ -1,9 +1,9 @@
-import Link from "next/link"
+import Image from 'next/image';
+import Link from 'next/link';
 import { NONE_IMG } from '@/util/image';
-import Image from 'next/image'
 
 export function ItemCard({ item }) {
-  console.log('YYY', item)
+  console.log('YYY', item);
 
   if (!item || !item.url) return null;
 
@@ -12,41 +12,37 @@ export function ItemCard({ item }) {
       <div className="py-4">
         <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
           <figure>
-            {
-              item.image ? (
-                <Image
+            {item.image ? (
+              <Image
                 src={item.image}
                 className="h-48 object-contain"
                 alt=""
                 width={400}
                 height={400}
               />
-              ) : (
-                <Image
+            ) : (
+              <Image
                 src={NONE_IMG}
                 className="h-48 object-contain"
                 alt=""
                 width={400}
                 height={400}
               />
-              )
-            }
+            )}
             <figcaption></figcaption>
           </figure>
         </div>
         <div className="pt-3">
-          <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">{item.title}</h4>
-          {
-            item.date && (
-              <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
-                {item.date}
-              </p>  
-            )
-          }
+          <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">
+            {item.title}
+          </h4>
+          {item.date && (
+            <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
+              {item.date}
+            </p>
+          )}
         </div>
       </div>
     </Link>
-  )
+  );
 }
-
-

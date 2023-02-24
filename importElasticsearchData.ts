@@ -1,13 +1,14 @@
-import { loadEnvConfig } from '@next/env'
+import { loadEnvConfig } from '@next/env';
+
 import { importData } from './util/elasticsearchImport';
 
 const collectionsDataFile = './data/collections.jsonl';
 const contentDataFile = './data/content.jsonl';
-const termsDataFile = "./data/terms.jsonl";
+const termsDataFile = './data/terms.jsonl';
 
 const idField = 'id';
 
-loadEnvConfig(process.cwd())
+loadEnvConfig(process.cwd());
 
 async function run() {
   await importData('collections', collectionsDataFile, idField);

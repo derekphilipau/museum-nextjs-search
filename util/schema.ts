@@ -1,5 +1,5 @@
-import { getSmallOrRestrictedImageUrl } from './image'
 import type { CollectionObject } from '@/types/collectionObject';
+import { getSmallOrRestrictedImageUrl } from './image';
 
 function getDimensionsCM(dimensions: string | undefined) {
   // H x W x D
@@ -11,40 +11,50 @@ function getDimensionsCM(dimensions: string | undefined) {
   const cm = dimensions.match(/\((.+?)\)/);
   if (cm?.length === 2) {
     const dim = cm[1].match(/\d+(\.\d{1,2})?/g);
-    if (dim?.length === 1) return { height: dim[0] }
-    if (dim?.length === 2) return { height: dim[0], width: dim[1] }
-    if (dim?.length === 3) return { height: dim[0], width: dim[1], depth: dim[2] }
+    if (dim?.length === 1) return { height: dim[0] };
+    if (dim?.length === 2) return { height: dim[0], width: dim[1] };
+    if (dim?.length === 3)
+      return { height: dim[0], width: dim[1], depth: dim[2] };
   }
   return {};
 }
 
 /**
  * https://schema.org/VisualArtwork
- * 
+ *
  * TODO: import JSON-LD schema typescript def
  */
 export function getSchemaVisualArtwork(item: CollectionObject | undefined) {
   if (!item) return '';
   const schema: any = {
     '@context': 'https://schema.org',
-    '@type': 'VisualArtwork'
+    '@type': 'VisualArtwork',
   };
   if (item.title) schema.name = item.title;
-  if (item.image) schema.image = getSmallOrRestrictedImageUrl(item.image, item.copyrightRestricted);
+  if (item.image)
+    schema.image = getSmallOrRestrictedImageUrl(
+      item.image,
+      item.copyrightRestricted
+    );
   if (item.description) schema.abstract = item.description;
   if (item.primaryConstituent) {
-    schema.creator = [{
-      '@type': 'Person',
-      name: item.primaryConstituent
-    }];
+    schema.creator = [
+      {
+        '@type': 'Person',
+        name: item.primaryConstituent,
+      },
+    ];
   }
   if (item.medium) schema.medium = item.medium;
   if (item.medium) schema.artMedium = item.medium; // TODO
   if (item.classification) schema.artform = item.classification;
   const dimensions = getDimensionsCM(item.dimensions);
-  if (dimensions?.height) schema.height = [{ '@type': 'Distance', 'name': `${dimensions.height} cm`}]
-  if (dimensions?.width) schema.width = [{ '@type': 'Distance', 'name': `${dimensions.width} cm`}]
-  if (dimensions?.depth) schema.depth = [{ '@type': 'Distance', 'name': `${dimensions.depth} cm`}]
+  if (dimensions?.height)
+    schema.height = [{ '@type': 'Distance', name: `${dimensions.height} cm` }];
+  if (dimensions?.width)
+    schema.width = [{ '@type': 'Distance', name: `${dimensions.width} cm` }];
+  if (dimensions?.depth)
+    schema.depth = [{ '@type': 'Distance', name: `${dimensions.depth} cm` }];
   schema.accessMode = 'visual'; // TODO
   if (item.copyright) schema.copyrightNotice = item.copyright;
   if (item.creditLine) schema.creditText = item.creditLine;

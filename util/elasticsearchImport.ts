@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as readline from 'node:readline';
+import { Client } from '@elastic/elasticsearch';
+
 import { getClient } from './elasticsearch';
 import { collections, content, terms } from './elasticsearchIndices';
-import { Client } from '@elastic/elasticsearch';
 
 const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
 const ELASTICSEARCH_BULK_LIMIT = 100;
@@ -10,33 +11,41 @@ const ELASTICSEARCH_BULK_LIMIT = 100;
 const indices = {
   collections,
   content,
-  terms
+  terms,
 };
 
-const snooze = s => new Promise(resolve => setTimeout(resolve, (s * 1000)))
+const snooze = (s) => new Promise((resolve) => setTimeout(resolve, s * 1000));
 
 /**
  * Check if a given index already exists in Elasticsearch.
  */
-async function existsIndex(client: Client, indexName: string): Promise<boolean> {
-  return await client.indices.exists({index: indexName}) ? true : false;
+async function existsIndex(
+  client: Client,
+  indexName: string
+): Promise<boolean> {
+  return (await client.indices.exists({ index: indexName })) ? true : false;
 }
 
 /**
  * Delete an Elasticsearch index.
  */
 async function deleteIndex(client: Client, indexName: string) {
-  if (await existsIndex(client, indexName)) await client.indices.delete({index: indexName});
+  if (await existsIndex(client, indexName))
+    await client.indices.delete({ index: indexName });
 }
 
 /**
  * Create an Elasticsearch index.
  */
- async function createIndex(client: Client, indexName: string, deleteIfExists = true) {
+async function createIndex(
+  client: Client,
+  indexName: string,
+  deleteIfExists = true
+) {
   if (deleteIfExists) await deleteIndex(client, indexName);
   await client.indices.create({
     index: indexName,
-    body: indices[indexName]
+    body: indices[indexName],
   });
 }
 
@@ -46,7 +55,7 @@ async function deleteIndex(client: Client, indexName: string) {
 async function countIndex(client: Client, indexName: string) {
   const res = await client.count({
     index: indexName,
-    body: { query: { match_all: {} } }
+    body: { query: { match_all: {} } },
   });
   return res?.count;
 }
@@ -54,38 +63,50 @@ async function countIndex(client: Client, indexName: string) {
 /**
  * Either insert or update the documents.
  */
-async function bulk(client: Client, indexName: string, documents: any, idFieldName: string, method = 'index') {
+async function bulk(
+  client: Client,
+  indexName: string,
+  documents: any,
+  idFieldName: string,
+  method = 'index'
+) {
   if (client === undefined) throw new Error(ERR_CLIENT);
-  const operations = documents.flatMap(doc => [
+  const operations = documents.flatMap((doc) => [
     {
       [method]: {
         _index: indexName,
-        ...(
-          idFieldName in doc &&
-          (doc[idFieldName] || doc[idFieldName] === 0) &&
-          { _id: doc[idFieldName] }
-        )
-      }
+        ...(idFieldName in doc &&
+          (doc[idFieldName] || doc[idFieldName] === 0) && {
+            _id: doc[idFieldName],
+          }),
+      },
     },
-    ...(method === 'update' ? [{ doc, doc_as_upsert: true }] : [doc])
+    ...(method === 'update' ? [{ doc, doc_as_upsert: true }] : [doc]),
   ]);
-  const bulkResponse = await client.bulk({ refresh: true, operations })
-  console.log('inserted ' + await countIndex(client, indexName), JSON.stringify(bulkResponse, null, 2));
+  const bulkResponse = await client.bulk({ refresh: true, operations });
+  console.log(
+    'inserted ' + (await countIndex(client, indexName)),
+    JSON.stringify(bulkResponse, null, 2)
+  );
 }
 
 /**
  * Import data from a jsonl file (one JSON object per row, no endline commas)
  */
-export async function importData(indexName: string, dataFilename: string, idFieldName: string) {
+export async function importData(
+  indexName: string,
+  dataFilename: string,
+  idFieldName: string
+) {
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
   await createIndex(client, indexName);
   const fileStream = fs.createReadStream(dataFilename);
   const rl = readline.createInterface({
     input: fileStream,
-    crlfDelay: Infinity
+    crlfDelay: Infinity,
   });
-  let documents:any[] = [];
+  let documents: any[] = [];
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (obj !== undefined) documents.push(obj);

@@ -1,30 +1,38 @@
-"use client"
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
-import { usePathname } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label";
-import { ChevronsUpDown, Plus, X } from "lucide-react"
-import { AggOption } from "@/types/aggOption";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+'use client';
+
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { getBooleanValue } from '@/util/various';
+import { ChevronsUpDown, Plus, X } from 'lucide-react';
+
+import { AggOption } from '@/types/aggOption';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { getBooleanValue } from "@/util/various";
+} from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface SearchAggProps {
-  index: string,
-  params: any,
-  aggDisplayName: string,
-  aggName: string,
-  options?: AggOption[],
-  filters?: any,
+  index: string;
+  params: any;
+  aggDisplayName: string;
+  aggName: string;
+  options?: AggOption[];
+  filters?: any;
 }
 
-export function SearchAgg({ index, params, aggDisplayName, aggName, options, filters }: SearchAggProps) {
+export function SearchAgg({
+  index,
+  params,
+  aggDisplayName,
+  aggName,
+  options,
+  filters,
+}: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -37,36 +45,38 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
 
   function checkboxChange(key: string, checked: string | boolean) {
     const myChecked = getBooleanValue(checked);
-    let option = options?.find(o => o.key === key);
+    let option = options?.find((o) => o.key === key);
     if (searchOptions && !option)
-      option = searchOptions?.find(o => o.key === key);
+      option = searchOptions?.find((o) => o.key === key);
     if (option) {
       if (!aggName) return;
       if (checked) {
         const c = checkedKeys;
-        c.push(key)
-        setCheckedKeys(c)
+        c.push(key);
+        setCheckedKeys(c);
       } else {
-        setCheckedKeys(checkedKeys.filter(e => e !== key))
+        setCheckedKeys(checkedKeys.filter((e) => e !== key));
       }
       const updatedParams = new URLSearchParams(params);
       if (myChecked) updatedParams.set(aggName, key);
       else updatedParams.delete(aggName || '');
       updatedParams.delete('p');
-      console.log('agg go: ' + aggName + ' key: ' + key + ' checked: ' + myChecked)
-      router.push(`${pathname}?${updatedParams}`)
+      console.log(
+        'agg go: ' + aggName + ' key: ' + key + ' checked: ' + myChecked
+      );
+      router.push(`${pathname}?${updatedParams}`);
     }
   }
 
   function isChecked(key: string) {
-    return checkedKeys.includes(key)
+    return checkedKeys.includes(key);
   }
 
   useEffect(() => {
     setIsOpen(false);
-    const c: string[] = []
+    const c: string[] = [];
     if (filters?.[aggName]) {
-      c.push(filters[aggName])
+      c.push(filters[aggName]);
     }
     setCheckedKeys(c);
     if (c.length > 0) setIsOpen(true);
@@ -74,26 +84,25 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
 
   useEffect(() => {
     const debounceQuery = setTimeout(() => {
-      setRealQuery(query)
+      setRealQuery(query);
     }, 400);
     return () => clearTimeout(debounceQuery);
   }, [query]);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     if (realQuery?.length < 3) {
       setSearchOptions([]);
       return;
-    }
-    else {
+    } else {
       if (aggName)
         fetch(`/api/options?index=${index}&field=${aggName}&q=${realQuery}`)
           .then((res) => res.json())
           .then((data) => {
-            if (data?.length > 0) setSearchOptions(data)
-            else setSearchOptions([])
-            setLoading(false)
-          })
+            if (data?.length > 0) setSearchOptions(data);
+            else setSearchOptions([]);
+            setLoading(false);
+          });
     }
   }, [realQuery, aggName, index]);
 
@@ -108,11 +117,9 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
           variant="ghost"
           size="sm"
           className="flex w-full items-center justify-between p-1"
-          aria-label='Expand search filter'
-          >
-          <h4 className="text-sm font-semibold">
-            {aggDisplayName}
-          </h4>
+          aria-label="Expand search filter"
+        >
+          <h4 className="text-sm font-semibold">{aggDisplayName}</h4>
           <div>
             <ChevronsUpDown className="h-4 w-4" />
             <span className="sr-only">Toggle {aggDisplayName}</span>
@@ -121,49 +128,69 @@ export function SearchAgg({ index, params, aggDisplayName, aggName, options, fil
       </CollapsibleTrigger>
       <CollapsibleContent className="w-full space-y-2">
         <div className="mb-2">
-          <Input name="query" placeholder={`Search ${aggDisplayName}`} onChange={(e) => setQuery(e.target.value)} />
+          <Input
+            name="query"
+            placeholder={`Search ${aggDisplayName}`}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
-        {searchOptions?.length > 0 && searchOptions?.map(
-          (option: AggOption, i) =>
-            option && (
-              <div className="flex items-center space-x-2" key={`agg-${aggName}-${i}`}>
-                <Checkbox
-                  id={`terms-${aggName}-${i}`}
-                  onCheckedChange={(checked) => checkboxChange(option.key, checked)}
-                  checked={isChecked(option.key)}
-                  aria-labelledby={`terms-label-${aggName}-${i}`}
-                />
-                <Label
-                  htmlFor={`terms-${aggName}-${i}`}
-                  id={`terms-label-${aggName}-${i}`}
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        {searchOptions?.length > 0 &&
+          searchOptions?.map(
+            (option: AggOption, i) =>
+              option && (
+                <div
+                  className="flex items-center space-x-2"
+                  key={`agg-${aggName}-${i}`}
                 >
-                  {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
-                </Label>
-              </div>
-            )
-        )}
-        {searchOptions?.length === 0 && Array.isArray(options) && options?.length > 0 && options?.map(
-          (option: AggOption, i) =>
-            option && (
-              <div className="flex items-center space-x-2" key={`agg-${aggName}-${i}`}>
-                <Checkbox
-                  id={`terms-${aggName}-${i}`}
-                  onCheckedChange={(checked) => checkboxChange(option.key, checked)}
-                  checked={isChecked(option.key)}
-                  aria-labelledby={`terms-label-${aggName}-${i}`}
-                />
-                <Label
-                  htmlFor={`terms-${aggName}-${i}`}
-                  id={`terms-label-${aggName}-${i}`}
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  <Checkbox
+                    id={`terms-${aggName}-${i}`}
+                    onCheckedChange={(checked) =>
+                      checkboxChange(option.key, checked)
+                    }
+                    checked={isChecked(option.key)}
+                    aria-labelledby={`terms-label-${aggName}-${i}`}
+                  />
+                  <Label
+                    htmlFor={`terms-${aggName}-${i}`}
+                    id={`terms-label-${aggName}-${i}`}
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {option.key}
+                    {option.doc_count ? ` (${option.doc_count})` : ''}
+                  </Label>
+                </div>
+              )
+          )}
+        {searchOptions?.length === 0 &&
+          Array.isArray(options) &&
+          options?.length > 0 &&
+          options?.map(
+            (option: AggOption, i) =>
+              option && (
+                <div
+                  className="flex items-center space-x-2"
+                  key={`agg-${aggName}-${i}`}
                 >
-                  {option.key}{option.doc_count ? ` (${option.doc_count})` : ''}
-                </Label>
-              </div>
-            )
-        )}
+                  <Checkbox
+                    id={`terms-${aggName}-${i}`}
+                    onCheckedChange={(checked) =>
+                      checkboxChange(option.key, checked)
+                    }
+                    checked={isChecked(option.key)}
+                    aria-labelledby={`terms-label-${aggName}-${i}`}
+                  />
+                  <Label
+                    htmlFor={`terms-${aggName}-${i}`}
+                    id={`terms-label-${aggName}-${i}`}
+                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {option.key}
+                    {option.doc_count ? ` (${option.doc_count})` : ''}
+                  </Label>
+                </div>
+              )
+          )}
       </CollapsibleContent>
     </Collapsible>
-  )
+  );
 }

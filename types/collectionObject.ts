@@ -1,4 +1,4 @@
-import { CollectionObjectImage } from "./collectionObjectImage"
+import { CollectionObjectImage } from './collectionObjectImage';
 
 export interface CollectionObject {
   type: string;

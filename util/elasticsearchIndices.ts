@@ -1,399 +1,395 @@
-
 const index = {
   number_of_shards: 1,
-  number_of_replicas: 1
+  number_of_replicas: 1,
 };
 
 const analysis = {
   analyzer: {
     unaggregatedStandardAnalyzer: {
-      tokenizer: "standard",
-      char_filter: ["hyphenApostropheMappingFilter"],
-      filter: [ "lowercase", "asciifolding", "enSnowball" ]
+      tokenizer: 'standard',
+      char_filter: ['hyphenApostropheMappingFilter'],
+      filter: ['lowercase', 'asciifolding', 'enSnowball'],
     },
     aggregatedKeywordAnalyzer: {
-      tokenizer: "keyword",
-      char_filter: ["hyphenApostropheMappingFilter"],
-      filter: ["lowercase", "asciifolding"]
+      tokenizer: 'keyword',
+      char_filter: ['hyphenApostropheMappingFilter'],
+      filter: ['lowercase', 'asciifolding'],
     },
     aggregatedSimpleKeywordAnalyzer: {
-      tokenizer: "keyword",
-      filter: ["lowercase"]
+      tokenizer: 'keyword',
+      filter: ['lowercase'],
     },
     suggestAnalyzer: {
-      tokenizer: "standard",
-      char_filter: ["hyphenApostropheMappingFilter"],
-      filter: [ "lowercase", "asciifolding" ]
-    }
+      tokenizer: 'standard',
+      char_filter: ['hyphenApostropheMappingFilter'],
+      filter: ['lowercase', 'asciifolding'],
+    },
   },
   char_filter: {
     hyphenApostropheMappingFilter: {
-      type: "mapping",
-      mappings: [
-        "-=>\\u0020",
-        "'=>",
-        "’=>"
-      ]
+      type: 'mapping',
+      mappings: ['-=>\\u0020', "'=>", '’=>'],
     },
     articleCharFilter: {
-      type: "pattern_replace",
-      pattern: "(^[Ddol]') |(^(van der|van|de la|de|du|da|di|le|la) )|( [dol]')",
-      replacement: " "
-    }
+      type: 'pattern_replace',
+      pattern:
+        "(^[Ddol]') |(^(van der|van|de la|de|du|da|di|le|la) )|( [dol]')",
+      replacement: ' ',
+    },
   },
   filter: {
     enSnowball: {
-      type: "snowball",
-      language: "English"
-    }
-  }
+      type: 'snowball',
+      language: 'English',
+    },
+  },
 };
 
 export const collections = {
   settings: {
     index,
-    analysis
+    analysis,
   },
   mappings: {
     properties: {
       type: {
-        type: "keyword"
+        type: 'keyword',
       },
       url: {
-        type: "keyword"
+        type: 'keyword',
       },
       id: {
-        type: "keyword"
+        type: 'keyword',
       },
       title: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer",
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
         fields: {
           suggest: {
-            type: "search_as_you_type",
-            analyzer: "suggestAnalyzer"
-          }
-        }
+            type: 'search_as_you_type',
+            analyzer: 'suggestAnalyzer',
+          },
+        },
       },
       description: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       searchText: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       keywords: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       boostedKeywords: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       image: {
-        type: "keyword"
+        type: 'keyword',
       },
       imageAlt: {
-        type: "keyword"
+        type: 'keyword',
       },
       images: {
-        type: "object"
+        type: 'object',
       },
       accessionNumber: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedSimpleKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedSimpleKeywordAnalyzer',
+          },
+        },
       },
       accessionDate: {
-        type: "date"
+        type: 'date',
       },
       date: {
-        type: "text"
+        type: 'text',
       },
       startDate: {
-        type: "date"
+        type: 'date',
       },
       endDate: {
-        type: "date"
+        type: 'date',
       },
       period: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       dynasty: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       provenance: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       medium: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       dimensions: {
-        type: "text"
+        type: 'text',
       },
       edition: {
-        type: "text"
+        type: 'text',
       },
       portfolio: {
-        type: "text"
+        type: 'text',
       },
       markings: {
-        type: "text"
+        type: 'text',
       },
       signed: {
-        type: "text"
+        type: 'text',
       },
       inscribed: {
-        type: "text"
+        type: 'text',
       },
       creditLine: {
-        type: "text"
+        type: 'text',
       },
       copyright: {
-        type: "text"
+        type: 'text',
       },
       classification: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       publicAccess: {
-        type: "boolean"
+        type: 'boolean',
       },
       copyrightRestricted: {
-        type: "boolean"
+        type: 'boolean',
       },
       highlight: {
-        type: "boolean"
+        type: 'boolean',
       },
       section: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       museumLocation: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       rightsType: {
-        type: "keyword"
+        type: 'keyword',
       },
       labels: {
-        type: "object",
-        enabled: false
+        type: 'object',
+        enabled: false,
       },
       primaryConstituent: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
           },
           suggest: {
-            type: "search_as_you_type",
-            analyzer: "suggestAnalyzer"
-          }
-        }
+            type: 'search_as_you_type',
+            analyzer: 'suggestAnalyzer',
+          },
+        },
       },
       primaryConstituentDates: {
-        type: "keyword"
+        type: 'keyword',
       },
       primaryConstituentRole: {
-        type: "keyword"
+        type: 'keyword',
       },
       constituents: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       collections: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       exhibitions: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       geographicalLocations: {
-        type: "object"
+        type: 'object',
       },
       primaryGeographicalLocationContinent: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       primaryGeographicalLocationCountry: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
-      },            
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
+      },
       primaryGeographicalLocation: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
-          }
-        }
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
+          },
+        },
       },
       primaryGeographicalLocationType: {
-        type: "keyword"
-      }
-    }
-  }
-}
+        type: 'keyword',
+      },
+    },
+  },
+};
 
 export const content = {
   settings: {
     index,
-    analysis
+    analysis,
   },
   mappings: {
     properties: {
       type: {
-        type: "keyword"
+        type: 'keyword',
       },
       url: {
-        type: "keyword"
+        type: 'keyword',
       },
       id: {
-        type: "keyword"
+        type: 'keyword',
       },
       title: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer",
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
         fields: {
           suggest: {
-            type: "search_as_you_type",
-            analyzer: "suggestAnalyzer"
-          }
-        }
+            type: 'search_as_you_type',
+            analyzer: 'suggestAnalyzer',
+          },
+        },
       },
       description: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       searchText: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       keywords: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       boostedKeywords: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       constituents: {
-        type: "text",
-        analyzer: "unaggregatedStandardAnalyzer"
+        type: 'text',
+        analyzer: 'unaggregatedStandardAnalyzer',
       },
       image: {
-        type: "keyword"
+        type: 'keyword',
       },
       imageAlt: {
-        type: "keyword"
+        type: 'keyword',
       },
       date: {
-        type: "text"
+        type: 'text',
       },
       startDate: {
-        type: "date"
+        type: 'date',
       },
       endDate: {
-        type: "date"
-      }
-    }
-  }
-}
+        type: 'date',
+      },
+    },
+  },
+};
 
 export const terms = {
   settings: {
     index,
-    analysis
+    analysis,
   },
   mappings: {
     properties: {
       index: {
-        type: "keyword"
+        type: 'keyword',
       },
       field: {
-        type: "keyword"
+        type: 'keyword',
       },
       value: {
-        type: "keyword",
+        type: 'keyword',
         fields: {
           search: {
-            type: "text",
-            analyzer: "aggregatedKeywordAnalyzer"
+            type: 'text',
+            analyzer: 'aggregatedKeywordAnalyzer',
           },
           suggest: {
-            type: "search_as_you_type",
-            analyzer: "suggestAnalyzer"
-          }
-        }
+            type: 'search_as_you_type',
+            analyzer: 'suggestAnalyzer',
+          },
+        },
       },
       description: {
-        type: "text"
+        type: 'text',
       },
       count: {
-        type: "integer"
-      }
-    }
-  }
-}
+        type: 'integer',
+      },
+    },
+  },
+};

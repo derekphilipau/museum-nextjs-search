@@ -1,6 +1,6 @@
-import { siteConfig } from "@/config/site"
-import { MainNav } from "@/components/layout/main-nav"
-import { AltNav } from "./alt-nav"
+import { siteConfig } from '@/config/site';
+import { MainNav } from '@/components/layout/main-nav';
+import { AltNav } from './alt-nav';
 
 export function SiteHeader() {
   return (
@@ -12,5 +12,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

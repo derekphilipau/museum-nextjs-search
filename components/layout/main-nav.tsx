@@ -1,11 +1,11 @@
-import * as React from "react"
-import Link from "next/link"
+import * as React from 'react';
+import Link from 'next/link';
+import { getDictionary } from '@/dictionaries/dictionaries';
 
-import { NavItem } from "@/types/nav"
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { AltNav } from "./alt-nav"
+import { NavItem } from '@/types/nav';
+import { cn } from '@/lib/utils';
+import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,25 +13,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-import { getDictionary } from '@/dictionaries/dictionaries';
+} from '@/components/ui/dropdown-menu';
+import { AltNav } from './alt-nav';
 
 interface MainNavProps {
-  items?: NavItem[]
+  items?: NavItem[];
 }
 
 export function MainNav({ items }: MainNavProps) {
-
   const dict = getDictionary();
 
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
         <Icons.logo className="w-52 fill-current" />
-        <span className="hidden font-bold">
-          {dict['site.title']}
-        </span>
+        <span className="hidden font-bold">{dict['site.title']}</span>
       </Link>
       {items?.length ? (
         <nav className="hidden gap-6 md:flex">
@@ -42,8 +38,8 @@ export function MainNav({ items }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    "flex items-center text-lg font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-100 sm:text-sm",
-                    item.disabled && "cursor-not-allowed opacity-80"
+                    'flex items-center text-lg font-semibold text-neutral-600 hover:text-neutral-900 dark:text-neutral-100 sm:text-sm',
+                    item.disabled && 'cursor-not-allowed opacity-80'
                   )}
                 >
                   {dict[item.dict]}
@@ -88,5 +84,5 @@ export function MainNav({ items }: MainNavProps) {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }
