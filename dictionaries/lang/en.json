@@ -1,5 +1,5 @@
 {
-  "site.title": "Brooklyn Museum",
+  "site.title": "My Museum",
   "nav.home": "Home",
   "nav.search": "Search",
   "organization.address1": "200 Eastern Parkway",
@@ -8,7 +8,7 @@
   "home.summary": "Prototype Elasticsearch search built with Next.js 13, Radix UI, and Tailwind CSS (via https://ui.shadcn.com/).",
   "home.button.label": "Try the search!",
   "home.button.link": "/search/collections?hasPhoto=true",
-  "footer.text": "The Brooklyn Museum stands on land that is part of the unceded, ancestral homeland of the Lenape (Delaware) people.",
+  "footer.text": "The museum stands on land that is part of the unceded, ancestral homeland of the Lenape (Delaware) people.",
   "footer.marketing.text": "Let's Stay Connected",
   "footer.marketing.placeholder": "Sign Up",
   "search.search": "Search",

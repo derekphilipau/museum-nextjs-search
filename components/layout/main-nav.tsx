@@ -25,9 +25,11 @@ export function MainNav({ items }: MainNavProps) {
 
   return (
     <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="hidden items-center space-x-2 md:flex">
-        <Icons.logo className="w-52 fill-current" />
-        <span className="hidden font-bold">{dict['site.title']}</span>
+      <Link
+        href="/"
+        className="hidden items-center space-x-2 text-2xl font-bold md:flex"
+      >
+        {dict['site.title']}
       </Link>
       {items?.length ? (
         <nav className="hidden gap-6 md:flex">
@@ -52,11 +54,11 @@ export function MainNav({ items }: MainNavProps) {
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="-ml-4 text-base hover:bg-transparent focus:ring-0 md:hidden"
+            className="-ml-4 text-2xl font-bold hover:bg-transparent focus:ring-0 md:hidden"
             aria-label="Open Menu"
           >
             <Icons.menu className="mr-4 h-5 w-5" />
-            <Icons.logo className="mr-2 w-48 fill-current" />
+            <span className="font-bold">{dict['site.title']}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

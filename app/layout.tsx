@@ -14,8 +14,8 @@ const inter = Inter({
 
 export const metadata = {
   title: {
-    default: 'Brooklyn Museum',
-    template: '%s | Brooklyn Museum',
+    default: 'My Museum',
+    template: '%s | My Museum',
   },
   description: 'Elasticsearch + Next.js Search Prototype',
   icons: {

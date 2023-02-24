@@ -11,9 +11,11 @@ export function Footer() {
     <div className="container p-6">
       <nav className="my-10 md:flex md:items-center md:justify-between md:space-x-6">
         <div>
-          <Link href="/" className="mb-4 flex items-center space-x-2">
-            <Icons.logo className="w-52 fill-current" />
-            <span className="hidden font-bold">{dict['site.title']}</span>
+          <Link
+            href="/"
+            className="mb-2 flex items-center space-x-2 text-xl font-bold"
+          >
+            {dict['site.title']}
           </Link>
           <p className="mb-2 text-xs">
             {dict['organization.address1']}

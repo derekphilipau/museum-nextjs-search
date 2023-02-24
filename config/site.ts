@@ -3,9 +3,9 @@ import { NavItem } from '@/types/nav';
 interface SiteConfig {
   defaultLocale: string;
   mainNav: NavItem[];
-  links: {
-    twitter: string;
-    instagram: string;
+  links?: {
+    twitter?: string;
+    instagram?: string;
   };
 }
 
@@ -21,8 +21,10 @@ export const siteConfig: SiteConfig = {
       href: '/search/collections?hasPhoto=true',
     },
   ],
+  /*
   links: {
     twitter: 'https://twitter.com/brooklynmuseum',
     instagram: 'https://www.instagram.com/brooklynmuseum',
   },
+  */
 };
