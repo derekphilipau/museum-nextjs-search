@@ -2,28 +2,26 @@
 
 import { readFileSync } from 'fs';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
+import { getBooleanValue } from '@/util/various';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 
-const DEFAULT_SEARCH_PAGE_SIZE = 24;
-const SEARCH_AGG_SIZE = 20;
-const OPTIONS_PAGE_SIZE = 20;
-const TERMS_PAGE_SIZE = 12;
-const SIMILAR_PAGE_SIZE = 24;
-const UNKNOWN_CONSTITUENT = 'Unknown';
+const DEFAULT_SEARCH_PAGE_SIZE = 24; // 24 results per page
+const SEARCH_AGG_SIZE = 20; // 20 results per aggregation
+const OPTIONS_PAGE_SIZE = 20; // 20 results per aggregation options search
+const TERMS_PAGE_SIZE = 12; // 12 results per aggregation terms search
+const SIMILAR_PAGE_SIZE = 24; // 24 results per similar search
+const MIN_SEARCH_QUERY_LENGTH = 3; // Minimum length of search query
+const UNKNOWN_CONSTITUENT = 'Unknown'; // Default string for unknown constituent in dataset
 
-interface Document {
-  // Elasticsearch types are hosed
-}
-
-interface Aggregations {
-  // Elasticsearch types are hosed
-  unique: T.AggregationsTermsAggregateBase<{ key: string }>;
-}
-
+/**
+ * Get an Elasticsearch client
+ *
+ * @returns Elasticsearch client
+ */
 export function getClient(): Client | undefined {
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true') {
     const id = process.env.ELASTICSEARCH_CLOUD_ID;
@@ -55,6 +53,13 @@ export function getClient(): Client | undefined {
   return new Client(clientSettings);
 }
 
+/**
+ * Get a document by Elasticsearch id
+ *
+ * @param index Index to search
+ * @param id ID of document to search for
+ * @returns Elasticsearch Document
+ */
 export async function getDocument(
   index: string,
   id: number
@@ -67,10 +72,9 @@ export async function getDocument(
       },
     },
   };
-
   const client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(esQuery);
+  const response: T.SearchTemplateResponse = await client.search(esQuery);
   const data = response?.hits?.hits[0]?._source;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
   if (index === 'collections') {
@@ -79,7 +83,35 @@ export async function getDocument(
   return apiResponse;
 }
 
-export async function search(params) {
+interface SearchParams {
+  index?: string | string[]; // Indices to search
+  p?: number; // Page number (1 is first page)
+  size?: number; // Number of results per page
+  q?: string; // Search query
+  isUnrestricted?: string | boolean; // Is copyright unrestricted?
+  hasPhoto?: string | boolean; // Has a photo?
+  onView?: string | boolean; // Is on view?
+  primaryConstituent?: string; // Primary constituent
+  classification?: string; // e.g. Print, Sculpture
+  medium?: string; // e.g. Painting, Drawing
+  period?: string; // e.g. 19th Century
+  dynasty?: string; // e.g. Ming
+  museumLocation?: string; // Decorative Art, 19th Century, 4th Floor
+  section?: string; // Section, e.g. Middle Kingdom
+  primaryGeographicalLocationContinent?: string; // e.g. Africa, Asia
+  primaryGeographicalLocationCountry?: string; // e.g. China, Japan
+  primaryGeographicalLocation?: string; // e.g. Paris, New York
+  exhibitions?: string; // e.g. Ancient Egyptian Art
+  collections?: string; // Actually the department, e.g. Decorative Arts
+}
+
+/**
+ * Search for documents in one or more indices
+ *
+ * @param params Search parameters
+ * @returns Elasticsearch search response
+ */
+export async function search(params: SearchParams): Promise<ApiResponseSearch> {
   if (params.index === 'collections') {
     return searchCollections(params);
   }
@@ -92,14 +124,14 @@ export async function search(params) {
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
-  const esQuery: any = {
+  const esQuery: T.SearchRequest = {
     index,
-    query: { bool: { must: {} } },
+    query: { bool: { must: { match_all: {} } } },
     from: (p - 1) * size || 0,
     size,
     track_total_hits: true,
   };
-  if (q) {
+  if (q && esQuery?.query?.bool) {
     esQuery.query.bool.must = {
       multi_match: {
         query: q,
@@ -115,15 +147,6 @@ export async function search(params) {
         ],
       },
     };
-  } else {
-    esQuery.query.bool.must = {
-      match_all: {},
-    };
-    /*
-    esQuery.sort = [
-      { startDate: 'desc' }
-    ];
-    */
   }
 
   if (index !== 'content') {
@@ -132,25 +155,32 @@ export async function search(params) {
 
   const client = getClient();
   if (client === undefined) return {};
-  const response: any = await client.search<Document, Aggregations>(esQuery);
+  const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
 
-  const count = response?.hits?.total?.value || 0;
+  let count = 0;
+  if (
+    typeof response?.hits?.total !== 'number' &&
+    response?.hits?.total?.value !== undefined
+  )
+    count = response?.hits?.total?.value;
   const metadata = {
     count,
     pages: Math.ceil(count / size),
   };
   const data = response.hits.hits.map((h) => h._source);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
-  if (q?.length > 3 && p === 1) {
+  if (q?.length && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
     const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
   return res;
 }
 
-export async function searchCollections(params) {
+export async function searchCollections(
+  params: SearchParams
+): Promise<ApiResponseSearch> {
   let {
     index,
     p,
@@ -174,9 +204,9 @@ export async function searchCollections(params) {
   } = params;
 
   // Coerce boolean vars
-  isUnrestricted = isUnrestricted === 'true';
-  hasPhoto = hasPhoto === 'true';
-  onView = onView === 'true';
+  isUnrestricted = getBooleanValue(isUnrestricted);
+  hasPhoto = getBooleanValue(hasPhoto);
+  onView = getBooleanValue(onView);
 
   // Defaults for missing params:
   index = 'collections';
@@ -266,7 +296,7 @@ export async function searchCollections(params) {
 
   const client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(esQuery);
+  const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
 
@@ -279,13 +309,19 @@ export async function searchCollections(params) {
 
   const data = response.hits.hits.map((h) => h._source);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
-  if (q?.length > 3 && p === 1) {
+  if (q && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
     const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
   return res;
 }
 
+/**
+ * Get the options/buckets for each agg in the response
+ *
+ * @param response The response from the ES search
+ * @returns Array of aggregations with options/buckets
+ */
 function getResponseOptions(response) {
   const options = {};
   if (response?.aggregations) {
@@ -299,7 +335,19 @@ function getResponseOptions(response) {
   return options;
 }
 
-export async function options(params, size = OPTIONS_PAGE_SIZE) {
+interface OptionsParams {
+  index?: string | string[]; // Indices to search
+  field?: string; // Field to get options for
+  q?: string; // Query string
+}
+
+/**
+ * Get options/buckets for a specific field/agg
+ * @param params
+ * @param size Number of options to return
+ * @returns
+ */
+export async function options(params: OptionsParams, size = OPTIONS_PAGE_SIZE) {
   const { index, field, q } = params;
 
   if (!index || !field) {
@@ -332,17 +380,24 @@ export async function options(params, size = OPTIONS_PAGE_SIZE) {
 
   const client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(request);
-
-  if (response.aggregations?.[field].buckets) {
-    return response.aggregations[field].buckets;
-  } else {
-    return [];
+  const response: T.SearchTemplateResponse = await client.search(request);
+  if (response.aggregations?.[field] !== undefined) {
+    const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
+    if ('buckets' in aggAgg && aggAgg?.buckets) return aggAgg.buckets;
   }
+  return [];
 }
 
+/**
+ * Get terms for a query. Used for "Did you mean?"
+ *
+ * @param query The query to search for
+ * @param size Number of terms to return
+ * @param client The ES client
+ * @returns Array of terms
+ */
 export async function terms(
-  query,
+  query?: string | string[],
   size: number = TERMS_PAGE_SIZE,
   client?: Client
 ) {
@@ -362,7 +417,7 @@ export async function terms(
 
   if (!client) client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(request);
+  const response: T.SearchTemplateResponse = await client.search(request);
 
   return response.hits.hits.map((h) => h._source);
 }
@@ -373,6 +428,13 @@ export async function similarCollectionObjectsById(id) {
   if (document) return similarCollectionObjects(document);
 }
 
+/**
+ * Get similar objects for a given document
+ *
+ * @param document The document to get similar objects for
+ * @param client The ES client
+ * @returns Array of similar objects
+ */
 async function similarCollectionObjects(document?: any, client?: Client) {
   if (!document || !document.id) return [];
 
@@ -417,13 +479,21 @@ async function similarCollectionObjects(document?: any, client?: Client) {
 
   if (!client) client = getClient();
   if (client === undefined) return {};
-  const response = await client.search<Document, Aggregations>(esQuery);
+  const response: T.SearchTemplateResponse = await client.search(esQuery);
   if (!response?.hits?.hits?.length) {
     return [];
   }
   return response.hits.hits.map((h) => h._source);
 }
 
+/**
+ * Add a term to a bool filter query
+ *
+ * @param esQuery   The ES query
+ * @param name    The name of the field to filter on
+ * @param value   The value to filter on
+ * @returns  Void.  The ES Query is modified in place
+ */
 function addQueryBoolFilterTerm(
   esQuery: any,
   name: string,
@@ -440,6 +510,13 @@ function addQueryBoolFilterTerm(
   });
 }
 
+/**
+ * Add an exists clause to a bool filter query
+ *
+ * @param esQuery   The ES query
+ * @param name    The name of the field to filter on
+ * @returns  Void.  The ES Query is modified in place
+ */
 function addQueryBoolFilterExists(esQuery: any, name: string): void {
   if (!esQuery?.query) esQuery.query = {};
   if (!esQuery.query?.bool) esQuery.query.bool = {};
@@ -451,6 +528,13 @@ function addQueryBoolFilterExists(esQuery: any, name: string): void {
   });
 }
 
+/**
+ * Add a term to a bool must not section of query
+ *
+ * @param esQuery The ES query
+ * @param name  The name of the field that must exist
+ * @returns  Void.  The ES Query is modified in place
+ */
 function addQueryBoolMustNotFilter(
   esQuery: any,
   name: string,
@@ -467,6 +551,14 @@ function addQueryBoolMustNotFilter(
   });
 }
 
+/**
+ * Add a should term with boost to query
+ *
+ * @param document The document from which to get the value
+ * @param esQuery The ES query
+ * @param name  The name of the field to add to the term query
+ * @returns  Void.  The ES Query is modified in place
+ */
 function addShouldTerms(
   document: any,
   esQuery: any,
