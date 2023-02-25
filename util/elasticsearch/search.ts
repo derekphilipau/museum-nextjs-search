@@ -6,6 +6,7 @@ import { getBooleanValue } from '@/util/various';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
+import { AggOption } from '@/types/aggOption';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 
@@ -64,7 +65,7 @@ export async function getDocument(
   index: string,
   id: number
 ): Promise<ApiResponseDocument> {
-  const esQuery = {
+  const esQuery: T.SearchRequest = {
     index,
     query: {
       match: {
@@ -213,7 +214,7 @@ export async function searchCollections(
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
-  const esQuery: any = {
+  const esQuery: T.SearchRequest = {
     index,
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
@@ -221,7 +222,7 @@ export async function searchCollections(
     sort: [{ startDate: 'desc' }],
     track_total_hits: true,
   };
-  if (q) {
+  if (q && esQuery?.query?.bool) {
     esQuery.query.bool.must = {
       multi_match: {
         query: q,
@@ -238,7 +239,7 @@ export async function searchCollections(
         ],
       },
     };
-  } else {
+  } else if (esQuery?.query?.bool) {
     esQuery.query.bool.must = {
       match_all: {},
     };
@@ -347,14 +348,17 @@ interface OptionsParams {
  * @param size Number of options to return
  * @returns
  */
-export async function options(params: OptionsParams, size = OPTIONS_PAGE_SIZE) {
+export async function options(
+  params: OptionsParams,
+  size = OPTIONS_PAGE_SIZE
+): Promise<AggOption[]> {
   const { index, field, q } = params;
 
   if (!index || !field) {
-    return;
+    return [];
   }
 
-  const request: any = {
+  const request: T.SearchRequest = {
     index,
     size: 0,
     aggs: {
@@ -379,7 +383,7 @@ export async function options(params: OptionsParams, size = OPTIONS_PAGE_SIZE) {
   }
 
   const client = getClient();
-  if (client === undefined) return {};
+  if (client === undefined) return [];
   const response: T.SearchTemplateResponse = await client.search(request);
   if (response.aggregations?.[field] !== undefined) {
     const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
