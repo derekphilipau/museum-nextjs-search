@@ -274,7 +274,8 @@ export async function searchCollections(
   );
   addQueryBoolFilterTerm(esQuery, 'exhibitions', exhibitions);
   addQueryBoolFilterTerm(esQuery, 'collections', collections);
-  addQueryBoolFilterTerm(esQuery, 'isUnrestricted', isUnrestricted);
+  if (isUnrestricted)
+    addQueryBoolFilterTerm(esQuery, 'copyrightRestricted', false);
 
   if (hasPhoto) addQueryBoolFilterExists(esQuery, 'image');
 
