@@ -85,7 +85,7 @@ From the command line, run:
 npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./importElasticsearchData.ts
 ```
 
-The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. There are about 60,000 documents to index in the default dataset.
+The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. There are about 100,000 documents to index in the default dataset.
 
 ## License
 

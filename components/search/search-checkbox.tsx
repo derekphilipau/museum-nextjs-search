@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getBooleanValue } from '@/util/various';
 
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
 interface SearchCheckboxProps {
   params?: any;
@@ -25,7 +25,7 @@ export function SearchCheckbox({
 
   const [originalValue, setOriginalValue] = useState(getBooleanValue(value));
 
-  function checkValue(checked) {
+  function checkValue(checked: boolean) {
     const myValue = checked ? true : false;
     if (originalValue !== myValue) {
       console.log('checkbox go: ' + originalValue + ' new: ' + myValue);
@@ -44,7 +44,7 @@ export function SearchCheckbox({
 
   return (
     <>
-      <Checkbox
+      <Switch
         id={name}
         onCheckedChange={(checked) => checkValue(checked)}
         checked={value}
