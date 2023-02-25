@@ -1,25 +1,31 @@
-const index = {
+import * as T from '@elastic/elasticsearch/lib/api/types';
+
+const index: T.IndicesIndexSettings = {
   number_of_shards: 1,
   number_of_replicas: 1,
 };
 
-const analysis = {
+const analysis: T.IndicesIndexSettingsAnalysis = {
   analyzer: {
     unaggregatedStandardAnalyzer: {
+      type: 'custom',
       tokenizer: 'standard',
       char_filter: ['hyphenApostropheMappingFilter'],
       filter: ['lowercase', 'asciifolding', 'enSnowball'],
     },
     aggregatedKeywordAnalyzer: {
+      type: 'custom',
       tokenizer: 'keyword',
       char_filter: ['hyphenApostropheMappingFilter'],
       filter: ['lowercase', 'asciifolding'],
     },
     aggregatedSimpleKeywordAnalyzer: {
+      type: 'custom',
       tokenizer: 'keyword',
       filter: ['lowercase'],
     },
     suggestAnalyzer: {
+      type: 'custom',
       tokenizer: 'standard',
       char_filter: ['hyphenApostropheMappingFilter'],
       filter: ['lowercase', 'asciifolding'],
@@ -45,7 +51,7 @@ const analysis = {
   },
 };
 
-export const collections = {
+export const collections: T.IndicesIndexSettings = {
   settings: {
     index,
     analysis,
@@ -293,7 +299,7 @@ export const collections = {
   },
 };
 
-export const content = {
+export const content: T.IndicesIndexSettings = {
   settings: {
     index,
     analysis,
@@ -358,7 +364,7 @@ export const content = {
   },
 };
 
-export const terms = {
+export const terms: T.IndicesIndexSettings = {
   settings: {
     index,
     analysis,

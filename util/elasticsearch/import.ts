@@ -14,10 +14,22 @@ const indices = {
   terms,
 };
 
-const snooze = (s) => new Promise((resolve) => setTimeout(resolve, s * 1000));
+/**
+ * Sleep for a given number of seconds.
+ *
+ * @param s Number of seconds to sleep.
+ * @returns A promise that resolves after the given number of seconds.
+ */
+function snooze(s: number) {
+  return new Promise((resolve) => setTimeout(resolve, s * 1000));
+}
 
 /**
  * Check if a given index already exists in Elasticsearch.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
+ * @returns True if the index exists, false otherwise.
  */
 async function existsIndex(
   client: Client,
@@ -28,6 +40,9 @@ async function existsIndex(
 
 /**
  * Delete an Elasticsearch index.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
  */
 async function deleteIndex(client: Client, indexName: string) {
   if (await existsIndex(client, indexName))
@@ -36,6 +51,10 @@ async function deleteIndex(client: Client, indexName: string) {
 
 /**
  * Create an Elasticsearch index.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
+ * @param deleteIfExists Delete the index if it already exists.
  */
 async function createIndex(
   client: Client,
@@ -51,6 +70,10 @@ async function createIndex(
 
 /**
  * Count the number of documents in an index.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
+ * @returns Number of documents in the index.
  */
 async function countIndex(client: Client, indexName: string) {
   const res = await client.count({
@@ -61,7 +84,13 @@ async function countIndex(client: Client, indexName: string) {
 }
 
 /**
- * Either insert or update the documents.
+ * Bulk insert or update documents in an index.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
+ * @param documents Array of documents to insert or update.
+ * @param idFieldName Optional name of the field to use as the document ID.
+ * @param method Either 'index' or 'update'.
  */
 async function bulk(
   client: Client,
@@ -92,6 +121,10 @@ async function bulk(
 
 /**
  * Import data from a jsonl file (one JSON object per row, no endline commas)
+ *
+ * @param indexName  Name of the index.
+ * @param dataFilename  Name of the file containing the data.
+ * @param idFieldName  Optional name of the field to use as the document ID.
  */
 export async function importData(
   indexName: string,
