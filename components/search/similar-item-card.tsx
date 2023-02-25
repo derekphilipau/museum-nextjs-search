@@ -3,9 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getSmallOrRestrictedImageUrl } from '@/util/image';
 
-import type { CollectionObject } from '@/types/collectionObject';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
-export function SimilarItemCard({ item }: { item: CollectionObject }) {
+export function SimilarItemCard({ item }: { item: CollectionObjectDocument }) {
   if (!item) return null;
 
   let imageSrc = getSmallOrRestrictedImageUrl(

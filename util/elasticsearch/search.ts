@@ -11,7 +11,7 @@ import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BasicDocument } from '@/types/basicDocument';
-import type { CollectionObject } from '@/types/collectionObject';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { Term } from '@/types/term';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24; // 24 results per page
@@ -312,7 +312,9 @@ export async function searchCollections(
     pages: Math.ceil(count / size),
   };
 
-  const data = response.hits.hits.map((h) => h._source as CollectionObject);
+  const data = response.hits.hits.map(
+    (h) => h._source as CollectionObjectDocument
+  );
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
     const t: Term[] = await terms(q, (size = TERMS_PAGE_SIZE), client);
@@ -449,7 +451,7 @@ export async function similarCollectionObjectsById(id) {
 async function similarCollectionObjects(
   document?: any,
   client?: Client
-): Promise<CollectionObject[]> {
+): Promise<CollectionObjectDocument[]> {
   if (!document || !document.id) return [];
 
   const esQuery = {
@@ -497,7 +499,7 @@ async function similarCollectionObjects(
   if (!response?.hits?.hits?.length) {
     return [];
   }
-  return response.hits.hits.map((h) => h._source as CollectionObject);
+  return response.hits.hits.map((h) => h._source as CollectionObjectDocument);
 }
 
 /**

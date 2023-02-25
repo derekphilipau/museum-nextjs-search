@@ -1,7 +1,7 @@
 import type { BasicDocument } from './basicDocument';
 import type { CollectionObjectImage } from './collectionObjectImage';
 
-export interface CollectionObject extends BasicDocument {
+export interface CollectionObjectDocument extends BasicDocument {
   images?: CollectionObjectImage[];
   accessionNumber?: string;
   period?: string;

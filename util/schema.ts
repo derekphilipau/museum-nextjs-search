@@ -1,4 +1,4 @@
-import type { CollectionObject } from '@/types/collectionObject';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { getSmallOrRestrictedImageUrl } from './image';
 
 function getDimensionsCM(dimensions: string | undefined) {
@@ -24,7 +24,9 @@ function getDimensionsCM(dimensions: string | undefined) {
  *
  * TODO: import JSON-LD schema typescript def
  */
-export function getSchemaVisualArtwork(item: CollectionObject | undefined) {
+export function getSchemaVisualArtwork(
+  item: CollectionObjectDocument | undefined
+) {
   if (!item) return '';
   const schema: any = {
     '@context': 'https://schema.org',
@@ -64,6 +66,8 @@ export function getSchemaVisualArtwork(item: CollectionObject | undefined) {
   return schema;
 }
 
-export function getSchemaVisualArtworkJson(item: CollectionObject | undefined) {
+export function getSchemaVisualArtworkJson(
+  item: CollectionObjectDocument | undefined
+) {
   return JSON.stringify(getSchemaVisualArtwork(item), null, 2);
 }

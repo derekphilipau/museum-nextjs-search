@@ -1,4 +1,4 @@
-import type { CollectionObject } from '@/types/collectionObject';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
 /**
  * Strips basic html tags from a string
@@ -34,7 +34,7 @@ export function stripLineBreaks(str: string, replaceStr: string = ' ') {
  * @param filename the filename of the image
  */
 export function getCaption(
-  item: CollectionObject,
+  item: CollectionObjectDocument,
   filename: string = ''
 ): string {
   if (!item) return '';

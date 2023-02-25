@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
-import type { CollectionObject } from '@/types/collectionObject';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { SimilarItemCard } from '@/components/search/similar-item-card';
 import { Button } from '@/components/ui/button';
 
 interface SimilarObjectsProps {
-  similar: CollectionObject[];
+  similar: CollectionObjectDocument[];
 }
 
 export function SimilarObjects({ similar }: SimilarObjectsProps) {

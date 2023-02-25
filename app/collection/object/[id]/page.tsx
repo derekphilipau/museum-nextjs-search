@@ -7,7 +7,6 @@ import { getCaption } from '@/util/various';
 import { encode } from 'html-entities';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
-import type { CollectionObject } from '@/types/collectionObject';
 import { SimilarObjects } from '@/components/object/similar-objects';
 import { ImageViewer } from '@/components/search/image-viewer';
 import { LanguageDisclaimer } from '@/components/search/language-disclaimer';
