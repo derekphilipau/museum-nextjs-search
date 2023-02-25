@@ -79,7 +79,7 @@ export default async function Page({ params, searchParams }) {
           <SearchQueryInput params={searchParams} />
         </div>
         {index === 'collections' && (
-          <div className="flex flex-wrap gap-x-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
             <div className="flex items-center space-x-2">
               <SearchCheckbox
                 params={searchParams}
