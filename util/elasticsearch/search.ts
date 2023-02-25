@@ -430,14 +430,7 @@ export async function terms(
   if (client === undefined) return [];
   const response: T.SearchTemplateResponse = await client.search(request);
 
-  return response.hits.hits.map((h) => {
-    const t = h._source as Term;
-    return {
-      field: t?.field,
-      value: t?.value,
-      description: t?.description,
-    };
-  });
+  return response.hits.hits.map((h) => h._source as Term);
 }
 
 export async function similarCollectionObjectsById(id) {
@@ -453,7 +446,10 @@ export async function similarCollectionObjectsById(id) {
  * @param client The ES client
  * @returns Array of similar objects
  */
-async function similarCollectionObjects(document?: any, client?: Client) {
+async function similarCollectionObjects(
+  document?: any,
+  client?: Client
+): Promise<CollectionObject[]> {
   if (!document || !document.id) return [];
 
   const esQuery = {
@@ -496,12 +492,12 @@ async function similarCollectionObjects(document?: any, client?: Client) {
   addShouldTerms(document, esQuery, 'primaryGeographicalLocation', 1);
 
   if (!client) client = getClient();
-  if (client === undefined) return {};
+  if (client === undefined) return [];
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   if (!response?.hits?.hits?.length) {
     return [];
   }
-  return response.hits.hits.map((h) => h._source);
+  return response.hits.hits.map((h) => h._source as CollectionObject);
 }
 
 /**
