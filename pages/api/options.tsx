@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { options } from '@/util/elasticsearch/search';
 
-import { AggOption } from '@/types/aggOption';
+import type { AggOption } from '@/types/aggOption';
 
 export default async function handler(
   req: NextApiRequest,

@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
-export function TermCard({ term }) {
+import type { Term } from '@/types/term';
+
+export function TermCard({ term }: { term: Term }) {
   let href = '';
   let name = '';
   if (term.field === 'primaryConstituent') {

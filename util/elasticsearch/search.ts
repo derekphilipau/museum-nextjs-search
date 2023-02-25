@@ -6,9 +6,13 @@ import { getBooleanValue } from '@/util/various';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
-import { AggOption } from '@/types/aggOption';
+import type { AggOption } from '@/types/aggOption';
+import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
+import type { BasicDocument } from '@/types/basicDocument';
+import type { CollectionObject } from '@/types/collectionObject';
+import type { Term } from '@/types/term';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24; // 24 results per page
 const SEARCH_AGG_SIZE = 20; // 20 results per aggregation
@@ -170,10 +174,10 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
     count,
     pages: Math.ceil(count / size),
   };
-  const data = response.hits.hits.map((h) => h._source);
+  const data = response.hits.hits.map((h) => h._source as BasicDocument);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q?.length && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
-    const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
+    const t: Term[] = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
   return res;
@@ -308,10 +312,10 @@ export async function searchCollections(
     pages: Math.ceil(count / size),
   };
 
-  const data = response.hits.hits.map((h) => h._source);
+  const data = response.hits.hits.map((h) => h._source as CollectionObject);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   if (q && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
-    const t = await terms(q, (size = TERMS_PAGE_SIZE), client);
+    const t: Term[] = await terms(q, (size = TERMS_PAGE_SIZE), client);
     res.terms = t;
   }
   return res;
@@ -323,13 +327,14 @@ export async function searchCollections(
  * @param response The response from the ES search
  * @returns Array of aggregations with options/buckets
  */
-function getResponseOptions(response) {
-  const options = {};
+function getResponseOptions(response: T.SearchTemplateResponse): AggOptions {
+  const options: AggOptions = {};
   if (response?.aggregations) {
-    Object.keys(response?.aggregations).forEach((n) => {
-      const agg = response.aggregations[n];
-      if (agg.buckets && agg.buckets.length) {
-        options[n] = agg.buckets;
+    Object.keys(response?.aggregations).forEach((field) => {
+      if (response.aggregations?.[field] !== undefined) {
+        const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
+        if ('buckets' in aggAgg && aggAgg?.buckets)
+          options[field] = aggAgg.buckets;
       }
     });
   }
@@ -404,13 +409,15 @@ export async function terms(
   query?: string | string[],
   size: number = TERMS_PAGE_SIZE,
   client?: Client
-) {
-  const request = {
+): Promise<Term[]> {
+  const myQuery = Array.isArray(query) ? query.join(' ') : query;
+  if (!myQuery || myQuery === undefined) return [];
+  const request: T.SearchRequest = {
     index: 'terms',
     query: {
       match: {
         value: {
-          query,
+          query: myQuery,
           fuzziness: 'AUTO',
         },
       },
@@ -420,10 +427,17 @@ export async function terms(
   };
 
   if (!client) client = getClient();
-  if (client === undefined) return {};
+  if (client === undefined) return [];
   const response: T.SearchTemplateResponse = await client.search(request);
 
-  return response.hits.hits.map((h) => h._source);
+  return response.hits.hits.map((h) => {
+    const t = h._source as Term;
+    return {
+      field: t?.field,
+      value: t?.value,
+      description: t?.description,
+    };
+  });
 }
 
 export async function similarCollectionObjectsById(id) {

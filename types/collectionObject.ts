@@ -1,21 +1,9 @@
-import { CollectionObjectImage } from './collectionObjectImage';
+import type { BasicDocument } from './basicDocument';
+import type { CollectionObjectImage } from './collectionObjectImage';
 
-export interface CollectionObject {
-  type: string;
-  url: string;
-  id: number;
-  title?: string;
-  description?: string;
-  searchText?: string;
-  keywords?: string;
-  boostedKeywords?: string;
-  image?: string;
-  imageAlt?: string;
+export interface CollectionObject extends BasicDocument {
   images?: CollectionObjectImage[];
   accessionNumber?: string;
-  date?: string;
-  startDate?: string;
-  endDate?: string;
   period?: string;
   dynasty?: string;
   provenance?: string;
@@ -39,7 +27,6 @@ export interface CollectionObject {
   primaryConstituent?: string;
   primaryConstituentDates?: string;
   primaryConstituentRole?: string;
-  constituents?: string[];
   collections?: string[];
   exhibitions?: string[];
   geographicalLocations?: any[];

@@ -1,9 +1,14 @@
+import { Key } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { search } from '@/util/elasticsearch/search';
 import { getBooleanValue } from '@/util/various';
 
+import type { AggOption } from '@/types/aggOption';
+import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
+import type { BasicDocument } from '@/types/basicDocument';
+import type { Term } from '@/types/term';
 import { ItemCard } from '@/components/search/item-card';
 import { ObjectCard } from '@/components/search/object-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
@@ -40,14 +45,12 @@ export default async function Page({ params, searchParams }) {
 
   // Query Elasticsearch
   const response: ApiResponseSearch = await search({ index, ...searchParams });
-  const items = response?.data || [];
-  const terms = response?.terms || [];
+  const items: BasicDocument[] = response?.data || [];
+  const terms: Term[] = response?.terms || [];
   const apiError = response?.error || '';
-  const options = response?.options || {};
+  const options: AggOptions = response?.options || {};
   const count = response?.metadata?.count || 0;
   const totalPages = response?.metadata?.pages || 0;
-
-  //  console.log('yyyy ', items)
 
   return (
     <section className="container pt-4 md:pt-6">
@@ -172,7 +175,8 @@ export default async function Page({ params, searchParams }) {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:pb-6 lg:grid-cols-4">
                 {terms?.length > 0 &&
                   terms.map(
-                    (term, i) => term && <TermCard key={i} term={term} />
+                    (term: Term, i: Key) =>
+                      term && <TermCard key={i} term={term} />
                   )}
               </div>
             </>
@@ -180,7 +184,7 @@ export default async function Page({ params, searchParams }) {
           <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
             {items?.length > 0 &&
               items.map(
-                (item: any, i) =>
+                (item: any, i: Key) =>
                   item && (
                     <div className="" key={i}>
                       {item.type === 'object' ? (
