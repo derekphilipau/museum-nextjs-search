@@ -392,10 +392,14 @@ export async function options(
 
   const client = getClient();
   if (client === undefined) return [];
-  const response: T.SearchTemplateResponse = await client.search(request);
-  if (response.aggregations?.[field] !== undefined) {
-    const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
-    if ('buckets' in aggAgg && aggAgg?.buckets) return aggAgg.buckets;
+  try {
+    const response: T.SearchTemplateResponse = await client.search(request);
+    if (response.aggregations?.[field] !== undefined) {
+      const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
+      if ('buckets' in aggAgg && aggAgg?.buckets) return aggAgg.buckets;
+    }
+  } catch (e) {
+    console.error(e);
   }
   return [];
 }
@@ -431,9 +435,13 @@ export async function terms(
 
   if (!client) client = getClient();
   if (client === undefined) return [];
-  const response: T.SearchTemplateResponse = await client.search(request);
-
-  return response.hits.hits.map((h) => h._source as Term);
+  try {
+    const response: T.SearchTemplateResponse = await client.search(request);
+    return response.hits.hits.map((h) => h._source as Term);
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
 }
 
 export async function similarCollectionObjectsById(id) {

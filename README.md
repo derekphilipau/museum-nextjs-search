@@ -46,7 +46,7 @@ You can run Elasticsearch in a Docker container, or sign up for an Elasticsearch
 
 Once you have a running Elasticsearch service, you can add the connection details to the environment variables.
 
-For local development, add a local `.env.local` file in the root directory. If `ELASTICSEARCH_USE_CLOUD` is "true", the Elastic Cloud vars will be used, otherwise the \_HOST, \_PROTOCOL, \_PORT, \_CA_FILE, and \_API_KEY vars will be used.
+For local development, add a local `.env.local` file in the root directory. If `ELASTICSEARCH_USE_CLOUD` is "true", the Elastic Cloud vars will be used, otherwise the \_HOST, \_PROTOCOL, \_PORT, \_CA_FILE, and \_API_KEY vars will be used.  You may need to copy the http_ca.crt from the Elasticsearch Docker container to a local directory like `./secrets`.
 
 On [Formspree](https://formspree.io/) you should set up a basic contact form and enter the `FORMSPREE_FORM_ID` env variable.
 
@@ -85,7 +85,7 @@ From the command line, run:
 npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./importElasticsearchData.ts
 ```
 
-The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. There are about 100,000 documents to index in the default dataset.
+The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. `importElasticsearchData.ts` is currently set to use the sample dataset, edit it to use the full dataset.  There are about 10,000 documents in the sample dataset and 100,000 documents in the default dataset.
 
 ## License
 

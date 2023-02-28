@@ -39,3 +39,5 @@ yarn-error.log*
 data/collections.jsonl
 es.secret.md
 **/.vscode/
+secrets/http_ca.crt
+elastic.md
