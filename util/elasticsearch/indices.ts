@@ -87,6 +87,35 @@ export const content: T.IndicesIndexSettings = {
   },
 };
 
+export const archives: T.IndicesIndexSettings = {
+  settings: {
+    index: S.index,
+    analysis: S.analysis,
+  },
+  mappings: {
+    properties: {
+      type: S.keywordField,
+      url: S.keywordField,
+      id: S.keywordField,
+      title: S.unaggregatedStandardAnalyzerTextField,
+      alternateTitle: S.unaggregatedStandardAnalyzerTextField,
+      description: S.unaggregatedStandardAnalyzerTextField,
+      searchText: S.unaggregatedStandardAnalyzerTextField,
+      accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
+      primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,
+      subject: S.keywordField,
+      language: S.keywordField,
+      publisher: S.keywordField,
+      format: S.textField,
+      rights: S.textField,
+      relation: S.keywordField,
+      date: S.textField,
+      startDate: S.dateField,
+      endDate: S.dateField,
+    },
+  },
+};
+
 export const terms: T.IndicesIndexSettings = {
   settings: {
     index: S.index,

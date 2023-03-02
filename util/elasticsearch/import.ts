@@ -5,8 +5,8 @@ import { Client } from '@elastic/elasticsearch';
 import { collections, content, terms } from './indices';
 import { getClient } from './search';
 
-const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
-const ELASTICSEARCH_BULK_LIMIT = 100;
+export const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
+export const ELASTICSEARCH_BULK_LIMIT = 100;
 
 const indices = {
   collections,
@@ -20,7 +20,7 @@ const indices = {
  * @param s Number of seconds to sleep.
  * @returns A promise that resolves after the given number of seconds.
  */
-function snooze(s: number) {
+export function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
 }
 
@@ -56,7 +56,7 @@ async function deleteIndex(client: Client, indexName: string) {
  * @param indexName Name of the index.
  * @param deleteIfExists Delete the index if it already exists.
  */
-async function createIndex(
+export async function createIndex(
   client: Client,
   indexName: string,
   deleteIfExists = true
@@ -92,7 +92,7 @@ async function countIndex(client: Client, indexName: string) {
  * @param idFieldName Optional name of the field to use as the document ID.
  * @param method Either 'index' or 'update'.
  */
-async function bulk(
+export async function bulk(
   client: Client,
   indexName: string,
   documents: any,
@@ -126,7 +126,7 @@ async function bulk(
  * @param dataFilename  Name of the file containing the data.
  * @param idFieldName  Optional name of the field to use as the document ID.
  */
-export async function importData(
+export async function importJsonFileData(
   indexName: string,
   dataFilename: string,
   idFieldName: string
