@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'node:readline';
 import { Client } from '@elastic/elasticsearch';
 
-import { collections, content, terms } from './indices';
+import { archives, collections, content, terms } from './indices';
 import { getClient } from './search';
 
 export const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
@@ -11,6 +11,7 @@ export const ELASTICSEARCH_BULK_LIMIT = 100;
 const indices = {
   collections,
   content,
+  archives,
   terms,
 };
 

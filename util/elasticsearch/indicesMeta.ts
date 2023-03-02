@@ -41,10 +41,6 @@ export const indicesMeta: IndicesMeta = {
     aggs: [],
   },
   archives: {
-    aggs: [
-      'subject',
-      'language',
-      'publisher',
-    ],
+    aggs: ['primaryConstituent'],
   },
 };

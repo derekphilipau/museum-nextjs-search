@@ -160,21 +160,23 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
   }
 
   if (index === 'all') {
-    esQuery.indices_boost = [{ content: 6 }, { collections: 3 }, { archives: 1 }];
+    esQuery.indices_boost = [
+      { content: 6 },
+      { collections: 3 },
+      { archives: 1 },
+    ];
   }
 
+  addQueryAggs(esQuery, index);
+  console.log('xxxxs', JSON.stringify(esQuery));
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
 
-  let count = 0;
-  if (
-    typeof response?.hits?.total !== 'number' &&
-    response?.hits?.total?.value !== undefined
-  )
-    count = response?.hits?.total?.value;
+  let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
+  if (typeof count !== 'number') count = count.value;
   const metadata = {
     count,
     pages: Math.ceil(count / size),
@@ -291,18 +293,8 @@ export async function searchCollections(
     );
   }
 
-  if (indicesMeta[index]?.aggs?.length > 0) {
-    const aggs = {};
-    for (const aggName of indicesMeta[index].aggs) {
-      aggs[aggName] = {
-        terms: {
-          field: aggName,
-          size: SEARCH_AGG_SIZE,
-        },
-      };
-    }
-    esQuery.aggs = aggs;
-  }
+  addQueryAggs(esQuery, index);
+  console.log('xiuiuius', JSON.stringify(esQuery));
 
   const client = getClient();
   if (client === undefined) return {};
@@ -607,4 +599,20 @@ function addShouldTerms(
       boost,
     },
   });
+}
+
+function addQueryAggs(esQuery: any, indexName: string | string[] | undefined) {
+  if (indexName === undefined || Array.isArray(indexName)) return;
+  if (indicesMeta[indexName]?.aggs?.length > 0) {
+    const aggs = {};
+    for (const aggName of indicesMeta[indexName].aggs) {
+      aggs[aggName] = {
+        terms: {
+          field: aggName,
+          size: SEARCH_AGG_SIZE,
+        },
+      };
+    }
+    esQuery.aggs = aggs;
+  }
 }
