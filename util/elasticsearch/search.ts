@@ -156,7 +156,7 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
     esQuery.query.bool.must = {
       match_all: {},
     };
-    esQuery.sort = [{ startDate: 'desc' }];
+    if (index !== 'content') esQuery.sort = [{ startDate: 'desc' }];
   }
 
   if (index === 'all') {

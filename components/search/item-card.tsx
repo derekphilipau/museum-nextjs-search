@@ -8,6 +8,9 @@ export function ItemCard({ item }) {
   return (
     <Link href={item.url}>
       <div className="py-4">
+        <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+          Page
+        </h4>
         <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
           <figure>
             {item.image ? (

@@ -4,13 +4,13 @@ import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { search } from '@/util/elasticsearch/search';
 import { getBooleanValue } from '@/util/various';
 
-import type { AggOption } from '@/types/aggOption';
 import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BasicDocument } from '@/types/basicDocument';
 import type { Term } from '@/types/term';
 import { ItemCard } from '@/components/search/item-card';
 import { ObjectCard } from '@/components/search/object-card';
+import { ArchiveCard } from '@/components/search/archive-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -193,11 +193,9 @@ export default async function Page({ params, searchParams }) {
                 (item: any, i: Key) =>
                   item && (
                     <div className="" key={i}>
-                      {item.type === 'object' ? (
-                        <ObjectCard item={item} />
-                      ) : (
-                        <ItemCard item={item} />
-                      )}
+                      {item.type === 'object' && <ObjectCard item={item} />}
+                      {item.type === 'dc_object' && <ArchiveCard item={item} />}
+                      {item.type === 'page' && <ItemCard item={item} />}
                     </div>
                   )
               )}

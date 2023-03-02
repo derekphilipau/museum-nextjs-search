@@ -62,3 +62,21 @@ export function getBooleanValue(x: any) {
   if (typeof x === 'string') return x === 'true';
   return false;
 }
+
+/**
+ * TODO
+ *
+ * @param str the string to trim
+ * @param length the length to trim to
+ * @param ellipsis the string to append to the trimmed string
+ * @returns
+ */
+export function trimStringToLengthAtWordBoundary(
+  str: string,
+  length: number,
+  ellipsis: string = '...'
+) {
+  if (!str) return '';
+  if (str.length <= length) return str;
+  return str.substr(0, str.lastIndexOf(' ', length)) + ellipsis;
+}
