@@ -11,6 +11,7 @@
 interface IndicesMeta {
   [index: string]: {
     aggs: string[];
+    filters: string[];
   };
 }
 
@@ -36,11 +37,32 @@ export const indicesMeta: IndicesMeta = {
       'exhibitions',
       'section',
     ],
+    filters: [
+      // not all aggs need to be filters
+      'primaryConstituent',
+      'classification',
+      'medium',
+      'collections',
+      'period',
+      'dynasty',
+      'primaryGeographicalLocationContinent',
+      'primaryGeographicalLocationCountry',
+      'primaryGeographicalLocation',
+      'museumLocation',
+      'exhibitions',
+      'section',
+      // non-agg filters:
+      'isUnrestricted',
+      'hasPhoto',
+      'onView',
+    ],
   },
   content: {
     aggs: [],
+    filters: [],
   },
   archives: {
     aggs: ['primaryConstituent'],
+    filters: ['primaryConstituent'],
   },
 };

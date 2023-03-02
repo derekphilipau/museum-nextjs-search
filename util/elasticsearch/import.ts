@@ -101,6 +101,7 @@ export async function bulk(
   method = 'index'
 ) {
   if (client === undefined) throw new Error(ERR_CLIENT);
+  if (documents === undefined || documents?.length === 0) return;
   const operations = documents.flatMap((doc) => [
     {
       [method]: {

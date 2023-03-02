@@ -4,12 +4,17 @@ import type { AggOptions } from './aggOptions';
 import type { BasicDocument } from './basicDocument';
 import type { Term } from './term';
 
+export interface ApiResponseSearchMetadata {
+  count?: number;
+  pages?: number;
+}
+
 export interface ApiResponseSearch {
   query?: T.SearchRequest;
   data?: BasicDocument[];
   terms?: Term[];
   options?: AggOptions;
-  metadata?: any;
+  metadata?: ApiResponseSearchMetadata;
   apiError?: string;
   error?: any;
 }

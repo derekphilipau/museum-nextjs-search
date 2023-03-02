@@ -8,9 +8,9 @@ import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BasicDocument } from '@/types/basicDocument';
 import type { Term } from '@/types/term';
+import { ArchiveCard } from '@/components/search/archive-card';
 import { ItemCard } from '@/components/search/item-card';
 import { ObjectCard } from '@/components/search/object-card';
-import { ArchiveCard } from '@/components/search/archive-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -33,15 +33,15 @@ export default async function Page({ params, searchParams }) {
   const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
   const onView = getBooleanValue(searchParams?.onView);
   const isShowFilters = getBooleanValue(searchParams?.f);
-  const filters = {};
+  const aggFilters = {};
   if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
     for (const aggName of indicesMeta[index].aggs) {
       if (searchParams[aggName]) {
-        filters[aggName] = searchParams[aggName] || '';
+        aggFilters[aggName] = searchParams[aggName] || '';
       }
     }
   }
-  const filterArr = Object.entries(filters);
+  const filterArr = Object.entries(aggFilters);
 
   // Query Elasticsearch
   const response: ApiResponseSearch = await search({ index, ...searchParams });
@@ -119,7 +119,7 @@ export default async function Page({ params, searchParams }) {
             <SearchAggSectionMobile
               index={index}
               params={searchParams}
-              filters={filters}
+              filters={aggFilters}
               options={options}
             />
           </div>
@@ -130,7 +130,7 @@ export default async function Page({ params, searchParams }) {
               index={index}
               params={searchParams}
               options={options}
-              filters={filters}
+              filters={aggFilters}
             />
           </div>
         )}

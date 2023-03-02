@@ -9,7 +9,10 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 import type { AggOption } from '@/types/aggOption';
 import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
-import type { ApiResponseSearch } from '@/types/apiResponseSearch';
+import type {
+  ApiResponseSearch,
+  ApiResponseSearchMetadata,
+} from '@/types/apiResponseSearch';
 import type { BasicDocument } from '@/types/basicDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { Term } from '@/types/term';
@@ -116,16 +119,15 @@ interface SearchParams {
  * @param params Search parameters
  * @returns Elasticsearch search response
  */
-export async function search(params: SearchParams): Promise<ApiResponseSearch> {
+export async function search(params: any): Promise<ApiResponseSearch> {
   if (params.index === 'collections') {
     return searchCollections(params);
   }
 
   let { index, p, size, q } = params;
 
+  // Defaults for params:
   index = index !== 'all' ? index : ['collections', 'content', 'archives'];
-
-  // Defaults for missing params:
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
   p = p || 1;
 
@@ -167,58 +169,26 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
     ];
   }
 
+  addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
-  console.log('xxxxs', JSON.stringify(esQuery));
+
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
-
-  let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
-  if (typeof count !== 'number') count = count.value;
-  const metadata = {
-    count,
-    pages: Math.ceil(count / size),
-  };
+  const metadata = getResponseMetadata(response, size);
   const data = response.hits.hits.map((h) => h._source as BasicDocument);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
-  if (q?.length && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
-    const t: Term[] = await terms(q, (size = TERMS_PAGE_SIZE), client);
-    res.terms = t;
-  }
+  const qt = await getSearchQueryTerms(q, p, client);
+  if (qt !== undefined && qt?.length > 0) res.terms = qt;
   return res;
 }
 
 export async function searchCollections(
-  params: SearchParams
+  params: any
 ): Promise<ApiResponseSearch> {
-  let {
-    index,
-    p,
-    size,
-    q,
-    isUnrestricted,
-    hasPhoto,
-    onView,
-    primaryConstituent,
-    classification,
-    medium,
-    period,
-    dynasty,
-    museumLocation,
-    section,
-    primaryGeographicalLocationContinent,
-    primaryGeographicalLocationCountry,
-    primaryGeographicalLocation,
-    exhibitions,
-    collections,
-  } = params;
-
-  // Coerce boolean vars
-  isUnrestricted = getBooleanValue(isUnrestricted);
-  hasPhoto = getBooleanValue(hasPhoto);
-  onView = getBooleanValue(onView);
+  let { index, p, size, q } = params;
 
   // Defaults for missing params:
   index = 'collections';
@@ -256,67 +226,21 @@ export async function searchCollections(
     esQuery.sort = [{ startDate: 'desc' }];
   }
 
-  addQueryBoolFilterTerm(esQuery, 'primaryConstituent', primaryConstituent);
-  addQueryBoolFilterTerm(esQuery, 'classification', classification);
-  addQueryBoolFilterTerm(esQuery, 'medium', medium);
-  addQueryBoolFilterTerm(esQuery, 'period', period);
-  addQueryBoolFilterTerm(esQuery, 'dynasty', dynasty);
-  addQueryBoolFilterTerm(esQuery, 'museumLocation', museumLocation);
-  addQueryBoolFilterTerm(esQuery, 'section', section);
-  addQueryBoolFilterTerm(
-    esQuery,
-    'primaryGeographicalLocationContinent',
-    primaryGeographicalLocationContinent
-  );
-  addQueryBoolFilterTerm(
-    esQuery,
-    'primaryGeographicalLocationCountry',
-    primaryGeographicalLocationCountry
-  );
-  addQueryBoolFilterTerm(
-    esQuery,
-    'primaryGeographicalLocation',
-    primaryGeographicalLocation
-  );
-  addQueryBoolFilterTerm(esQuery, 'exhibitions', exhibitions);
-  addQueryBoolFilterTerm(esQuery, 'collections', collections);
-  if (isUnrestricted)
-    addQueryBoolFilterTerm(esQuery, 'copyrightRestricted', false);
-
-  if (hasPhoto) addQueryBoolFilterExists(esQuery, 'image');
-
-  if (onView) {
-    addQueryBoolMustNotFilter(
-      esQuery,
-      'museumLocation',
-      'This item is not on view'
-    );
-  }
-
+  addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
-  console.log('xiuiuius', JSON.stringify(esQuery));
 
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
-
-  let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
-  if (typeof count !== 'number') count = count.value;
-  const metadata = {
-    count,
-    pages: Math.ceil(count / size),
-  };
-
+  const metadata = getResponseMetadata(response, size);
   const data = response.hits.hits.map(
     (h) => h._source as CollectionObjectDocument
   );
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
-  if (q && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
-    const t: Term[] = await terms(q, (size = TERMS_PAGE_SIZE), client);
-    res.terms = t;
-  }
+  const qt = await getSearchQueryTerms(q, p, client);
+  if (qt !== undefined && qt?.length > 0) res.terms = qt;
   return res;
 }
 
@@ -338,6 +262,43 @@ function getResponseOptions(response: T.SearchTemplateResponse): AggOptions {
     });
   }
   return options;
+}
+
+/**
+ * Get the total number of results and the number of pages
+ *
+ * @param response The response from the ES search
+ * @param size The number of results per page
+ * @returns Object with the total number of results and the number of pages
+ */
+function getResponseMetadata(
+  response: T.SearchTemplateResponse,
+  size: number
+): ApiResponseSearchMetadata {
+  let count = response?.hits?.total || 0; // Returns either number or SearchTotalHits
+  if (typeof count !== 'number') count = count.value;
+  return {
+    count,
+    pages: Math.ceil(count / size),
+  };
+}
+
+/**
+ * If there was a search query, search for matching terms:
+ *
+ * @param q Search query
+ * @param p Page number
+ * @param client ES client
+ * @returns Array of matching terms
+ */
+async function getSearchQueryTerms(
+  q: string,
+  p: number,
+  client: Client
+): Promise<Term[] | undefined> {
+  if (q?.length && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
+    return await terms(q, TERMS_PAGE_SIZE, client);
+  }
 }
 
 interface OptionsParams {
@@ -505,6 +466,25 @@ async function similarCollectionObjects(
     return [];
   }
   return response.hits.hits.map((h) => h._source as CollectionObjectDocument);
+}
+
+function addQueryBoolFilterTerms(esQuery: any, indexName: any, params: any) {
+  if (Array.isArray(indexName)) return;
+  if (indicesMeta[indexName]?.filters?.length > 0) {
+    for (const filter of indicesMeta[indexName].filters) {
+      if (filter === 'onView' && params?.[filter] === 'true')
+        addQueryBoolMustNotFilter(
+          esQuery,
+          'museumLocation',
+          'This item is not on view'
+        );
+      else if (filter === 'hasPhoto' && params?.[filter] === 'true')
+        addQueryBoolFilterExists(esQuery, 'image');
+      else if (filter === 'isUnrestricted' && params?.[filter] === 'true')
+        addQueryBoolFilterTerm(esQuery, 'copyrightRestricted', false);
+      else addQueryBoolFilterTerm(esQuery, filter, params?.[filter]);
+    }
+  }
 }
 
 /**
