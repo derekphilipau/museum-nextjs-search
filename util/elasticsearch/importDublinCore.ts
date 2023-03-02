@@ -60,7 +60,6 @@ function getDates(metadata: any) {
   // Date can be of form "1994", "1974 -- 1975", "1980-10", "1988-03-1988-05", "1988-1989"
   // Use regular expression if the date is of the form YYYY-MM:
   const match = /^(\d{4})-(\d{2})$/.exec(date);
-  console.log(date);
   if (match?.length === 3) {
     const dateStr = `${match[1]}-${match[2]}-01`;
     // dang it, gotta do a date calculation now :(
@@ -160,7 +159,6 @@ export async function importDublinCoreData(
   let documents: any[] = [];
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
-    console.log(JSON.stringify(translateDublinCore(obj)));
     if (obj !== undefined) documents.push(translateDublinCore(obj));
     if (documents.length >= ELASTICSEARCH_BULK_LIMIT) {
       await bulk(client, indexName, documents, idFieldName);

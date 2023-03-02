@@ -14,9 +14,9 @@ const idField = 'id';
 loadEnvConfig(process.cwd());
 
 async function run() {
-  //await importJsonFileData('collections', collectionsDataFile, idField);
-  //await importJsonFileData('content', contentDataFile, idField);
-  //await importJsonFileData('terms', termsDataFile, idField);
+  await importJsonFileData('collections', collectionsDataFile, idField);
+  await importJsonFileData('content', contentDataFile, idField);
+  await importJsonFileData('terms', termsDataFile, idField);
   await importDublinCoreData('archives', archivesDataFile, idField);
 }
 

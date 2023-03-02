@@ -41,3 +41,4 @@ es.secret.md
 **/.vscode/
 secrets/http_ca.crt
 elastic.md
+data/archivesSpaceDCRecords.jsonl

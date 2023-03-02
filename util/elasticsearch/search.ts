@@ -123,7 +123,7 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
 
   let { index, p, size, q } = params;
 
-  index = index === 'content' ? 'content' : ['collections', 'content'];
+  index = index !== 'all' ? index : ['collections', 'content', 'archives'];
 
   // Defaults for missing params:
   size = size || DEFAULT_SEARCH_PAGE_SIZE;
@@ -131,7 +131,7 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
 
   const esQuery: T.SearchRequest = {
     index,
-    query: { bool: { must: { match_all: {} } } },
+    query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
     size,
     track_total_hits: true,
@@ -152,10 +152,15 @@ export async function search(params: SearchParams): Promise<ApiResponseSearch> {
         ],
       },
     };
+  } else if (esQuery?.query?.bool) {
+    esQuery.query.bool.must = {
+      match_all: {},
+    };
+    esQuery.sort = [{ startDate: 'desc' }];
   }
 
-  if (index !== 'content') {
-    esQuery.indices_boost = [{ content: 4 }, { collections: 1 }];
+  if (index === 'all') {
+    esQuery.indices_boost = [{ content: 6 }, { collections: 3 }, { archives: 1 }];
   }
 
   const client = getClient();
@@ -223,7 +228,6 @@ export async function searchCollections(
     query: { bool: { must: {} } },
     from: (p - 1) * size || 0,
     size,
-    sort: [{ startDate: 'desc' }],
     track_total_hits: true,
   };
   if (q && esQuery?.query?.bool) {

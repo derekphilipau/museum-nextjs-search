@@ -59,19 +59,25 @@ export default async function Page({ params, searchParams }) {
           index={index}
           params={searchParams}
           name="all"
-          label="All"
+          label={dict['index.all']}
         />
         <SearchIndexButton
           index={index}
           params={searchParams}
           name="content"
-          label="Pages"
+          label={dict['index.content']}
         />
         <SearchIndexButton
           index={index}
           params={searchParams}
           name="collections"
-          label="Collection"
+          label={dict['index.collections']}
+        />
+        <SearchIndexButton
+          index={index}
+          params={searchParams}
+          name="archives"
+          label={dict['index.archives']}
         />
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4">
