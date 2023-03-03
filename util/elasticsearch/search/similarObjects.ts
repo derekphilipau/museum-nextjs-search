@@ -10,7 +10,10 @@ import { getDocument } from './document';
 const SIMILAR_PAGE_SIZE = 24; // 24 results per similar search
 const UNKNOWN_CONSTITUENT = 'Unknown'; // Default string for unknown constituent in dataset
 
-export async function similarCollectionObjectsById(id: number | string) {
+export async function similarCollectionObjectsById(
+  id: number | string | undefined
+) {
+  if (!id) return [];
   const docResponse = await getDocument('collections', id);
   const document = docResponse?.data;
   if (document) return similarCollectionObjects(document);
