@@ -12,7 +12,6 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.6.0",
     "@formspree/react": "^2.4.1",
-    "@next/font": "^13.1.6",
     "@radix-ui/react-accessible-icon": "^1.0.1",
     "@radix-ui/react-accordion": "^1.1.0",
     "@radix-ui/react-alert-dialog": "^1.0.2",
@@ -46,7 +45,7 @@
     "embla-carousel-react": "^7.0.9",
     "html-entities": "^2.3.3",
     "lucide-react": "0.105.0-alpha.4",
-    "next": "^13.2.1-canary.0",
+    "next": "^13.2.3",
     "next-themes": "npm:@wits/next-themes@^0.2.16",
     "openseadragon": "^4.0.0",
     "react": "^18.2.0",

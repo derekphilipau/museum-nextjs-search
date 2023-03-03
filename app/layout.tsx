@@ -1,4 +1,4 @@
-import { Inter } from '@next/font/google';
+import { Inter } from "next/font/google";
 
 import { Footer } from '@/components/layout/footer';
 import { SiteHeader } from '@/components/layout/site-header';

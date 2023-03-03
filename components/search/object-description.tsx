@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Geo } from '@next/font/google';
 
 import { DescriptionRow } from './description-row';
 import { GeographicalDescriptionRow } from './geographical-description-row';
