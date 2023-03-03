@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import { SimilarItemCard } from '@/components/search/similar-item-card';
+import { SimilarObjectCard } from '@/components/search/similar-object-card';
 import { Button } from '@/components/ui/button';
 
 interface SimilarObjectsProps {
@@ -40,7 +40,7 @@ export function SimilarObjects({ similar }: SimilarObjectsProps) {
               (item, i) =>
                 item && (
                   <div className="" key={i}>
-                    <SimilarItemCard item={item} />
+                    <SimilarObjectCard item={item} />
                   </div>
                 )
             )}

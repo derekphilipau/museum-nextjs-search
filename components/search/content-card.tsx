@@ -13,7 +13,7 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function ItemCard({ item, layout }) {
+export function ContentCard({ item, layout }) {
   if (!item || !item.url) return null;
   const dict = getDictionary();
 

@@ -9,7 +9,7 @@ import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BasicDocument } from '@/types/basicDocument';
 import type { Term } from '@/types/term';
 import { ArchiveCard } from '@/components/search/archive-card';
-import { ItemCard } from '@/components/search/item-card';
+import { ContentCard } from '@/components/search/content-card';
 import { ObjectCard } from '@/components/search/object-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
@@ -211,7 +211,7 @@ export default async function Page({ params, searchParams }) {
                         <ArchiveCard item={item} layout={layout} />
                       )}
                       {item.type === 'page' && (
-                        <ItemCard item={item} layout={layout} />
+                        <ContentCard item={item} layout={layout} />
                       )}
                     </div>
                   )

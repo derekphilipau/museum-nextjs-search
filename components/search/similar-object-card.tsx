@@ -5,7 +5,11 @@ import { getSmallOrRestrictedImageUrl } from '@/util/image';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
-export function SimilarItemCard({ item }: { item: CollectionObjectDocument }) {
+export function SimilarObjectCard({
+  item,
+}: {
+  item: CollectionObjectDocument;
+}) {
   if (!item) return null;
 
   let imageSrc = getSmallOrRestrictedImageUrl(
