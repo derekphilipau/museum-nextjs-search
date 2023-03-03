@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { NONE_IMG, getSmallOrRestrictedImageUrl } from '@/util/image';
+import { trimStringToLengthAtWordBoundary } from '@/util/various';
 
 function getContainerClass(layout) {
   if (layout === 'grid') return 'py-4';
@@ -71,6 +72,9 @@ export function ObjectCard({ item, layout, showType }) {
             <span className="text-sm text-neutral-700 dark:text-neutral-400">
               {item.primaryConstituentDates}
             </span>
+          )}
+          {layout === 'list' && (
+            <p>{trimStringToLengthAtWordBoundary(item.description, 200)}</p>
           )}
         </div>
       </div>
