@@ -2,38 +2,57 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NONE_IMG } from '@/util/image';
 
-export function ItemCard({ item }) {
+function getContainerClass(layout) {
+  if (layout === 'grid') return 'py-4';
+  return 'py-4 grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 gap-x-6 gap-y-3';
+}
+
+function getDetailsClass(layout) {
+  if (layout === 'grid') return 'pt-3';
+  return 'lg:col-span-2';
+}
+
+export function ItemCard({ item, layout }) {
   if (!item || !item.url) return null;
 
   return (
     <Link href={item.url}>
-      <div className="py-4">
-        <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-          Page
-        </h4>
-        <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
-          <figure>
-            {item.image ? (
-              <Image
-                src={item.image}
-                className="h-48 object-contain"
-                alt=""
-                width={400}
-                height={400}
-              />
-            ) : (
-              <Image
-                src={NONE_IMG}
-                className="h-48 object-contain"
-                alt=""
-                width={400}
-                height={400}
-              />
-            )}
-            <figcaption></figcaption>
-          </figure>
+      <div className={getContainerClass(layout)}>
+        <div>
+          {layout === 'grid' && (
+            <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              Page
+            </h4>
+          )}
+          <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
+            <figure>
+              {item.image ? (
+                <Image
+                  src={item.image}
+                  className="h-48 object-contain"
+                  alt=""
+                  width={400}
+                  height={400}
+                />
+              ) : (
+                <Image
+                  src={NONE_IMG}
+                  className="h-48 object-contain"
+                  alt=""
+                  width={400}
+                  height={400}
+                />
+              )}
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
-        <div className="pt-3">
+        <div className={getDetailsClass(layout)}>
+          {layout === 'list' && (
+            <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              Page
+            </h4>
+          )}
           <h4 className="mb-1 text-xl font-semibold text-neutral-900 dark:text-white">
             {item.title}
           </h4>

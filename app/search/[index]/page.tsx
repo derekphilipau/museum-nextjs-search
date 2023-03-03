@@ -22,6 +22,12 @@ import { TermCard } from '@/components/search/term-card';
 
 export const dynamic = 'force-dynamic'; // https://github.com/vercel/next.js/issues/43077
 
+function getLayoutGridClass(layout: string) {
+  if (layout === 'grid')
+    return 'relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3';
+  return 'relative grid grid-cols-1 gap-6 pb-8 md:pb-10';
+}
+
 export default async function Page({ params, searchParams }) {
   const dict = getDictionary();
 
@@ -32,7 +38,10 @@ export default async function Page({ params, searchParams }) {
   const isUnrestricted = getBooleanValue(searchParams?.isUnrestricted);
   const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
   const onView = getBooleanValue(searchParams?.onView);
+  const layout = searchParams?.layout || 'grid';
+
   const isShowFilters = getBooleanValue(searchParams?.f);
+
   const aggFilters = {};
   if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
     for (const aggName of indicesMeta[index].aggs) {
@@ -155,6 +164,8 @@ export default async function Page({ params, searchParams }) {
             size={size}
             totalPages={totalPages}
             isShowFilters={isShowFilters}
+            layout={layout}
+            isShowViewOptions={true}
           />
 
           {filterArr?.length > 0 && (
@@ -187,15 +198,21 @@ export default async function Page({ params, searchParams }) {
               </div>
             </>
           )}
-          <div className="relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3">
+          <div className={getLayoutGridClass(layout)}>
             {items?.length > 0 &&
               items.map(
                 (item: any, i: Key) =>
                   item && (
                     <div className="" key={i}>
-                      {item.type === 'object' && <ObjectCard item={item} />}
-                      {item.type === 'dc_object' && <ArchiveCard item={item} />}
-                      {item.type === 'page' && <ItemCard item={item} />}
+                      {item.type === 'object' && (
+                        <ObjectCard item={item} layout={layout} />
+                      )}
+                      {item.type === 'dc_object' && (
+                        <ArchiveCard item={item} layout={layout} />
+                      )}
+                      {item.type === 'page' && (
+                        <ItemCard item={item} layout={layout} />
+                      )}
                     </div>
                   )
               )}
@@ -212,7 +229,9 @@ export default async function Page({ params, searchParams }) {
             p={p}
             size={size}
             totalPages={totalPages}
-            isShowFilters={true}
+            isShowFilters={isShowFilters}
+            layout={layout}
+            isShowViewOptions={false}
           />
         </div>
       </div>

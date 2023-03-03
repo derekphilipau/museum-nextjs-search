@@ -2,7 +2,7 @@ import { Key } from 'react';
 import Link from 'next/link';
 import { trimStringToLengthAtWordBoundary } from '@/util/various';
 
-export function ArchiveCard({ item }) {
+export function ArchiveCard({ item, layout }) {
   if (!item || !item.url) return null;
 
   const primaryConstituent = item.primaryConstituent;
@@ -31,6 +31,12 @@ export function ArchiveCard({ item }) {
                   </p>
                 )
             )}
+
+          {!Array.isArray(item.description) && (
+            <p className="text-sm text-neutral-700 dark:text-neutral-400">
+              {trimStringToLengthAtWordBoundary(item.description, 100)}
+            </p>
+          )}
         </div>
       </div>
     </Link>

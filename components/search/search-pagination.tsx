@@ -13,6 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SearchPaginationProps {
   index: string;
@@ -22,6 +28,8 @@ interface SearchPaginationProps {
   size: string;
   totalPages: number;
   isShowFilters: boolean;
+  layout: string;
+  isShowViewOptions: boolean;
 }
 
 export function SearchPagination({
@@ -32,6 +40,8 @@ export function SearchPagination({
   size,
   totalPages,
   isShowFilters,
+  layout,
+  isShowViewOptions,
 }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -40,6 +50,7 @@ export function SearchPagination({
     useState(isShowFilters);
   const [originalPage, setOriginalPage] = useState(p);
   const [originalSize, setOriginalSize] = useState(size);
+  const [originalLayout, setOriginalLayout] = useState(layout);
 
   function pageClick(newPage) {
     console.log('pagination go: ' + originalPage + ' new: ' + newPage);
@@ -74,6 +85,13 @@ export function SearchPagination({
     router.push(`${pathname}?${updatedParams}`);
   }
 
+  function clickChangeLayout(layout: string) {
+    setOriginalLayout(layout); // Make sure we remember the most recent value
+    const updatedParams = new URLSearchParams(params);
+    updatedParams.set('layout', layout);
+    router.push(`${pathname}?${updatedParams}`);
+  }
+
   useEffect(() => {
     setOriginalIsShowFilters(isShowFilters);
   }, [isShowFilters]);
@@ -92,31 +110,74 @@ export function SearchPagination({
       aria-label="Pagination"
     >
       <div className="flex items-center justify-start gap-x-4">
-        {!originalIsShowFilters &&
-          (index === 'collections' || index === 'archives') && (
+        {isShowViewOptions && (
+          <>
+            {!originalIsShowFilters &&
+              (index === 'collections' || index === 'archives') && (
+                <div className="hidden sm:block">
+                  <Button
+                    onClick={() => clickShowFilters()}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
+                    {dict['search.showFilters']}
+                  </Button>
+                </div>
+              )}
             <div className="hidden sm:block">
-              <Button
-                onClick={() => clickShowFilters()}
-                variant="ghost"
-                size="sm"
-              >
-                <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-                {dict['search.showFilters']}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => clickChangeLayout('grid')}
+                      variant="ghost"
+                      size="sm"
+                      disabled={layout === 'grid'}
+                    >
+                      <Icons.layoutGrid className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{dict['search.layoutGrid']}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-          )}
-        <div className="flex w-16">
-          <Select value={size} onValueChange={(value) => sizeChange(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="12">12</SelectItem>
-              <SelectItem value="24">24</SelectItem>
-              <SelectItem value="48">48</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            <div className="hidden sm:block">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => clickChangeLayout('list')}
+                      variant="ghost"
+                      size="sm"
+                      disabled={layout === 'list'}
+                    >
+                      <Icons.layoutList className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{dict['search.layoutList']}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="flex w-16">
+              <Select value={size} onValueChange={(value) => sizeChange(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="12">12</SelectItem>
+                  <SelectItem value="24">24</SelectItem>
+                  <SelectItem value="48">48</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        )}
+
         <div className="text-xs">
           {count} {dict['search.resultsPage']} {p} {dict['search.of']}{' '}
           {totalPages}.

@@ -6,6 +6,8 @@ import {
   Info,
   Instagram,
   Laptop,
+  LayoutGrid,
+  LayoutList,
   LucideProps,
   Menu,
   Moon,
@@ -30,4 +32,6 @@ export const Icons = {
   slidersHorizontal: SlidersHorizontal,
   info: Info,
   menu: Menu,
+  layoutGrid: LayoutGrid,
+  layoutList: LayoutList,
 };

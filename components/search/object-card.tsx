@@ -2,7 +2,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { NONE_IMG, getSmallOrRestrictedImageUrl } from '@/util/image';
 
-export function ObjectCard({ item }) {
+function getContainerClass(layout) {
+  if (layout === 'grid') return 'py-4';
+  return 'py-4 grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 gap-x-6 gap-y-3';
+}
+
+function getDetailsClass(layout) {
+  if (layout === 'grid') return 'pt-3';
+  return 'lg:col-span-2';
+}
+
+export function ObjectCard({ item, layout }) {
   if (!item) return null;
 
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
@@ -11,36 +21,45 @@ export function ObjectCard({ item }) {
 
   return (
     <Link href={href}>
-      <div className="py-4">
-        <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-          Artwork
-        </h4>
-        <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
-          <figure>
-            {item.image ? (
-              <Image
-                src={getSmallOrRestrictedImageUrl(
-                  item.image,
-                  item.copyrightRestricted
-                )}
-                className="h-48 object-contain"
-                alt=""
-                width={400}
-                height={400}
-              />
-            ) : (
-              <Image
-                src={NONE_IMG}
-                className="h-48 object-contain"
-                alt=""
-                width={400}
-                height={400}
-              />
-            )}
-            <figcaption></figcaption>
-          </figure>
+      <div className={getContainerClass(layout)}>
+        <div>
+          {layout === 'grid' && (
+            <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              Artwork
+            </h4>
+          )}
+          <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
+            <figure>
+              {item.image ? (
+                <Image
+                  src={getSmallOrRestrictedImageUrl(
+                    item.image,
+                    item.copyrightRestricted
+                  )}
+                  className="h-48 object-contain"
+                  alt=""
+                  width={400}
+                  height={400}
+                />
+              ) : (
+                <Image
+                  src={NONE_IMG}
+                  className="h-48 object-contain"
+                  alt=""
+                  width={400}
+                  height={400}
+                />
+              )}
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
-        <div className="pt-3">
+        <div className={getDetailsClass(layout)}>
+          {layout === 'list' && (
+            <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              Artwork
+            </h4>
+          )}
           <h4 className="mb-2 text-xl font-semibold">
             {item.title}
             {item.date ? `, ${item.date}` : ''}
