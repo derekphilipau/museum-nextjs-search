@@ -1,9 +1,11 @@
 import { Key } from 'react';
 import Link from 'next/link';
+import { getDictionary } from '@/dictionaries/dictionaries';
 import { trimStringToLengthAtWordBoundary } from '@/util/various';
 
 export function ArchiveCard({ item, layout }) {
   if (!item || !item.url) return null;
+  const dict = getDictionary();
 
   const primaryConstituent = item.primaryConstituent;
 
@@ -11,7 +13,7 @@ export function ArchiveCard({ item, layout }) {
     <Link href={item.url}>
       <div className="py-4">
         <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-          Archives
+          {dict['index.archives.itemTitle']}
         </h4>
         <div className="">
           <h4 className="mb-2 text-xl font-semibold">
