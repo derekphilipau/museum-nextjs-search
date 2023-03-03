@@ -1,7 +1,7 @@
 import { Key } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
-import { search } from '@/util/elasticsearch/search';
+import { search } from '@/util/elasticsearch/search/search';
 import { getBooleanValue } from '@/util/various';
 
 import type { AggOptions } from '@/types/aggOptions';

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getDocument } from '@/util/elasticsearch/search';
+import { getDocument } from '@/util/elasticsearch/search/document';
 
 export default async function handler(
   req: NextApiRequest,

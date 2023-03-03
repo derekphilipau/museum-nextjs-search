@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'node:readline';
 
+import { getClient } from './client';
 import {
   ELASTICSEARCH_BULK_LIMIT,
   ERR_CLIENT,
@@ -8,7 +9,6 @@ import {
   createIndex,
   snooze,
 } from './import';
-import { getClient } from './search';
 
 /**
  * Return an array or a single value from a Dublin Core property.

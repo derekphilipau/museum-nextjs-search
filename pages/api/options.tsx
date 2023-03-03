@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { options } from '@/util/elasticsearch/search';
+import { options } from '@/util/elasticsearch/search/options';
 
 import type { AggOption } from '@/types/aggOption';
 
