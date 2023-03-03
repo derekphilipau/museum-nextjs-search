@@ -205,13 +205,21 @@ export default async function Page({ params, searchParams }) {
                   item && (
                     <div className="" key={i}>
                       {item.type === 'object' && (
-                        <ObjectCard item={item} layout={layout} />
+                        <ObjectCard
+                          item={item}
+                          layout={layout}
+                          showType={index === 'all'}
+                        />
                       )}
                       {item.type === 'dc_object' && (
-                        <ArchiveCard item={item} layout={layout} />
+                        <ArchiveCard item={item} showType={index === 'all'} />
                       )}
                       {item.type === 'page' && (
-                        <ContentCard item={item} layout={layout} />
+                        <ContentCard
+                          item={item}
+                          layout={layout}
+                          showType={index === 'all'}
+                        />
                       )}
                     </div>
                   )

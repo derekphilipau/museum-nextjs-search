@@ -13,7 +13,7 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function ContentCard({ item, layout }) {
+export function ContentCard({ item, layout, showType }) {
   if (!item || !item.url) return null;
   const dict = getDictionary();
 
@@ -21,7 +21,7 @@ export function ContentCard({ item, layout }) {
     <Link href={item.url}>
       <div className={getContainerClass(layout)}>
         <div>
-          {layout === 'grid' && (
+          {showType && layout === 'grid' && (
             <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
               {dict['index.content.itemTitle']}
             </h4>
@@ -50,7 +50,7 @@ export function ContentCard({ item, layout }) {
           </div>
         </div>
         <div className={getDetailsClass(layout)}>
-          {layout === 'list' && (
+          {showType && layout === 'list' && (
             <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
               {dict['index.content.itemTitle']}
             </h4>

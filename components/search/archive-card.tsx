@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { trimStringToLengthAtWordBoundary } from '@/util/various';
 
-export function ArchiveCard({ item, layout }) {
+export function ArchiveCard({ item, showType }) {
   if (!item || !item.url) return null;
   const dict = getDictionary();
 
@@ -12,9 +12,11 @@ export function ArchiveCard({ item, layout }) {
   return (
     <Link href={item.url}>
       <div className="py-4">
-        <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-          {dict['index.archives.itemTitle']}
-        </h4>
+        {showType && (
+          <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+            {dict['index.archives.itemTitle']}
+          </h4>
+        )}
         <div className="">
           <h4 className="mb-2 text-xl font-semibold">
             {item.title}
