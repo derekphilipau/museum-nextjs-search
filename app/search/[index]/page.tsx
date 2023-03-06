@@ -56,6 +56,7 @@ export default async function Page({ params, searchParams }) {
   const response: ApiResponseSearch = await search({ index, ...searchParams });
   const items: BasicDocument[] = response?.data || [];
   const terms: Term[] = response?.terms || [];
+  const filters: Term[] = response?.filters || [];
   const apiError = response?.error || '';
   const options: AggOptions = response?.options || {};
   const count = response?.metadata?.count || 0;
@@ -155,6 +156,27 @@ export default async function Page({ params, searchParams }) {
               {apiError}
             </h3>
           )}
+
+          {filters?.length > 0 &&
+            filters.map(
+              (term: Term, i: Key) =>
+                term?.field === 'primaryConstituent' && (
+                  <div className="mb-4">
+                    <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+                      {dict[`index.collections.agg.${term.field}`]}
+                    </h4>
+                    {term.value && (
+                      <h4 className="mb-2 text-2xl">{term.value}</h4>
+                    )}
+                    {term.summary && (
+                      <p className="mb-2 text-base">{term.summary}</p>
+                    )}
+                    {term.description && (
+                      <p className="text-sm">{term.description}</p>
+                    )}
+                  </div>
+                )
+            )}
 
           <SearchPagination
             index={index}

@@ -13,7 +13,7 @@ import type { BasicDocument } from '@/types/basicDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { Term } from '@/types/term';
 import { getClient } from '../client';
-import { terms } from './terms';
+import { getTerm, terms } from './terms';
 
 const DEFAULT_SEARCH_PAGE_SIZE = 24; // 24 results per page
 const SEARCH_AGG_SIZE = 20; // 20 results per aggregation
@@ -147,6 +147,8 @@ export async function searchCollections(
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;
+  const term = await getFilterTerm(index, params, client);
+  if (term !== undefined) res.filters = [term];
   return res;
 }
 
@@ -204,6 +206,23 @@ async function getSearchQueryTerms(
 ): Promise<Term[] | undefined> {
   if (q?.length && q?.length > MIN_SEARCH_QUERY_LENGTH && p === 1) {
     return await terms(q, undefined, client);
+  }
+}
+
+async function getFilterTerm(
+  indexName: string,
+  params: any,
+  client: Client
+): Promise<Term | undefined> {
+  if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
+  if (indicesMeta[indexName]?.filters?.length > 0) {
+    for (const filter of indicesMeta[indexName].filters) {
+      if (params?.[filter] && filter === 'primaryConstituent') {
+        // TODO: Only returns primaryConstituent filter term
+        const response = await getTerm(filter, params?.[filter], client);
+        return response?.data;
+      }
+    }
   }
 }
 

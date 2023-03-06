@@ -5,17 +5,50 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import type { Term } from '@/types/term';
 import { getClient } from '../client';
+import { ApiResponseDocument } from '@/types/apiResponseDocument';
 
 const TERMS_PAGE_SIZE = 12; // 12 results per aggregation terms search
 
 /**
- * Get terms for a query. Used for "Did you mean?"
+ * Get term by field and value
  *
- * @param query The query to search for
- * @param size Number of terms to return
- * @param client The ES client
- * @returns Array of terms
+ * @param field Field name
+ * @param value Field value
+ * @param client Elasticsearch client
+ * @returns ApiResponseDocument containing Term
  */
+// primaryConstituent: 'Oscar yi Hou' }
+export async function getTerm(
+  field: string,
+  value: string,
+  client?: Client
+): Promise<ApiResponseDocument | undefined> {
+  if (!field || !value) return;
+  const request: T.SearchRequest = {
+    index: 'terms',
+    query: {
+      bool: {
+        must: [
+          { match: { field } },
+          { match: { value } },
+        ]
+      }
+    }
+  };
+
+  if (!client) client = getClient();
+  if (client === undefined) return;
+  try {
+    const response: T.SearchTemplateResponse = await client.search(request);
+    const data = response?.hits?.hits[0]?._source;
+    const apiResponse: ApiResponseDocument = { query: request, data };
+    return apiResponse;
+  } catch (e) {
+    console.error(e);
+  }
+  return;
+}
+
 export async function terms(
   query?: string | string[],
   size: number = TERMS_PAGE_SIZE,

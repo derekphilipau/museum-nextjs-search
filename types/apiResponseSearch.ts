@@ -13,6 +13,7 @@ export interface ApiResponseSearch {
   query?: T.SearchRequest;
   data?: BasicDocument[];
   terms?: Term[];
+  filters?: Term[];
   options?: AggOptions;
   metadata?: ApiResponseSearchMetadata;
   apiError?: string;
