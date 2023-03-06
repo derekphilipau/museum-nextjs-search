@@ -19,6 +19,7 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 ## Features
 
 - Full-text search, including accession number
+- API Endpoints for search & document retrieval
 - Searchable filters
 - Linked object properties
 - Custom similarity algorithm with combined weighted terms (can be adjusted)
@@ -35,6 +36,25 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 ## Adopt it yourself
 
 It's hoped that all one will need to do is be able to export TMS data to JSON matching the format of the Elasticsearch index.
+
+## API Endpoints
+
+### Search API
+
+Searches can be performed against any index.  Search requests are of the form:
+GET `http://localhost:3000/api/search/[index]?[querystring]`
+
+Querystring parameters are the same as those for the Web UI:
+GET `http://localhost:3000/api/search/collections?f=true&primaryConstituent=George%20Bradford%20Brainerd`
+
+### Document API
+
+Document requests are of the form:
+GET `http://localhost:3000/api/[index]/[documentId]`
+
+For example, to get collection object #53453:
+GET `http://localhost:3000/api/collections/53453`
+
 
 ## Installation & Running
 

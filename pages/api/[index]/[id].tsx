@@ -6,12 +6,14 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { id } = req.query;
+    const { index, id } = req.query;
     console.log('getting... ' + id);
     if (!id || Array.isArray(id))
       res.status(500).json({ error: 'Id not provided' });
+    else if (!index || Array.isArray(index))
+      res.status(500).json({ error: 'Index not provided' });
     else {
-      const result = await getDocument('collections', parseInt(id));
+      const result = await getDocument(index, id);
       res.status(200).json(result);
     }
   } catch (error) {
