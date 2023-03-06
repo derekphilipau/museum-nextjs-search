@@ -15,32 +15,28 @@ const ulanFilenames = [
   './data/ULAN/ulan_xml_0622/ULAN5.xml',
 ];
 
-const outputFilename = './data/ULAN/ulanArtists.json';
+const artistsOutputFilename = './data/ULAN/ulanArtists.jsonl';
+const corporateBodiesOutputFilename = './data/ULAN/ulanCorporateBodies.jsonl';
 
 export interface UlanTerm {
   id: string;
+  type: string;
   preferred?: string | null;
   alternates?: string[] | null;
   summary?: string | null;
   description?: string | null;
 }
 
-function cleanAlternateArtistName(name: string): string {
-  if (!name) return '';
-  return name
-    .replace(/^(professor\s)/i, '')
-    .replace(/&amp;\s/, '') // Remove ampersand code
-    .replace(/\w+\.\s/, '') // Remove name abbreviations
-    .replace(/,\s\w+\.$/, '') // Remove ending abbreviations
-    .normalize('NFD') // Remove diacritics
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .trim();
-}
-
 function transformSubject(ulan): UlanTerm | undefined {
   const subject = ulan?.Subject;
   const id = subject?.['$']?.Subject_ID;
   if (!subject || !id) return;
+
+  let type = subject?.Parent_Relationships?.[0]?.Preferred_Parent?.[0]?.Parent_String?.[0];
+  if (type) {
+    // Type is of form "Corporate Bodies [500000003]"
+    type = type.replace(/\s\[\d+\]$/, '');
+  }
 
   let description: string | null = null;
   if (subject?.Descriptive_Notes?.length > 0) {
@@ -83,6 +79,7 @@ function transformSubject(ulan): UlanTerm | undefined {
 
   return {
     id,
+    type,
     preferred: preferredTerm,
     alternates: nonPreferredTerms,
     summary: biography,
@@ -93,8 +90,12 @@ function transformSubject(ulan): UlanTerm | undefined {
 async function writeJsonSubject(xmlSubject: string) {
   const subject = await parser.parseStringPromise(xmlSubject);
   const esObj = transformSubject(subject);
-  if (esObj) {
-    fs.writeFileSync(outputFilename, JSON.stringify(esObj) + '\n', {
+  if (esObj?.type === 'Persons, Artists') {
+    fs.writeFileSync(artistsOutputFilename, JSON.stringify(esObj) + '\n', {
+      flag: 'a',
+    });
+  } else if (esObj?.type === 'Corporate Bodies') {
+    fs.writeFileSync(corporateBodiesOutputFilename, JSON.stringify(esObj) + '\n', {
       flag: 'a',
     });
   }
@@ -117,13 +118,16 @@ async function parseULANXMLFile(filename: string) {
         xmlSubject = '';
       } else if (line.match(/<Parent_String>.*<\/Parent_String>/)) {
         if (
-          !line.match(
-            /<Parent_String>Persons, Artists \[\d+\]<\/Parent_String>/
+          line.match(
+            /<Parent_String>Persons, Artists \[500000002\]<\/Parent_String>/
+          ) ||
+          line.match(
+            /<Parent_String>Corporate Bodies \[500000003\]<\/Parent_String>/
           )
         ) {
-          xmlSubject = '';
-        } else {
           xmlSubject += line + '\n';
+        } else {
+          xmlSubject = '';
         }
       } else {
         xmlSubject += line + '\n';
@@ -133,7 +137,8 @@ async function parseULANXMLFile(filename: string) {
 }
 
 export async function convert() {
-  fs.writeFileSync(outputFilename, '', { flag: 'w' });
+  fs.writeFileSync(artistsOutputFilename, '', { flag: 'w' });
+  fs.writeFileSync(corporateBodiesOutputFilename, '', { flag: 'w' });
   for (const filename of ulanFilenames) {
     await parseULANXMLFile(filename);
   }

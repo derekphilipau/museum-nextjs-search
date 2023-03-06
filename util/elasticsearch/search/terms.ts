@@ -26,12 +26,11 @@ export async function terms(
   const request: T.SearchRequest = {
     index: 'terms',
     query: {
-      match: {
-        value: {
-          query: myQuery,
-          fuzziness: 'AUTO',
-        },
-      },
+      multi_match: {
+        query: myQuery,
+        fields: [ "value^3", "alternates" ],
+        fuzziness: 'AUTO:3,7',
+      }
     },
     from: 0,
     size,

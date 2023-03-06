@@ -42,3 +42,6 @@ es.secret.md
 secrets/http_ca.crt
 elastic.md
 data/archivesSpaceDCRecords.jsonl
+data/ULAN/ulanArtists.jsonl
+data/ULAN/ulanCorporateBodies.jsonl
+data/ULAN/ulan_xml_0622/

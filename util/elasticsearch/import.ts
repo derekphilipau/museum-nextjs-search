@@ -46,8 +46,13 @@ async function existsIndex(
  * @param indexName Name of the index.
  */
 async function deleteIndex(client: Client, indexName: string) {
-  if (await existsIndex(client, indexName))
-    await client.indices.delete({ index: indexName });
+  if (await existsIndex(client, indexName)) {
+    try {
+      await client.indices.delete({ index: indexName });
+    } catch (err) {
+      console.error(`Error deleting index ${indexName}: ${err}`);
+    }
+  }
 }
 
 /**
@@ -131,11 +136,12 @@ export async function bulk(
 export async function importJsonFileData(
   indexName: string,
   dataFilename: string,
-  idFieldName: string
+  idFieldName: string,
+  isCreateIndex = true
 ) {
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
-  await createIndex(client, indexName);
+  if (isCreateIndex) await createIndex(client, indexName);
   const fileStream = fs.createReadStream(dataFilename);
   const rl = readline.createInterface({
     input: fileStream,
