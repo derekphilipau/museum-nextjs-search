@@ -1,10 +1,14 @@
-import * as React from 'react';
+import { Key } from 'react';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
+import type {
+  CollectionObjectDocument,
+  CollectionObjectGeographicalLocation,
+} from '@/types/collectionObjectDocument';
+
 interface DescriptionRowProps {
-  item?: any;
-  isLink?: boolean;
+  item?: CollectionObjectDocument;
 }
 
 export function GeographicalDescriptionRow({ item }: DescriptionRowProps) {
@@ -13,8 +17,8 @@ export function GeographicalDescriptionRow({ item }: DescriptionRowProps) {
     dict?.[`object.field.geographicalLocations`] || 'Unknown field';
   const searchUrl = '/search/collections?';
 
-  let val = item.geographicalLocations;
-  if (!val || val.length === 0) return null;
+  let val = item?.geographicalLocations;
+  if (val === undefined || val.length === 0) return null;
 
   // [{"id":5027,"name":"China","type":"Place manufactured"}]
 
@@ -25,18 +29,17 @@ export function GeographicalDescriptionRow({ item }: DescriptionRowProps) {
       </dt>
       <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
         {val.map(
-          (tag, index) =>
-            tag && (
-              <>
-                {tag.type}:{' '}
+          (geoLoc: CollectionObjectGeographicalLocation, i: Key) =>
+            geoLoc && (
+              <span key={i}>
+                {geoLoc.type}:{' '}
                 <Link
-                  key={index}
-                  href={`${searchUrl}primaryGeographicalLocation=${tag.name}`}
+                  href={`${searchUrl}primaryGeographicalLocation=${geoLoc.name}`}
                   className="underline"
                 >
-                  {`${tag.name}${index !== val.length - 1 ? ',  ' : ''}`}
+                  {`${geoLoc.name}${val && i !== val.length - 1 ? ',  ' : ''}`}
                 </Link>
-              </>
+              </span>
             )
         )}
       </dd>

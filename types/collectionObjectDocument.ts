@@ -1,6 +1,12 @@
 import type { BasicDocument } from './basicDocument';
 import type { CollectionObjectImage } from './collectionObjectImage';
 
+export interface CollectionObjectGeographicalLocation {
+  id: number;
+  name: string;
+  type: string;
+}
+
 export interface CollectionObjectDocument extends BasicDocument {
   images?: CollectionObjectImage[];
   accessionNumber?: string;
@@ -29,7 +35,7 @@ export interface CollectionObjectDocument extends BasicDocument {
   primaryConstituentRole?: string;
   collections?: string[];
   exhibitions?: string[];
-  geographicalLocations?: any[];
+  geographicalLocations?: CollectionObjectGeographicalLocation[];
   primaryGeographicalLocationContinent?: string;
   primaryGeographicalLocationCountry?: string;
   primaryGeographicalLocation?: string;

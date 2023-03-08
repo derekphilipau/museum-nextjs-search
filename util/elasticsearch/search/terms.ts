@@ -40,7 +40,7 @@ export async function getTerm(
   if (client === undefined) return;
   try {
     const response: T.SearchTemplateResponse = await client.search(request);
-    const data = response?.hits?.hits[0]?._source;
+    const data = response?.hits?.hits[0]?._source as Term;
     const apiResponse: ApiResponseDocument = { query: request, data };
     return apiResponse;
   } catch (e) {

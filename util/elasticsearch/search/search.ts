@@ -220,7 +220,7 @@ async function getFilterTerm(
       if (params?.[filter] && filter === 'primaryConstituent') {
         // TODO: Only returns primaryConstituent filter term
         const response = await getTerm(filter, params?.[filter], client);
-        return response?.data;
+        return response?.data as Term;
       }
     }
   }

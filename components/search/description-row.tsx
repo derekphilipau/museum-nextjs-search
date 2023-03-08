@@ -1,11 +1,13 @@
-import * as React from 'react';
+import { Key } from 'react';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
+
 interface DescriptionRowProps {
   name: string;
-  value?: any;
-  item?: any;
+  value?: string;
+  item?: CollectionObjectDocument;
   isLink?: boolean;
 }
 
@@ -19,7 +21,7 @@ export function DescriptionRow({
   const displayName = dict?.[`object.field.${name}`] || 'Unknown field';
   const searchUrl = '/search/collections?';
 
-  let val = value ? value : item[name];
+  let val = value ? value : item?.[name];
   if (!name || !val || val.length === 0) return null;
   if (!Array.isArray(val)) val = [val];
 
@@ -44,9 +46,9 @@ export function DescriptionRow({
           )}
         {!isLink &&
           val.map(
-            (tag, index) =>
+            (tag: string, i: Key) =>
               tag && (
-                <span key={index}>{`${index > 0 ? ',  ' : ''}${tag}`}</span>
+                <span key={i}>{`${i > 0 ? ',  ' : ''}${tag}`}</span>
               )
           )}
       </dd>

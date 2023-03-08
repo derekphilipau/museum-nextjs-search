@@ -7,6 +7,7 @@ import { getCaption } from '@/util/various';
 import { encode } from 'html-entities';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { SimilarObjects } from '@/components/object/similar-objects';
 import { ImageViewer } from '@/components/search/image-viewer';
 import { LanguageDisclaimer } from '@/components/search/language-disclaimer';
@@ -19,7 +20,7 @@ async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   const data = await getCollectionObject(params.id);
-  const collectionObject = data?.data;
+  const collectionObject = data?.data as CollectionObjectDocument;
   if (!collectionObject) return {};
 
   const caption = encode(getCaption(collectionObject));
@@ -45,8 +46,8 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 
 export default async function Page({ params }) {
   const data = await getCollectionObject(params.id);
-  const collectionObject = data?.data;
-  const similarCollectionObjects = data?.similar;
+  const collectionObject = data?.data as CollectionObjectDocument;
+  const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
 
   return (

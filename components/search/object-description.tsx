@@ -1,9 +1,14 @@
 import * as React from 'react';
 
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { DescriptionRow } from './description-row';
 import { GeographicalDescriptionRow } from './geographical-description-row';
 
-export function ObjectDescription({ item }) {
+interface ObjectDescriptionProps {
+  item: CollectionObjectDocument;
+}
+
+export function ObjectDescription({ item }: ObjectDescriptionProps) {
   if (!item?.id) return null;
 
   const maker = item.primaryConstituent || 'Unknown';
@@ -30,8 +35,3 @@ export function ObjectDescription({ item }) {
     </div>
   );
 }
-
-/*
-CAPTION Abbas Al-Musavi. Battle of Karbala, late 19th-early 20th century. Oil on canvas, 69 1/16 × 134 1/2 × 2 1/4 in. (175.4 × 341.6 × 5.7 cm). Brooklyn Museum, Gift of K. Thomas Elghanayan in honor of Nourollah Elghanayan, 2002.6 (Photo: Brooklyn Museum, 2002.6_PS2.jpg)
-IMAGE overall, 2002.6_PS2.jpg. Brooklyn Museum photograph, 2010
-*/
