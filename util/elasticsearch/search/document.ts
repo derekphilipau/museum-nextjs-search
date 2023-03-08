@@ -1,8 +1,9 @@
 'use strict';
 
 import * as T from '@elastic/elasticsearch/lib/api/types';
-import type { BasicDocument } from '@/types/basicDocument';
+
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
+import type { BaseDocument } from '@/types/baseDocument';
 import { getClient } from '../client';
 import { similarCollectionObjects } from './similarObjects';
 
@@ -28,7 +29,7 @@ export async function getDocument(
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
-  const data = response?.hits?.hits[0]?._source as BasicDocument;
+  const data = response?.hits?.hits[0]?._source as BaseDocument;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
   if (index === 'collections') {
     apiResponse.similar = await similarCollectionObjects(data, client);

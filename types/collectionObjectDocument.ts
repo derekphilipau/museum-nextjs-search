@@ -1,4 +1,4 @@
-import type { BasicDocument } from './basicDocument';
+import type { BaseDocument } from './baseDocument';
 import type { CollectionObjectImage } from './collectionObjectImage';
 
 export interface CollectionObjectGeographicalLocation {
@@ -7,7 +7,7 @@ export interface CollectionObjectGeographicalLocation {
   type: string;
 }
 
-export interface CollectionObjectDocument extends BasicDocument {
+export interface CollectionObjectDocument extends BaseDocument {
   images?: CollectionObjectImage[];
   accessionNumber?: string;
   period?: string;

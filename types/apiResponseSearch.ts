@@ -1,7 +1,7 @@
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import type { AggOptions } from './aggOptions';
-import type { BasicDocument } from './basicDocument';
+import type { BaseDocument } from './baseDocument';
 import type { Term } from './term';
 
 export interface ApiResponseSearchMetadata {
@@ -11,7 +11,7 @@ export interface ApiResponseSearchMetadata {
 
 export interface ApiResponseSearch {
   query?: T.SearchRequest;
-  data?: BasicDocument[];
+  data?: BaseDocument[];
   terms?: Term[];
   filters?: Term[];
   options?: AggOptions;

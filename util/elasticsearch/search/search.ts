@@ -9,7 +9,7 @@ import type {
   ApiResponseSearch,
   ApiResponseSearchMetadata,
 } from '@/types/apiResponseSearch';
-import type { BasicDocument } from '@/types/basicDocument';
+import type { BaseDocument } from '@/types/baseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { Term } from '@/types/term';
 import { getClient } from '../client';
@@ -84,7 +84,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 
   const options = getResponseOptions(response);
   const metadata = getResponseMetadata(response, size);
-  const data = response.hits.hits.map((h) => h._source as BasicDocument);
+  const data = response.hits.hits.map((h) => h._source as BaseDocument);
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;

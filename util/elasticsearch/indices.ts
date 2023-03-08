@@ -2,6 +2,23 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import * as S from './settings';
 
+const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
+  type: S.keywordField,
+  url: S.keywordField,
+  id: S.keywordField,
+  title: S.suggestUnaggregatedStandardAnalyzerField,
+  description: S.unaggregatedStandardAnalyzerTextField,
+  searchText: S.unaggregatedStandardAnalyzerTextField,
+  keywords: S.unaggregatedStandardAnalyzerTextField,
+  boostedKeywords: S.unaggregatedStandardAnalyzerTextField,
+  constituents: S.unaggregatedStandardAnalyzerTextField,
+  image: S.keywordField,
+  imageAlt: S.keywordField,
+  date: S.textField,
+  startDate: S.dateField,
+  endDate: S.dateField,
+};
+
 export const collections: T.IndicesIndexSettings = {
   settings: {
     index: S.index,
@@ -9,22 +26,10 @@ export const collections: T.IndicesIndexSettings = {
   },
   mappings: {
     properties: {
-      type: S.keywordField,
-      url: S.keywordField,
-      id: S.keywordField,
-      title: S.suggestUnaggregatedStandardAnalyzerField,
-      description: S.unaggregatedStandardAnalyzerTextField,
-      searchText: S.unaggregatedStandardAnalyzerTextField,
-      keywords: S.unaggregatedStandardAnalyzerTextField,
-      boostedKeywords: S.unaggregatedStandardAnalyzerTextField,
-      image: S.keywordField,
-      imageAlt: S.keywordField,
+      ...baseDocument,
       images: S.objectField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
-      date: S.textField,
-      startDate: S.dateField,
-      endDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,
       dynasty: S.searchableAggregatedKeywordAnalyzerField,
       provenance: S.unaggregatedStandardAnalyzerTextField,
@@ -48,7 +53,6 @@ export const collections: T.IndicesIndexSettings = {
       primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,
       primaryConstituentDates: S.keywordField,
       primaryConstituentRole: S.keywordField,
-      constituents: S.unaggregatedStandardAnalyzerTextField,
       collections: S.searchableAggregatedKeywordAnalyzerField,
       exhibitions: S.searchableAggregatedKeywordAnalyzerField,
       geographicalLocations: S.objectField,
@@ -69,20 +73,7 @@ export const content: T.IndicesIndexSettings = {
   },
   mappings: {
     properties: {
-      type: S.keywordField,
-      url: S.keywordField,
-      id: S.keywordField,
-      title: S.suggestUnaggregatedStandardAnalyzerField,
-      description: S.unaggregatedStandardAnalyzerTextField,
-      searchText: S.unaggregatedStandardAnalyzerTextField,
-      keywords: S.unaggregatedStandardAnalyzerTextField,
-      boostedKeywords: S.unaggregatedStandardAnalyzerTextField,
-      constituents: S.unaggregatedStandardAnalyzerTextField,
-      image: S.keywordField,
-      imageAlt: S.keywordField,
-      date: S.textField,
-      startDate: S.dateField,
-      endDate: S.dateField,
+      ...baseDocument,
     },
   },
 };
@@ -94,13 +85,7 @@ export const archives: T.IndicesIndexSettings = {
   },
   mappings: {
     properties: {
-      type: S.keywordField,
-      url: S.keywordField,
-      id: S.keywordField,
-      title: S.unaggregatedStandardAnalyzerTextField,
-      alternateTitle: S.unaggregatedStandardAnalyzerTextField,
-      description: S.unaggregatedStandardAnalyzerTextField,
-      searchText: S.unaggregatedStandardAnalyzerTextField,
+      ...baseDocument,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       primaryConstituent: S.searchableAggregatedSimpleKeywordAnalyzerField,
       subject: S.searchableAggregatedSimpleKeywordAnalyzerField,
@@ -109,9 +94,6 @@ export const archives: T.IndicesIndexSettings = {
       format: S.textField,
       rights: S.textField,
       relation: S.keywordField,
-      date: S.textField,
-      startDate: S.dateField,
-      endDate: S.dateField,
     },
   },
 };

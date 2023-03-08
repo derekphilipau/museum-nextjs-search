@@ -1,4 +1,4 @@
-export interface BasicDocument {
+export interface BaseDocument {
   type: string;
   url: string;
   id: number;

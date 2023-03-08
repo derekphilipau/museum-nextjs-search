@@ -6,7 +6,7 @@ import { getBooleanValue } from '@/util/various';
 
 import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
-import type { BasicDocument } from '@/types/basicDocument';
+import type { BaseDocument } from '@/types/baseDocument';
 import type { Term } from '@/types/term';
 import { ArchiveCard } from '@/components/search/archive-card';
 import { ContentCard } from '@/components/search/content-card';
@@ -54,7 +54,7 @@ export default async function Page({ params, searchParams }) {
 
   // Query Elasticsearch
   const response: ApiResponseSearch = await search({ index, ...searchParams });
-  const items: BasicDocument[] = response?.data || [];
+  const items: BaseDocument[] = response?.data || [];
   const terms: Term[] = response?.terms || [];
   const filters: Term[] = response?.filters || [];
   const apiError = response?.error || '';
