@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   getLargeImageUrl,
   getRestrictedImageUrl,
@@ -12,13 +11,12 @@ import {
 import { getCaption } from '@/util/various';
 import useEmblaCarousel from 'embla-carousel-react';
 
+import { Icons } from '@/components/icons';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 
 const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
@@ -105,33 +103,38 @@ export function ImageViewer({ item }) {
                       style={{ flex: '0 0 100%' }}
                       onClick={() => clickImage(index)}
                     >
-                      <figure key={index}>
-                        <Image
-                          src={getSmallOrRestrictedImageUrl(
-                            image?.filename,
-                            isCopyrightRestricted
-                          )}
-                          className={
-                            isCopyrightRestricted
-                              ? 'max-h-96 object-contain'
-                              : 'max-h-96 cursor-pointer object-contain'
-                          }
-                          alt=""
-                          width={800}
-                          height={800}
-                        />
-                        <figcaption className="mt-4 whitespace-normal break-all text-xs text-neutral-500 dark:text-neutral-400">
-                          {getCaption(item, image?.filename)}
-                        </figcaption>
-                      </figure>
-                      {isCopyrightRestricted && (
-                        <p className="mt-4 whitespace-normal break-all text-xs italic text-neutral-500 dark:text-neutral-400">
-                          This image is presented as a &quot;thumbnail&quot;
-                          because it is protected by copyright. The museum
-                          respects the rights of artists who retain the
-                          copyright to their work.
-                        </p>
-                      )}
+                      <div className="relative">
+                        <div className="absolute top-0 right-0 hidden group-hover:block">
+                          <Icons.expand className="h-5 w-5 fill-current" />
+                        </div>
+                        <figure key={index}>
+                          <Image
+                            src={getSmallOrRestrictedImageUrl(
+                              image?.filename,
+                              isCopyrightRestricted
+                            )}
+                            className={
+                              isCopyrightRestricted
+                                ? 'max-h-96 object-contain'
+                                : 'max-h-96 cursor-pointer object-contain'
+                            }
+                            alt=""
+                            width={800}
+                            height={800}
+                          />
+                          <figcaption className="mt-4 whitespace-normal break-all text-xs text-neutral-500 dark:text-neutral-400">
+                            {getCaption(item, image?.filename)}
+                          </figcaption>
+                        </figure>
+                        {isCopyrightRestricted && (
+                          <p className="mt-4 whitespace-normal break-all text-xs italic text-neutral-500 dark:text-neutral-400">
+                            This image is presented as a &quot;thumbnail&quot;
+                            because it is protected by copyright. The museum
+                            respects the rights of artists who retain the
+                            copyright to their work.
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )
               )}

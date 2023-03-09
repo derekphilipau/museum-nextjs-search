@@ -1,6 +1,6 @@
 # museum-nextjs-search
 
-Powerful services & frameworks like [Elasticsearch](https://www.elastic.co/) & [Next.js](https://nextjs.org/) make it possible for museums to easily build performant, responsive and accessible faceted searches for their online collections.
+Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](https://nextjs.org/) make it possible for museums to easily build performant, responsive and accessible faceted searches for their online collections.
 
 ## Demo
 
@@ -41,7 +41,7 @@ It's hoped that all one will need to do is be able to export TMS data to JSON ma
 
 ### Search API
 
-Searches can be performed against any index.  Search requests are of the form:
+Searches can be performed against any index. Search requests are of the form:
 GET `http://localhost:3000/api/search/[index]?[querystring]`
 
 Querystring parameters are the same as those for the Web UI:
@@ -55,7 +55,6 @@ GET `http://localhost:3000/api/[index]/[documentId]`
 For example, to get collection object #53453:
 GET `http://localhost:3000/api/collections/53453`
 
-
 ## Installation & Running
 
 ### Set up Elasticsearch
@@ -66,7 +65,7 @@ You can run Elasticsearch in a Docker container, or sign up for an Elasticsearch
 
 Once you have a running Elasticsearch service, you can add the connection details to the environment variables.
 
-For local development, add a local `.env.local` file in the root directory. If `ELASTICSEARCH_USE_CLOUD` is "true", the Elastic Cloud vars will be used, otherwise the \_HOST, \_PROTOCOL, \_PORT, \_CA_FILE, and \_API_KEY vars will be used.  You may need to copy the http_ca.crt from the Elasticsearch Docker container to a local directory like `./secrets`.
+For local development, add a local `.env.local` file in the root directory. If `ELASTICSEARCH_USE_CLOUD` is "true", the Elastic Cloud vars will be used, otherwise the \_HOST, \_PROTOCOL, \_PORT, \_CA_FILE, and \_API_KEY vars will be used. You may need to copy the http_ca.crt from the Elasticsearch Docker container to a local directory like `./secrets`.
 
 On [Formspree](https://formspree.io/) you should set up a basic contact form and enter the `FORMSPREE_FORM_ID` env variable.
 
@@ -95,17 +94,17 @@ If you have not yet loaded the Elasticsearch data, you should see an error on th
 
 ### Loading the data
 
-The main data file with collection objects is `./data/collections.jsonl`. It has been gzipped to fit into github. Just run `gzip collections.jsonl.gz` to decompress it.
+The main data file with collection objects is `./data/BkM/json/collections.jsonl`. It has been gzipped to fit into github. Just run `gunzip collections.jsonl.gz` to decompress it.
 
-The `importElasticsearchData.ts` will load data from the files in the `data` directory.
+`importDataCommand.ts` will load data from .jsonl files in the `data/BkM/json/` directory into Elasticsearch indices. **_Warning: This will erase Elasticsearch indices._**
 
 From the command line, run:
 
 ```
-npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./importElasticsearchData.ts
+npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/importDataCommand.ts
 ```
 
-The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. `importElasticsearchData.ts` is currently set to use the sample dataset, edit it to use the full dataset.  There are about 10,000 documents in the sample dataset and 100,000 documents in the default dataset.
+The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. It is currently set to use the sample dataset, edit `./util/data/dataFiles.ts` to use the full dataset. There are about 10,000 documents in the sample dataset and 100,000 documents in the default dataset.
 
 ## License
 

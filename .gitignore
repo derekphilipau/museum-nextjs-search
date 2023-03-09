@@ -35,13 +35,15 @@ yarn-error.log*
 .contentlayer
 .env
 
-# data files too big
-data/collections.jsonl
 es.secret.md
 **/.vscode/
 secrets/http_ca.crt
 elastic.md
-data/archivesSpaceDCRecords.jsonl
-data/ULAN/ulanArtists.jsonl
-data/ULAN/ulanCorporateBodies.jsonl
-data/ULAN/ulan_xml_0622/
+
+# data files
+data/BkM/json/collections.jsonl
+data/BkM/json/archivesSpaceDCRecords.jsonl
+data/BkM/raw/20221221_102750_object.jsonl
+data/ULAN/json/ulanArtists.jsonl
+data/ULAN/json/ulanCorporateBodies.jsonl
+data/ULAN/raw/*

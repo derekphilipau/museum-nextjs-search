@@ -3,6 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  Expand,
   Info,
   Instagram,
   Laptop,
@@ -34,4 +35,5 @@ export const Icons = {
   menu: Menu,
   layoutGrid: LayoutGrid,
   layoutList: LayoutList,
+  expand: Expand,
 };

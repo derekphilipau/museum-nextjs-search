@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import { Client } from '@elastic/elasticsearch';
 
 /**
- * Get an Elasticsearch client
+ * Get an Elasticsearch client, either cloud or host-based.
  *
  * @returns Elasticsearch client
  */
