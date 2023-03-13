@@ -19,7 +19,8 @@ async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
 }
 
 export async function generateMetadata({ params }): Promise<Metadata> {
-  const data = await getCollectionObject(params.id);
+  const id = params.slug[0];
+  const data = await getCollectionObject(id);
   const collectionObject = data?.data as CollectionObjectDocument;
   if (!collectionObject) return {};
 
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 }
 
 export default async function Page({ params }) {
-  const data = await getCollectionObject(params.id);
+  const id = params.slug[0];
+  const data = await getCollectionObject(id);
   const collectionObject = data?.data as CollectionObjectDocument;
   const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
