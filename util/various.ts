@@ -1,3 +1,5 @@
+import slugify from 'slugify';
+
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
 /**
@@ -79,4 +81,18 @@ export function trimStringToLengthAtWordBoundary(
   if (!str) return '';
   if (str.length <= length) return str;
   return str.substr(0, str.lastIndexOf(' ', length)) + ellipsis;
+}
+
+export function getObjectUrlWithSlug(id: number, title: string) {
+  let url = `/collection/object/${id}`;
+  const slug = slugify(title, {
+    replacement: '-', // replace spaces with replacement character, defaults to `-`
+    remove: /[*+~.()'",!:@]/g, // remove characters that match regex, defaults to `undefined`
+    lower: true, // convert to lower case, defaults to `false`
+    strict: true, // strip special characters except replacement, defaults to `false`
+    locale: 'en', // language code of the locale to use
+    trim: true, // trim leading and trailing replacement chars, defaults to `true`
+  });
+  if (slug) url += `/${slug}`;
+  return url;
 }

@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import slugify from 'slugify';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { NONE_IMG, getSmallOrRestrictedImageUrl } from '@/util/image';
-import { trimStringToLengthAtWordBoundary } from '@/util/various';
+import {
+  getObjectUrlWithSlug,
+  trimStringToLengthAtWordBoundary,
+} from '@/util/various';
 
 function getContainerClass(layout) {
   if (layout === 'grid') return 'py-4';
@@ -21,16 +23,7 @@ export function ObjectCard({ item, layout, showType }) {
 
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
 
-  const slug = slugify(item?.title, {
-    replacement: '-',  // replace spaces with replacement character, defaults to `-`
-    remove: /[*+~.()'",!:@]/g, // remove characters that match regex, defaults to `undefined`
-    lower: true,      // convert to lower case, defaults to `false`
-    strict: true,     // strip special characters except replacement, defaults to `false`
-    locale: 'en',      // language code of the locale to use
-    trim: true         // trim leading and trailing replacement chars, defaults to `true`
-  })
-
-  const href = `/collection/object/${item.id}/${slug}`;
+  const href = getObjectUrlWithSlug(item.id, item.title);
 
   return (
     <Link href={href}>

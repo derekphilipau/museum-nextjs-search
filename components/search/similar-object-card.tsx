@@ -2,6 +2,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getSmallOrRestrictedImageUrl } from '@/util/image';
+import { getObjectUrlWithSlug } from '@/util/various';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
@@ -17,7 +18,7 @@ export function SimilarObjectCard({
     item.copyrightRestricted
   );
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
-  const href = `/collection/object/${item.id}`;
+  const href = getObjectUrlWithSlug(item.id, item.title);
 
   return (
     <Link href={href}>
