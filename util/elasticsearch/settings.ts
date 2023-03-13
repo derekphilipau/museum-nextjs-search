@@ -64,6 +64,7 @@ export const disabledOjectField: T.MappingProperty = {
 export const booleanField: T.MappingProperty = { type: 'boolean' };
 export const integerField: T.MappingProperty = { type: 'integer' };
 export const dateField: T.MappingProperty = { type: 'date' };
+export const nestedField: T.MappingProperty = { type: 'nested' };
 
 export const unaggregatedStandardAnalyzerTextField: T.MappingProperty = {
   type: 'text',

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import slugify from 'slugify';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { NONE_IMG, getSmallOrRestrictedImageUrl } from '@/util/image';
 import { trimStringToLengthAtWordBoundary } from '@/util/various';
@@ -20,7 +21,16 @@ export function ObjectCard({ item, layout, showType }) {
 
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
 
-  const href = `/collection/object/${item.id}`;
+  const slug = slugify(item?.title, {
+    replacement: '-',  // replace spaces with replacement character, defaults to `-`
+    remove: undefined, // remove characters that match regex, defaults to `undefined`
+    lower: true,      // convert to lower case, defaults to `false`
+    strict: true,     // strip special characters except replacement, defaults to `false`
+    locale: 'en',      // language code of the locale to use
+    trim: true         // trim leading and trailing replacement chars, defaults to `true`
+  })
+
+  const href = `/collection/object/${item.id}/${slug}`;
 
   return (
     <Link href={href}>
