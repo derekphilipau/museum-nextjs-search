@@ -83,8 +83,10 @@ export function trimStringToLengthAtWordBoundary(
   return str.substr(0, str.lastIndexOf(' ', length)) + ellipsis;
 }
 
-export function getObjectUrlWithSlug(id: number, title: string) {
+export function getObjectUrlWithSlug(id: number | string, title: string | undefined) {
+  if (!id) return '';
   let url = `/collection/object/${id}`;
+  if (title === undefined) return url;
   const slug = slugify(title, {
     replacement: '-', // replace spaces with replacement character, defaults to `-`
     remove: /[*+~.()'",!:@]/g, // remove characters that match regex, defaults to `undefined`
