@@ -43,6 +43,7 @@
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
     "embla-carousel-react": "^7.0.9",
+    "get-pixels": "^3.3.3",
     "html-entities": "^2.3.3",
     "lucide-react": "0.105.0-alpha.4",
     "next": "^13.2.3",

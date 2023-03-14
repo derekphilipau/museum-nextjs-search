@@ -121,7 +121,7 @@ export async function bulk(
   ]);
   const bulkResponse = await client.bulk({ refresh: true, operations });
   console.log(
-    `inserted ${operations?.length / 2} docs, index size now ${await countIndex(
+    `${method} ${operations?.length / 2} docs, index size now ${await countIndex(
       client,
       indexName
     )}`

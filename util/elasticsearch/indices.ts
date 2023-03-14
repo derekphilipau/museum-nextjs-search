@@ -27,6 +27,7 @@ export const collections: T.IndicesIndexSettings = {
   mappings: {
     properties: {
       ...baseDocument,
+      imageHistogram: S.histogramField,
       images: S.objectField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
