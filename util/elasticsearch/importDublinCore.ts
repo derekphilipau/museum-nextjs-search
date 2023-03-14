@@ -2,13 +2,7 @@ import * as fs from 'fs';
 import * as readline from 'node:readline';
 
 import { getClient } from './client';
-import {
-  ELASTICSEARCH_BULK_LIMIT,
-  ERR_CLIENT,
-  bulk,
-  createIndex,
-  snooze,
-} from './import';
+import { ERR_CLIENT, bulk, createIndex, snooze } from './import';
 
 /**
  * Return an array or a single value from a Dublin Core property.
@@ -148,6 +142,7 @@ export async function importDublinCoreData(
   dataFilename: string,
   idFieldName: string
 ) {
+  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
   await createIndex(client, indexName);
@@ -160,7 +155,7 @@ export async function importDublinCoreData(
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (obj !== undefined) documents.push(translateDublinCore(obj));
-    if (documents.length >= ELASTICSEARCH_BULK_LIMIT) {
+    if (documents.length >= limit) {
       await bulk(client, indexName, documents, idFieldName);
       documents = [];
       await snooze(2);

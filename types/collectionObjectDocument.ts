@@ -8,6 +8,7 @@ export interface CollectionObjectGeographicalLocation {
 }
 
 export interface CollectionObjectDocument extends BaseDocument {
+  imageHistogram?: number[];
   images?: CollectionObjectImage[];
   accessionNumber?: string;
   period?: string;

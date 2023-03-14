@@ -6,7 +6,6 @@ import { getClient } from './client';
 import { archives, collections, content, terms } from './indices';
 
 export const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
-export const ELASTICSEARCH_BULK_LIMIT = 100;
 
 const indices = {
   collections,
@@ -121,10 +120,9 @@ export async function bulk(
   ]);
   const bulkResponse = await client.bulk({ refresh: true, operations });
   console.log(
-    `${method} ${operations?.length / 2} docs, index size now ${await countIndex(
-      client,
-      indexName
-    )}`
+    `${method} ${
+      operations?.length / 2
+    } docs, index size now ${await countIndex(client, indexName)}`
   );
 }
 
@@ -141,6 +139,7 @@ export async function importJsonFileData(
   idFieldName: string,
   isCreateIndex = true
 ) {
+  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
   if (isCreateIndex) await createIndex(client, indexName);
@@ -153,7 +152,7 @@ export async function importJsonFileData(
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (obj !== undefined) documents.push(obj);
-    if (documents.length >= ELASTICSEARCH_BULK_LIMIT) {
+    if (documents.length >= limit) {
       await bulk(client, indexName, documents, idFieldName);
       documents = [];
       await snooze(2);

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { getDictionary } from '@/dictionaries/dictionaries';
 import { getDocument } from '@/util/elasticsearch/search/document';
 import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import { getSchemaVisualArtworkJson } from '@/util/schema';
@@ -50,7 +51,10 @@ export default async function Page({ params }) {
   const data = await getCollectionObject(id);
   const collectionObject = data?.data as CollectionObjectDocument;
   const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
+  const similarImageHistogram =
+    data?.similarImageHistogram as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
+  const dict = getDictionary();
 
   return (
     <>
@@ -101,7 +105,16 @@ export default async function Page({ params }) {
           </div>
         </div>
       </section>
-      <SimilarObjects similar={similarCollectionObjects} />
+      <SimilarObjects
+        title={dict['object.similar']}
+        similar={similarCollectionObjects}
+      />
+
+      <SimilarObjects
+        title={dict['object.similarHistogram']}
+        similar={similarImageHistogram}
+      />
+
       {/* https://beta.nextjs.org/docs/guides/seo */}
       <Script id="json-ld-script" type="application/ld+json">
         {jsonLd}
