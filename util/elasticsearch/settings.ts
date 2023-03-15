@@ -67,7 +67,7 @@ export const dateField: T.MappingProperty = { type: 'date' };
 export const nestedField: T.MappingProperty = { type: 'nested' };
 export const denseVectorHistogramField: T.MappingProperty = {
   type: 'dense_vector',
-  dims: 192,
+  dims: 96,
   index: true,
   similarity: 'cosine',
 };

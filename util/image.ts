@@ -1,5 +1,6 @@
 import { getBooleanValue } from './various';
 import getPixels from 'get-pixels';
+import convert from 'color-convert';
 
 const IMG_RESTRICTED_BASE_URL =
   'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
@@ -34,23 +35,40 @@ export function getLargeImageUrl(filename: string | undefined) {
   return `${IMG_LG_BASE_URL}${filename}`;
 }
 
+function normalizeVector(vector: number[]): number[] {
+  const sum = vector.reduce((acc, val) => acc + val ** 2, 0);
+  const magnitude = Math.sqrt(sum);
+  return vector.map((val) => val / magnitude);
+}
+
 export async function getImageHistogram(url: string | undefined): Promise<number[]> {
-  return new Promise((resolve, reject) => {
+  return new Promise<number[]>((resolve, reject) => {
     if (!url) return [];
-    getPixels(url, function(err, pixels) {
+    getPixels(url, function(err: Error, pixels: any) {
       if (err) {
         return reject(err);
       }
-      const histogram = new Array(64 * 3).fill(0);
+      const histogram: number[] = new Array(32 * 3).fill(0);
       for (let i = 0; i < pixels.data.length; i += 4) {
-        const red = Math.floor(pixels.data[i] / 4);
-        const green = Math.floor(pixels.data[i + 1] / 4);
-        const blue = Math.floor(pixels.data[i + 2] / 4);
-        histogram[red]++;
-        histogram[green + 64]++;
-        histogram[blue + 128]++;
+        const red = pixels.data[i];
+        const green = pixels.data[i + 1];
+        const blue = pixels.data[i + 2];
+
+        // Convert RGB to Lab
+        const [L, a, b] = convert.rgb.lab(red, green, blue);
+
+        // Quantize the Lab values to fit the histogram bins
+        const L_quantized = Math.floor(L / 8);
+        const a_quantized = Math.floor((a + 128) / 8);
+        const b_quantized = Math.floor((b + 128) / 8);
+
+        histogram[L_quantized]++;
+        histogram[a_quantized + 32]++;
+        histogram[b_quantized + 64]++;
       }
-      resolve(histogram);
+      // Normalize the histogram
+      const normalizedHistogram = normalizeVector(histogram);
+      resolve(normalizedHistogram);
     });
   });
 }
