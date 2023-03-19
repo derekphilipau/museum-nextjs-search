@@ -8,14 +8,9 @@
 import * as fs from 'fs';
 import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
+import { normalizeVector } from '@/util/image';
 
 import { collectionsDataFile } from '../dataFiles';
-
-function normalizeVector(vector) {
-  const sum = vector.reduce((acc, val) => acc + val ** 2, 0);
-  const magnitude = Math.sqrt(sum);
-  return vector.map((val) => val / magnitude);
-}
 
 async function updateHistograms() {
   const outputStream = createWriteStream(collectionsDataFile + '.new');

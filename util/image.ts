@@ -1,6 +1,7 @@
-import { getBooleanValue } from './various';
-import getPixels from 'get-pixels';
 import convert from 'color-convert';
+import getPixels from 'get-pixels';
+
+import { getBooleanValue } from './various';
 
 const IMG_RESTRICTED_BASE_URL =
   'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
@@ -35,16 +36,18 @@ export function getLargeImageUrl(filename: string | undefined) {
   return `${IMG_LG_BASE_URL}${filename}`;
 }
 
-function normalizeVector(vector: number[]): number[] {
+export function normalizeVector(vector: number[]): number[] {
   const sum = vector.reduce((acc, val) => acc + val ** 2, 0);
   const magnitude = Math.sqrt(sum);
   return vector.map((val) => val / magnitude);
 }
 
-export async function getImageHistogram(url: string | undefined): Promise<number[]> {
+export async function getImageHistogram(
+  url: string | undefined
+): Promise<number[]> {
   return new Promise<number[]>((resolve, reject) => {
     if (!url) return [];
-    getPixels(url, function(err: Error, pixels: any) {
+    getPixels(url, function (err: Error, pixels: any) {
       if (err) {
         return reject(err);
       }
