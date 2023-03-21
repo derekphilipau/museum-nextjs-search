@@ -119,6 +119,10 @@ export async function bulk(
     ...(method === 'update' ? [{ doc, doc_as_upsert: true }] : [doc]),
   ]);
   const bulkResponse = await client.bulk({ refresh: true, operations });
+  if (bulkResponse.errors) {
+    console.log(JSON.stringify(bulkResponse, null, 2));
+    throw new Error('Failed to import data');
+  }
   console.log(
     `${method} ${
       operations?.length / 2

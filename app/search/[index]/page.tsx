@@ -20,8 +20,6 @@ import { SearchPagination } from '@/components/search/search-pagination';
 import { SearchQueryInput } from '@/components/search/search-query-input';
 import { TermCard } from '@/components/search/term-card';
 
-export const dynamic = 'force-dynamic'; // https://github.com/vercel/next.js/issues/43077
-
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
     return 'relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3';

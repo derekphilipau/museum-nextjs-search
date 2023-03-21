@@ -46,7 +46,7 @@
     "get-pixels": "^3.3.3",
     "html-entities": "^2.3.3",
     "lucide-react": "0.105.0-alpha.4",
-    "next": "^13.2.4",
+    "next": "^13.2.5-canary.10",
     "next-themes": "npm:@wits/next-themes@^0.2.16",
     "openseadragon": "^4.0.0",
     "react": "^18.2.0",
