@@ -32,7 +32,7 @@ export function MainNav({ items }: MainNavProps) {
         {dict['site.title']}
       </Link>
       {items?.length ? (
-        <nav className="hidden gap-6 md:flex">
+        <nav className="hidden gap-6 md:flex" aria-label="Main menu">
           {items?.map(
             (item, index) =>
               item.href && (
@@ -76,7 +76,9 @@ export function MainNav({ items }: MainNavProps) {
             (item, index) =>
               item.href && (
                 <DropdownMenuItem key={index} asChild>
-                  <Link href={item.href}>{dict[item.dict]}</Link>
+                  <Link role="button" href={item.href}>
+                    {dict[item.dict]}
+                  </Link>
                 </DropdownMenuItem>
               )
           )}

@@ -1,5 +1,6 @@
-import { Inter } from "next/font/google";
+import { Inter } from 'next/font/google';
 
+import { siteConfig } from '@/config/site';
 import { Footer } from '@/components/layout/footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { Providers } from './layoutProviders';
@@ -48,7 +49,7 @@ export default async function RootLayout({
         <Providers>
           <SiteHeader />
           <main className="min-h-screen">{children}</main>
-          <Footer />
+          <Footer items={siteConfig.mainNav} />
         </Providers>
       </body>
     </html>
