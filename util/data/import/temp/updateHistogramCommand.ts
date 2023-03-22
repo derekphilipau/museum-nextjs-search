@@ -8,17 +8,20 @@
 import * as fs from 'fs';
 import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
-import { getImageHistogram } from '@/util/image';
+import { getImageHistogramHSV } from '@/util/image';
 
-const CLOUD_URL = 'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
+const CLOUD_URL =
+  'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
 
 function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
 }
 
 async function updateHistograms() {
-  const outputStream = createWriteStream('./data/BkM/json/collections.labcolor.jsonl');
-  const fileStream = fs.createReadStream('./data/BkM/json/collections.jsonl.old');
+  const outputStream = createWriteStream(
+    './data/BkM/json/collections.hsvcolor.jsonl'
+  );
+  const fileStream = fs.createReadStream('./data/BkM/json/collections.jsonl');
   const rl = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity,
@@ -28,7 +31,9 @@ async function updateHistograms() {
     if (!obj) continue;
     if (obj.image) {
       try {
-        obj.imageHistogram = await getImageHistogram(CLOUD_URL + encodeURIComponent(obj.image));
+        obj.imageHistogram = await getImageHistogramHSV(
+          CLOUD_URL + encodeURIComponent(obj.image)
+        );
         console.log(obj.image);
         await snooze(0.1);
       } catch (error) {
