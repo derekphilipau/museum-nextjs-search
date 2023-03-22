@@ -144,8 +144,6 @@ export async function searchCollections(
   addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
 
-  console.log(JSON.stringify(esQuery));
-
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
