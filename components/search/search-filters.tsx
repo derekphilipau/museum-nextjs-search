@@ -9,6 +9,7 @@ import { getBooleanValue } from '@/util/various';
 import { Icons } from '@/components/icons';
 import { SearchAgg } from '@/components/search/search-agg';
 import { Button } from '@/components/ui/button';
+import { DateFilter } from './date-filter';
 
 interface SearchFiltersProps {
   index: string;
@@ -57,6 +58,7 @@ export function SearchFilters({
           {dict['search.hideFilters']}
         </Button>
       </div>
+      {index === 'collections' && <DateFilter params={params} />}
       {indicesMeta.collections?.aggs?.map(
         (aggName, i) =>
           aggName &&

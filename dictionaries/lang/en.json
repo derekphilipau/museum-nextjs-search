@@ -67,5 +67,8 @@
   "index.collections.agg.primaryGeographicalLocation": "Location",
   "index.collections.agg.museumLocation": "Museum Location",
   "index.collections.agg.exhibitions": "Exhibitions",
-  "index.collections.agg.section": "Section"
+  "index.collections.agg.section": "Section",
+  "index.collections.date": "Year Made",
+  "index.collections.date.from": "From",
+  "index.collections.date.to": "To"
 }

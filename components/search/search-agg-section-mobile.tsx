@@ -6,6 +6,7 @@ import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 
 import { Icons } from '@/components/icons';
 import { SearchAgg } from '@/components/search/search-agg';
+import { DateFilter } from './date-filter';
 
 interface SearchAggSectionMobileProps {
   index: string;
@@ -45,6 +46,7 @@ export function SearchAggSectionMobile({
           )}
         </button>
       </div>
+      {isOpen && index === 'collections' && <DateFilter params={params} />}
       {isOpen &&
         indicesMeta.collections?.aggs?.map(
           (aggName, i) =>

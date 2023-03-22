@@ -23,7 +23,7 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 - Searchable filters
 - Linked object properties
 - Custom similarity algorithm with combined weighted terms (can be adjusted)
-- Histogram similarity using Lab color space.
+- Histogram similarity using HSV color space.
 - Embedded JSON-LD (Schema.org [VisualArtwork](https://schema.org/VisualArtwork)) for better SEO and sharing
 - Image Zoom with [Openseadragon](https://openseadragon.github.io/)
 - Image carousel with [embla-carousel](https://www.embla-carousel.com/get-started/react/)

@@ -45,25 +45,29 @@ export async function search(params: any): Promise<ApiResponseSearch> {
     track_total_hits: true,
   };
   if (q && esQuery?.query?.bool) {
-    esQuery.query.bool.must = {
-      multi_match: {
-        query: q,
-        type: 'best_fields',
-        operator: 'and',
-        fields: [
-          'boostedKeywords^20',
-          'primaryConstituent^4',
-          'title^2',
-          'keywords^2',
-          'description',
-          'searchText',
-        ],
+    esQuery.query.bool.must = [
+      {
+        multi_match: {
+          query: q,
+          type: 'best_fields',
+          operator: 'and',
+          fields: [
+            'boostedKeywords^20',
+            'primaryConstituent^4',
+            'title^2',
+            'keywords^2',
+            'description',
+            'searchText',
+          ],
+        },
       },
-    };
+    ];
   } else if (esQuery?.query?.bool) {
-    esQuery.query.bool.must = {
-      match_all: {},
-    };
+    esQuery.query.bool.must = [
+      {
+        match_all: {},
+      },
+    ];
     if (index !== 'content') esQuery.sort = [{ startDate: 'desc' }];
   }
 
@@ -109,31 +113,38 @@ export async function searchCollections(
     track_total_hits: true,
   };
   if (q && esQuery?.query?.bool) {
-    esQuery.query.bool.must = {
-      multi_match: {
-        query: q,
-        type: 'best_fields',
-        operator: 'and',
-        fields: [
-          'boostedKeywords^20',
-          'constituents^4', // TODO
-          'title^2',
-          'keywords^2',
-          'description',
-          'searchText',
-          'accessionNumber',
-        ],
+    esQuery.query.bool.must = [
+      {
+        multi_match: {
+          query: q,
+          type: 'best_fields',
+          operator: 'and',
+          fields: [
+            'boostedKeywords^20',
+            'constituents^4', // TODO
+            'title^2',
+            'keywords^2',
+            'description',
+            'searchText',
+            'accessionNumber',
+          ],
+        },
       },
-    };
+    ];
   } else if (esQuery?.query?.bool) {
-    esQuery.query.bool.must = {
-      match_all: {},
-    };
+    esQuery.query.bool.must = [
+      {
+        match_all: {},
+      },
+    ];
     esQuery.sort = [{ startDate: 'desc' }];
   }
 
+  addQueryBoolDateRange(esQuery, params);
   addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
+
+  console.log(JSON.stringify(esQuery));
 
   const client = getClient();
   if (client === undefined) return {};
@@ -226,6 +237,41 @@ async function getFilterTerm(
   }
 }
 
+/**
+ * Currently only supports year ranges
+ *
+ * @param esQuery The ES query to modify in place
+ * @param params The search params
+ */
+function addQueryBoolDateRange(esQuery: any, params: any) {
+  console.log(params?.startDate, params?.endDate);
+  const ranges: T.QueryDslQueryContainer[] = [];
+  if (params?.startDate) {
+    ranges.push({
+      range: {
+        startDate: {
+          gte: params.startDate,
+        },
+      },
+    });
+  }
+  if (params?.endDate) {
+    ranges.push({
+      range: {
+        endDate: {
+          lte: params.endDate,
+        },
+      },
+    });
+  }
+  if (ranges.length > 0) {
+    esQuery.query ??= {};
+    esQuery.query.bool ??= {};
+    esQuery.query.bool.filter ??= [];
+    esQuery.query.bool.filter.push(...ranges);
+  }
+}
+
 function addQueryBoolFilterTerms(esQuery: any, indexName: any, params: any) {
   if (Array.isArray(indexName)) return;
   if (indicesMeta[indexName]?.filters?.length > 0) {
@@ -259,9 +305,9 @@ function addQueryBoolFilterTerm(
   value: string | boolean | number | undefined
 ): void {
   if (!value) return;
-  if (!esQuery?.query) esQuery.query = {};
-  if (!esQuery.query?.bool) esQuery.query.bool = {};
-  if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
+  esQuery.query ??= {};
+  esQuery.query.bool ??= {};
+  esQuery.query.bool.filter ??= [];
   esQuery.query.bool.filter.push({
     term: {
       [name]: value,
@@ -277,9 +323,9 @@ function addQueryBoolFilterTerm(
  * @returns  Void.  The ES Query is modified in place
  */
 function addQueryBoolFilterExists(esQuery: any, name: string): void {
-  if (!esQuery?.query) esQuery.query = {};
-  if (!esQuery.query?.bool) esQuery.query.bool = {};
-  if (!esQuery.query.bool?.filter) esQuery.query.bool.filter = [];
+  esQuery.query ??= {};
+  esQuery.query.bool ??= {};
+  esQuery.query.bool.filter ??= [];
   esQuery.query.bool.filter.push({
     exists: {
       field: name,
@@ -300,9 +346,9 @@ function addQueryBoolMustNotFilter(
   value: string
 ): void {
   if (!value) return;
-  if (!esQuery?.query) esQuery.query = {};
-  if (!esQuery.query?.bool) esQuery.query.bool = {};
-  if (!esQuery.query.bool?.must_not) esQuery.query.bool.must_not = [];
+  esQuery.query ??= {};
+  esQuery.query.bool ??= {};
+  esQuery.query.bool.must_not ??= [];
   esQuery.query.bool.must_not.push({
     term: {
       [name]: value,
