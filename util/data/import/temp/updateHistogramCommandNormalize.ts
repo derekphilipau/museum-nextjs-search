@@ -10,7 +10,7 @@ import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
 import { normalizeVector } from '@/util/image';
 
-import { collectionsDataFile } from '../dataFiles';
+import { collectionsDataFile } from '../../dataFiles';
 
 async function updateHistograms() {
   const outputStream = createWriteStream(collectionsDataFile + '.new');

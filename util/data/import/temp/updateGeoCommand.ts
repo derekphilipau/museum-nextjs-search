@@ -10,7 +10,7 @@ import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
 
 import { continents, countries } from '@/components/map/countries';
-import { collectionsDataFile } from '../dataFiles';
+import { collectionsDataFile } from '../../dataFiles';
 
 async function update() {
   const outputStream = createWriteStream(collectionsDataFile + '.geo');
