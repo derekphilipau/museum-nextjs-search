@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getBooleanValue } from '@/util/various';
 import { ChevronsUpDown, Plus, X } from 'lucide-react';
 
 import type { AggOption } from '@/types/aggOption';
+import { useDebounce } from '@/components/forms/debounce';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -35,10 +36,7 @@ export function SearchAgg({
 }: SearchAggProps) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const [query, setQuery] = useState('');
-  const [realQuery, setRealQuery] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
   const [searchOptions, setSearchOptions] = useState<AggOption[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -61,9 +59,6 @@ export function SearchAgg({
       if (myChecked) updatedParams.set(aggName, key);
       else updatedParams.delete(aggName || '');
       updatedParams.delete('p');
-      console.log(
-        'agg go: ' + aggName + ' key: ' + key + ' checked: ' + myChecked
-      );
       router.push(`${pathname}?${updatedParams}`);
     }
   }
@@ -82,29 +77,20 @@ export function SearchAgg({
     if (c.length > 0) setIsOpen(true);
   }, [aggName, filters]);
 
-  useEffect(() => {
-    const debounceQuery = setTimeout(() => {
-      setRealQuery(query);
-    }, 400);
-    return () => clearTimeout(debounceQuery);
-  }, [query]);
+  const debouncedRequest = useDebounce(() => {
+    if (aggName && value)
+      fetch(`/api/options?index=${index}&field=${aggName}&q=${value}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.length > 0) setSearchOptions(data);
+          else setSearchOptions([]);
+        });
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    if (realQuery?.length < 3) {
-      setSearchOptions([]);
-      return;
-    } else {
-      if (aggName)
-        fetch(`/api/options?index=${index}&field=${aggName}&q=${realQuery}`)
-          .then((res) => res.json())
-          .then((data) => {
-            if (data?.length > 0) setSearchOptions(data);
-            else setSearchOptions([]);
-            setLoading(false);
-          });
-    }
-  }, [realQuery, aggName, index]);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+    debouncedRequest();
+  };
 
   return (
     <Collapsible
@@ -131,7 +117,8 @@ export function SearchAgg({
           <Input
             name="query"
             placeholder={`Search ${aggDisplayName}`}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={onChange}
+            value={value}
           />
         </div>
         {searchOptions?.length > 0 &&
