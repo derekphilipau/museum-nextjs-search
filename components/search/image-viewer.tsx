@@ -27,7 +27,7 @@ export function ImageViewer({ item }) {
   const [sortedImages, setSortedImages] = useState(getSortedImages(item));
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<any>({});
-  const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(false);
+  const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(item.copyrightRestricted);
   const [open, setOpen] = useState(false);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false });
 
@@ -57,12 +57,6 @@ export function ImageViewer({ item }) {
     embla.on('select', onSelect);
     onSelect();
   }, [embla, onSelect]);
-
-  useEffect(() => {
-    setSortedImages(getSortedImages(item));
-    setSelectedImageIndex(0);
-    setIsCopyrightRestricted(item.copyrightRestricted);
-  }, [item]);
 
   useEffect(() => {
     setSelectedImage(sortedImages?.[selectedImageIndex]);
