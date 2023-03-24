@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
-import { getBooleanValue } from '@/util/various';
 
 import { Icons } from '@/components/icons';
 import { SearchAgg } from '@/components/search/search-agg';
@@ -28,28 +26,17 @@ export function SearchFilters({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isShowFilters, setIsShowFilters] = useState(
-    getBooleanValue(params?.f)
-  );
-  const [myIsShowFilters, setMyIsShowFilters] = useState(
-    getBooleanValue(params?.f)
-  );
-
-  useEffect(() => {
-    if (isShowFilters !== myIsShowFilters) {
-      setIsShowFilters(myIsShowFilters); // Make sure we remember the most recent value
-      const updatedParams = new URLSearchParams(params);
-      if (myIsShowFilters) updatedParams.set('f', 'true');
-      else updatedParams.delete('f');
-      router.push(`${pathname}?${updatedParams}`);
-    }
-  }, [isShowFilters, myIsShowFilters, router, params, pathname]);
+  function hideFilters() {
+    const updatedParams = new URLSearchParams(params);
+    updatedParams.delete('f');
+    router.push(`${pathname}?${updatedParams}`);
+  }
 
   return (
     <>
       <div className="">
         <Button
-          onClick={() => setMyIsShowFilters(false)}
+          onClick={() => hideFilters()}
           variant="ghost"
           size="sm"
           aria-label="Hide Filters"
