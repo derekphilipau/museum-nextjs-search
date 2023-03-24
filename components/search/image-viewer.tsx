@@ -25,7 +25,6 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 
 export function ImageViewer({ item }) {
   const [sortedImages, setSortedImages] = useState(getSortedImages(item));
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<any>({});
   const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(item.copyrightRestricted);
   const [open, setOpen] = useState(false);
@@ -49,18 +48,14 @@ export function ImageViewer({ item }) {
 
   const onSelect = useCallback(() => {
     if (!embla) return;
-    setSelectedImageIndex(embla.selectedScrollSnap());
-  }, [embla]);
+    setSelectedImage(sortedImages?.[embla.selectedScrollSnap()])
+  }, [embla, sortedImages]);
 
   useEffect(() => {
     if (!embla) return;
     embla.on('select', onSelect);
     onSelect();
   }, [embla, onSelect]);
-
-  useEffect(() => {
-    setSelectedImage(sortedImages?.[selectedImageIndex]);
-  }, [selectedImageIndex, sortedImages]);
 
   if (!item?.id || !(item?.images?.length > 0)) return null;
 
@@ -72,12 +67,12 @@ export function ImageViewer({ item }) {
   }
 
   function clickImage(index) {
-    setSelectedImageIndex(index);
+    setSelectedImage(sortedImages?.[index]);
     if (!isCopyrightRestricted) setOpen(true);
   }
 
   function clickThumbnail(index) {
-    setSelectedImageIndex(index);
+    setSelectedImage(sortedImages?.[index]);
     if (!embla) return;
     embla.scrollTo(index);
   }
