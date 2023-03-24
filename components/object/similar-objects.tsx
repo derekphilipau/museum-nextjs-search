@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { SimilarObjectCard } from '@/components/search/similar-object-card';
 import { Button } from '@/components/ui/button';
+
+const SIMILAR_MAX_ITEMS = 24;
+const SIMILAR_MIN_ITEMS = 12;
 
 interface SimilarObjectsProps {
   title: string;
@@ -14,20 +17,7 @@ interface SimilarObjectsProps {
 
 export function SimilarObjects({ title, similar }: SimilarObjectsProps) {
   const dict = getDictionary();
-
-  const [visibleSimilar, setVisibleSimilar] = useState(
-    similar?.length > 0 ? similar.slice(0, 12) : []
-  );
   const [showAllSimilar, setShowAllSimilar] = useState(false);
-
-  useEffect(() => {
-    if (showAllSimilar) setVisibleSimilar(similar);
-    else setVisibleSimilar(similar?.length > 0 ? similar.slice(0, 12) : []);
-  }, [similar, showAllSimilar]);
-
-  useEffect(() => {
-    setShowAllSimilar(false);
-  }, [similar]);
 
   if (!similar || similar.length === 0) return null;
 
@@ -38,8 +28,8 @@ export function SimilarObjects({ title, similar }: SimilarObjectsProps) {
           {title}
         </h2>
         <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
-          {visibleSimilar?.length > 0 &&
-            visibleSimilar.map(
+          {similar?.length > 0 &&
+            similar.slice(0, (showAllSimilar ? SIMILAR_MAX_ITEMS : SIMILAR_MIN_ITEMS)).map(
               (item, i) =>
                 item && (
                   <div className="" key={i}>
