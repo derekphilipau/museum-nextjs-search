@@ -1,9 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { getBooleanValue } from '@/util/various';
-
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
@@ -23,24 +20,13 @@ export function SearchCheckbox({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [originalValue, setOriginalValue] = useState(getBooleanValue(value));
-
   function checkValue(checked: boolean) {
-    const myValue = checked ? true : false;
-    if (originalValue !== myValue) {
-      console.log('checkbox go: ' + originalValue + ' new: ' + myValue);
-      setOriginalValue(myValue); // Make sure we remember the most recent value
-      const updatedParams = new URLSearchParams(params);
-      if (myValue) updatedParams.set(name, myValue + '');
-      else updatedParams.delete(name);
-      updatedParams.delete('p');
-      router.push(`${pathname}?${updatedParams}`);
-    }
+    const updatedParams = new URLSearchParams(params);
+    if (checked) updatedParams.set(name, checked + '');
+    else updatedParams.delete(name);
+    updatedParams.delete('p');
+    router.push(`${pathname}?${updatedParams}`);
   }
-
-  useEffect(() => {
-    setOriginalValue(value);
-  }, [value]);
 
   return (
     <>
