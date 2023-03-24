@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
@@ -46,63 +45,35 @@ export function SearchPagination({
   const router = useRouter();
   const pathname = usePathname();
   const dict = getDictionary();
-  const [originalIsShowFilters, setOriginalIsShowFilters] =
-    useState(isShowFilters);
-  const [originalPage, setOriginalPage] = useState(p);
-  const [originalSize, setOriginalSize] = useState(size);
-  const [originalLayout, setOriginalLayout] = useState(layout);
 
   function pageClick(newPage) {
-    console.log('pagination go: ' + originalPage + ' new: ' + newPage);
-    if (originalPage !== newPage) {
-      setOriginalPage(newPage); // Make sure we remember the most recent value
-      const updatedParams = new URLSearchParams(params);
-      if (newPage > 1) updatedParams.set('p', newPage + '');
-      else updatedParams.delete('p');
-      router.push(`${pathname}?${updatedParams}`);
-      window.scroll(0, 0);
-    }
+    const updatedParams = new URLSearchParams(params);
+    if (newPage > 1) updatedParams.set('p', newPage + '');
+    else updatedParams.delete('p');
+    router.push(`${pathname}?${updatedParams}`);
+    window.scroll(0, 0);
   }
 
   function sizeChange(value) {
-    if (originalSize !== value) {
-      console.log('size go: ' + originalSize + ' new: ' + value);
-      setOriginalSize(value); // Make sure we remember the most recent value
-      setOriginalPage(1);
-      const updatedParams = new URLSearchParams(params);
-      if (value && value != '24') updatedParams.set('size', value);
-      else updatedParams.delete('size');
-      updatedParams.delete('p');
-      router.push(`${pathname}?${updatedParams}`);
-      window.scroll(0, 0);
-    }
+    const updatedParams = new URLSearchParams(params);
+    if (value && value != '24') updatedParams.set('size', value);
+    else updatedParams.delete('size');
+    updatedParams.delete('p');
+    router.push(`${pathname}?${updatedParams}`);
+    window.scroll(0, 0);
   }
 
   function clickShowFilters() {
-    setOriginalIsShowFilters(true); // Make sure we remember the most recent value
     const updatedParams = new URLSearchParams(params);
     updatedParams.set('f', 'true');
     router.push(`${pathname}?${updatedParams}`);
   }
 
   function clickChangeLayout(layout: string) {
-    setOriginalLayout(layout); // Make sure we remember the most recent value
     const updatedParams = new URLSearchParams(params);
     updatedParams.set('layout', layout);
     router.push(`${pathname}?${updatedParams}`);
   }
-
-  useEffect(() => {
-    setOriginalIsShowFilters(isShowFilters);
-  }, [isShowFilters]);
-
-  useEffect(() => {
-    setOriginalPage(p);
-  }, [p]);
-
-  useEffect(() => {
-    setOriginalSize(size);
-  }, [size]);
 
   return (
     <nav
@@ -112,7 +83,7 @@ export function SearchPagination({
       <div className="flex items-center justify-start gap-x-4">
         {isShowViewOptions && (
           <>
-            {!originalIsShowFilters &&
+            {!isShowFilters &&
               (index === 'collections' || index === 'archives') && (
                 <div className="hidden sm:block">
                   <Button
