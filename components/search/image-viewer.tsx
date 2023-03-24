@@ -26,7 +26,6 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 export function ImageViewer({ item }) {
   const [sortedImages, setSortedImages] = useState(getSortedImages(item));
   const [selectedImage, setSelectedImage] = useState<any>({});
-  const [isCopyrightRestricted, setIsCopyrightRestricted] = useState(item.copyrightRestricted);
   const [open, setOpen] = useState(false);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false });
 
@@ -48,7 +47,7 @@ export function ImageViewer({ item }) {
 
   const onSelect = useCallback(() => {
     if (!embla) return;
-    setSelectedImage(sortedImages?.[embla.selectedScrollSnap()])
+    setSelectedImage(sortedImages?.[embla.selectedScrollSnap()]);
   }, [embla, sortedImages]);
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export function ImageViewer({ item }) {
     onSelect();
   }, [embla, onSelect]);
 
-  if (!item?.id || !(item?.images?.length > 0)) return null;
+  if (!item || !item?.id || !(item?.images?.length > 0)) return null;
 
   function getThumbnailClass(filename) {
     const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';
@@ -68,7 +67,7 @@ export function ImageViewer({ item }) {
 
   function clickImage(index) {
     setSelectedImage(sortedImages?.[index]);
-    if (!isCopyrightRestricted) setOpen(true);
+    if (!item?.copyrightRestricted) setOpen(true);
   }
 
   function clickThumbnail(index) {
@@ -80,7 +79,7 @@ export function ImageViewer({ item }) {
   return (
     <div className="flex flex-col items-center">
       {sortedImages?.length > 0 && (
-        <div className="">
+        <div className="relative">
           <div className="embla overflow-hidden" ref={emblaRef}>
             <div className="embla__container flex">
               {sortedImages.map(
@@ -100,10 +99,10 @@ export function ImageViewer({ item }) {
                           <Image
                             src={getSmallOrRestrictedImageUrl(
                               image?.filename,
-                              isCopyrightRestricted
+                              item.copyrightRestricted
                             )}
                             className={
-                              isCopyrightRestricted
+                              item.copyrightRestricted
                                 ? 'max-h-96 object-contain'
                                 : 'max-h-96 cursor-pointer object-contain'
                             }
@@ -111,23 +110,22 @@ export function ImageViewer({ item }) {
                             width={800}
                             height={800}
                           />
-                          <figcaption className="mt-4 whitespace-normal break-all text-xs text-neutral-500 dark:text-neutral-400">
-                            {getCaption(item, image?.filename)}
-                          </figcaption>
                         </figure>
-                        {isCopyrightRestricted && (
-                          <p className="mt-4 whitespace-normal break-all text-xs italic text-neutral-500 dark:text-neutral-400">
-                            This image is presented as a &quot;thumbnail&quot;
-                            because it is protected by copyright. The museum
-                            respects the rights of artists who retain the
-                            copyright to their work.
-                          </p>
-                        )}
                       </div>
                     </div>
                   )
               )}
             </div>
+          </div>
+          <div className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+            {getCaption(item, selectedImage?.filename)}
+            {item.copyrightRestricted && (
+              <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
+                This image is presented as a &quot;thumbnail&quot; because it is
+                protected by copyright. The museum respects the rights of
+                artists who retain the copyright to their work.
+              </p>
+            )}
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="h-full min-w-full">
