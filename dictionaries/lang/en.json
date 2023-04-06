@@ -16,6 +16,8 @@
   "search.hideFilters": "Hide Filters",
   "search.layoutGrid": "Grid view",
   "search.layoutList": "List view",
+  "search.cardPalette": "Palette view",
+  "search.cardColor": "Color view",
   "search.resultsPage": "results, page",
   "search.of": "of",
   "search.previous": "Previous",

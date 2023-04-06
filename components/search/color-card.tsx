@@ -1,0 +1,87 @@
+import Link from 'next/link';
+import { getDictionary } from '@/dictionaries/dictionaries';
+import {
+  getObjectUrlWithSlug,
+  trimStringToLengthAtWordBoundary,
+} from '@/util/various';
+
+function getContainerClass(layout) {
+  if (layout === 'grid') return '';
+  return 'grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 gap-x-6 gap-y-3';
+}
+
+function getDetailsClass(layout) {
+  if (layout === 'grid') return '';
+  return 'lg:col-span-2';
+}
+
+function getHsl(item) {
+  if (!(item.dominantColorsHsl?.length > 0)) return 'white';
+  const hsl = `hsl(${item.dominantColorsHsl[0][0] * 360}, ${
+    item.dominantColorsHsl[0][1] * 100
+  }%, ${item.dominantColorsHsl[0][2] * 100}%)`;
+  return hsl;
+}
+
+function getFontColor(item) {
+  if (!(item.dominantColorsHsl?.length > 0)) return 'black';
+  if (item.dominantColorsHsl[0][2] * 100 > 50) return 'black';
+  return 'white';
+}
+
+export function ColorCard({ item, layout, showType }) {
+  if (!item) return null;
+  const dict = getDictionary();
+
+  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+
+  const href = getObjectUrlWithSlug(item.id, item.title);
+
+  return (
+    <Link href={href}>
+      <div className={getContainerClass(layout)}>
+        <div>
+          {showType && layout === 'grid' && (
+            <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              {dict['index.collections.itemTitle']}
+            </h4>
+          )}
+          {item.dominantColorsHsl && (
+            <div
+              className="flex aspect-square items-center justify-center p-10 text-center text-2xl"
+              style={{
+                backgroundColor: getHsl(item),
+                color: getFontColor(item),
+              }}
+            >
+              {trimStringToLengthAtWordBoundary(item.title, 100)}
+            </div>
+          )}
+        </div>
+        <div className={getDetailsClass(layout)}>
+          {showType && layout === 'list' && (
+            <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
+              {dict['index.collections.itemTitle']}
+            </h4>
+          )}
+
+          {layout !== 'list' && (
+            <h4 className="text-sm">
+              {item.date ? `${item.date},` : ''}
+              {primaryConstituent ? ` ${primaryConstituent}` : ''}
+            </h4>
+          )}
+          {layout === 'list' && (
+            <>
+              <h4 className="mb-2 text-xl font-semibold">
+                {item.title}
+                {item.date ? `, ${item.date}` : ''}
+              </h4>
+              <p>{trimStringToLengthAtWordBoundary(item.description, 200)}</p>
+            </>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}

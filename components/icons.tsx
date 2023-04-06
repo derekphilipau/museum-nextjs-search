@@ -12,6 +12,8 @@ import {
   LucideProps,
   Menu,
   Moon,
+  Palette,
+  Pipette,
   SlidersHorizontal,
   SunMedium,
   Twitter,
@@ -36,4 +38,6 @@ export const Icons = {
   layoutGrid: LayoutGrid,
   layoutList: LayoutList,
   expand: Expand,
+  palette: Palette,
+  pipette: Pipette,
 };

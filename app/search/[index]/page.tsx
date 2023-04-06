@@ -9,8 +9,10 @@ import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BaseDocument } from '@/types/baseDocument';
 import type { Term } from '@/types/term';
 import { ArchiveCard } from '@/components/search/archive-card';
+import { ColorCard } from '@/components/search/color-card';
 import { ContentCard } from '@/components/search/content-card';
 import { ObjectCard } from '@/components/search/object-card';
+import { PaletteCard } from '@/components/search/palette-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -22,8 +24,8 @@ import { TermCard } from '@/components/search/term-card';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
-    return 'relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3';
-  return 'relative grid grid-cols-1 gap-6 pb-8 md:pb-10';
+    return 'my-4 relative grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3';
+  return 'relative grid grid-cols-1 gap-6';
 }
 
 export default async function Page({ params, searchParams }) {
@@ -37,6 +39,7 @@ export default async function Page({ params, searchParams }) {
   const hasPhoto = getBooleanValue(searchParams?.hasPhoto);
   const onView = getBooleanValue(searchParams?.onView);
   const layout = searchParams?.layout || 'grid';
+  const cardType = searchParams?.card || '';
 
   const isShowFilters = getBooleanValue(searchParams?.f);
 
@@ -185,6 +188,7 @@ export default async function Page({ params, searchParams }) {
             totalPages={totalPages}
             isShowFilters={isShowFilters}
             layout={layout}
+            card={cardType}
             isShowViewOptions={true}
           />
 
@@ -224,7 +228,21 @@ export default async function Page({ params, searchParams }) {
                 (item: any, i: Key) =>
                   item && (
                     <div className="" key={i}>
-                      {item.type === 'object' && (
+                      {item.type === 'object' && cardType === 'color' && (
+                        <ColorCard
+                          item={item}
+                          layout={layout}
+                          showType={index === 'all'}
+                        />
+                      )}
+                      {item.type === 'object' && cardType === 'palette' && (
+                        <PaletteCard
+                          item={item}
+                          layout={layout}
+                          showType={index === 'all'}
+                        />
+                      )}
+                      {item.type === 'object' && cardType === '' && (
                         <ObjectCard
                           item={item}
                           layout={layout}
@@ -259,6 +277,7 @@ export default async function Page({ params, searchParams }) {
             totalPages={totalPages}
             isShowFilters={isShowFilters}
             layout={layout}
+            card={cardType}
             isShowViewOptions={false}
           />
         </div>

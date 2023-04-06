@@ -71,6 +71,13 @@ export const denseVectorHistogramField: T.MappingProperty = {
   index: true,
   similarity: 'cosine',
 };
+export const colorField: T.MappingProperty = {
+  properties: {
+    h: { type: 'float' },
+    s: { type: 'float' },
+    v: { type: 'float' },
+  },
+};
 
 export const unaggregatedStandardAnalyzerTextField: T.MappingProperty = {
   type: 'text',
