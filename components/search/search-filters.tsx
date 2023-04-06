@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
@@ -7,6 +8,7 @@ import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { Icons } from '@/components/icons';
 import { SearchAgg } from '@/components/search/search-agg';
 import { Button } from '@/components/ui/button';
+import { ColorPicker } from './color-picker';
 import { DateFilter } from './date-filter';
 
 interface SearchFiltersProps {
@@ -45,6 +47,11 @@ export function SearchFilters({
           {dict['search.hideFilters']}
         </Button>
       </div>
+      {index === 'collections' && (
+        <div className="color-picker">
+          <ColorPicker params={params} />
+        </div>
+      )}
       {index === 'collections' && <DateFilter params={params} />}
       {indicesMeta.collections?.aggs?.map(
         (aggName, i) =>

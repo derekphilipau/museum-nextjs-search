@@ -17,16 +17,14 @@ function getDetailsClass(layout) {
 }
 
 function getHsl(hslColor) {
-  if (!(hslColor?.length > 0)) return 'white';
-  const hsl = `hsl(${hslColor[0] * 360}, ${hslColor[1] * 100}%, ${
-    hslColor[2] * 100
-  }%)`;
+  if (!hslColor) return 'white';
+  const hsl = `hsl(${hslColor.h}, ${hslColor.s}%, ${hslColor.l}%)`;
   return hsl;
 }
 
 function getFontColor(hslColor) {
-  if (!(hslColor?.length > 0)) return 'black';
-  if (hslColor[2] * 100 > 50) return 'black';
+  if (!hslColor) return 'black';
+  if (hslColor.l > 50) return 'black';
   return 'white';
 }
 
@@ -51,7 +49,7 @@ export function PaletteCard({ item, layout, showType }) {
             <div className="relative aspect-square items-center justify-center">
               {item.dominantColorsHsl.map(
                 (color: any, i: Key) =>
-                  color?.length > 0 && (
+                  color && (
                     <div
                       className="h-1/6 w-full"
                       style={{

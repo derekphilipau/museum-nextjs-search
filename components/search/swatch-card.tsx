@@ -19,17 +19,9 @@ function getDetailsClass(layout) {
 }
 
 function getHsl(hslColor) {
-  if (!(hslColor?.length > 0)) return 'white';
-  const hsl = `hsl(${hslColor[0] * 360}, ${hslColor[1] * 100}%, ${
-    hslColor[2] * 100
-  }%)`;
+  if (!hslColor) return 'white';
+  const hsl = `hsl(${hslColor.h}, ${hslColor.s}%, ${hslColor.l}%)`;
   return hsl;
-}
-
-function getFontColor(hslColor) {
-  if (!(hslColor?.length > 0)) return 'black';
-  if (hslColor[2] * 100 > 50) return 'black';
-  return 'white';
 }
 
 export function SwatchCard({ item, layout, showType }) {
@@ -57,7 +49,7 @@ export function SwatchCard({ item, layout, showType }) {
                     item.image,
                     item.copyrightRestricted
                   )}
-                  className="h-96 w-full object-cover"
+                  className="h-72 w-full object-cover"
                   alt=""
                   width={400}
                   height={400}
@@ -65,7 +57,7 @@ export function SwatchCard({ item, layout, showType }) {
               ) : (
                 <Image
                   src={NONE_IMG}
-                  className="h-96 w-full object-contain"
+                  className="h-72 w-full object-contain"
                   alt=""
                   width={400}
                   height={400}
@@ -77,12 +69,11 @@ export function SwatchCard({ item, layout, showType }) {
               <div className="flex items-center justify-center">
                 {item.dominantColorsHsl.map(
                   (color: any, i: Key) =>
-                    color?.length > 0 && (
+                    color && (
                       <div
                         className="aspect-square w-1/6"
                         style={{
                           backgroundColor: getHsl(color),
-                          color: getFontColor(color),
                         }}
                       ></div>
                     )

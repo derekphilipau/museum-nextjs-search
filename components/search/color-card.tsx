@@ -17,15 +17,13 @@ function getDetailsClass(layout) {
 
 function getHsl(item) {
   if (!(item.dominantColorsHsl?.length > 0)) return 'white';
-  const hsl = `hsl(${item.dominantColorsHsl[0][0] * 360}, ${
-    item.dominantColorsHsl[0][1] * 100
-  }%, ${item.dominantColorsHsl[0][2] * 100}%)`;
+  const hsl = `hsl(${item.dominantColorsHsl[0].h}, ${item.dominantColorsHsl[0].s}%, ${item.dominantColorsHsl[0].l}%)`;
   return hsl;
 }
 
 function getFontColor(item) {
   if (!(item.dominantColorsHsl?.length > 0)) return 'black';
-  if (item.dominantColorsHsl[0][2] * 100 > 50) return 'black';
+  if (item.dominantColorsHsl[0].l > 50) return 'black';
   return 'white';
 }
 

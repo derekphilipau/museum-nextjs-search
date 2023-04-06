@@ -98,7 +98,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 export async function searchCollections(
   params: any
 ): Promise<ApiResponseSearch> {
-  let { index, p, size, q } = params;
+  let { index, p, size, q, color } = params;
 
   // Defaults for missing params:
   index = 'collections';
@@ -138,6 +138,11 @@ export async function searchCollections(
       },
     ];
     esQuery.sort = [{ startDate: 'desc' }];
+  }
+
+  if (color) {
+    //esQuery.sort = [{ dominantColorsHsl: 'desc' }];
+    //"dominantColorsHsl":[[0.21296296296296272
   }
 
   addQueryBoolDateRange(esQuery, params);

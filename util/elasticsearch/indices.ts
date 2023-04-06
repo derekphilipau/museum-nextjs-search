@@ -29,7 +29,7 @@ export const collections: T.IndicesIndexSettings = {
       ...baseDocument,
       imageHistogram: S.denseVectorHistogramField,
       images: S.objectField,
-      dominantColorsHsl: S.disabledOjectField,
+      dominantColorsHsl: S.nestedField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,

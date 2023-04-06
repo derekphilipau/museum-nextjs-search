@@ -3,6 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  CircleSlashed,
   Expand,
   Info,
   Instagram,
@@ -42,4 +43,5 @@ export const Icons = {
   palette: Palette,
   pipette: Pipette,
   paintbrush2: Paintbrush2,
+  circleSlashed: CircleSlashed,
 };
