@@ -155,6 +155,30 @@ export function SearchPagination({
                       onClick={() =>
                         clickChangeSearchType(
                           'card',
+                          'swatch',
+                          card === 'swatch'
+                        )
+                      }
+                      variant={card === 'swatch' ? 'default' : 'ghost'}
+                      size="sm"
+                    >
+                      <Icons.paintbrush2 className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{dict['search.cardSwatch']}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() =>
+                        clickChangeSearchType(
+                          'card',
                           'palette',
                           card === 'palette'
                         )

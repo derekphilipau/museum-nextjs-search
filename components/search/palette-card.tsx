@@ -48,7 +48,7 @@ export function PaletteCard({ item, layout, showType }) {
             </h4>
           )}
           {item.dominantColorsHsl && (
-            <div className="relative aspect-square items-center justify-center p-4">
+            <div className="relative aspect-square items-center justify-center">
               {item.dominantColorsHsl.map(
                 (color: any, i: Key) =>
                   color?.length > 0 && (

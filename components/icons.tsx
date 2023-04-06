@@ -12,6 +12,7 @@ import {
   LucideProps,
   Menu,
   Moon,
+  Paintbrush2,
   Palette,
   Pipette,
   SlidersHorizontal,
@@ -40,4 +41,5 @@ export const Icons = {
   expand: Expand,
   palette: Palette,
   pipette: Pipette,
+  paintbrush2: Paintbrush2,
 };

@@ -20,12 +20,13 @@ import { SearchFilters } from '@/components/search/search-filters';
 import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
 import { SearchQueryInput } from '@/components/search/search-query-input';
+import { SwatchCard } from '@/components/search/swatch-card';
 import { TermCard } from '@/components/search/term-card';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
-    return 'my-4 relative grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3';
-  return 'relative grid grid-cols-1 gap-6';
+    return 'my-4 relative grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 md:pb-10 lg:grid-cols-3';
+  return 'relative grid grid-cols-1 gap-6 pb-8 md:pb-10';
 }
 
 export default async function Page({ params, searchParams }) {
@@ -237,6 +238,13 @@ export default async function Page({ params, searchParams }) {
                       )}
                       {item.type === 'object' && cardType === 'palette' && (
                         <PaletteCard
+                          item={item}
+                          layout={layout}
+                          showType={index === 'all'}
+                        />
+                      )}
+                      {item.type === 'object' && cardType === 'swatch' && (
+                        <SwatchCard
                           item={item}
                           layout={layout}
                           showType={index === 'all'}
