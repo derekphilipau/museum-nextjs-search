@@ -141,8 +141,18 @@ export async function searchCollections(
   }
 
   if (color) {
-    //esQuery.sort = [{ dominantColorsHsl: 'desc' }];
-    //"dominantColorsHsl":[[0.21296296296296272
+    const colorQuery = getColorQuery(color);
+    if (colorQuery) {
+      if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+        esQuery.query.bool.must = [];
+      }
+      if (Array.isArray(esQuery?.query?.bool?.must)) {
+        for (const query of colorQuery) {
+          esQuery.query?.bool?.must.push(query);
+        }
+      }
+      esQuery.sort = [{ _score: 'desc' }];
+    }
   }
 
   addQueryBoolDateRange(esQuery, params);
@@ -373,4 +383,106 @@ function addQueryAggs(esQuery: any, indexName: string | string[] | undefined) {
     }
     esQuery.aggs = aggs;
   }
+}
+
+function getColorQuery(colorName: string) {
+  // colors object with properties for each color
+  const colors = {
+    red: { h: 0, s: 100, l: 50 },
+    orange: { h: 30, s: 100, l: 50 },
+    yellow: { h: 60, s: 100, l: 50 },
+    green: { h: 120, s: 100, l: 50 },
+    cyan: { h: 180, s: 100, l: 50 },
+    blue: { h: 240, s: 100, l: 50 },
+    purple: { h: 270, s: 100, l: 50 },
+    black: { h: 0, s: 0, l: 0 },
+    white: { h: 0, s: 0, l: 100 },
+  };
+
+  const color = colors?.[colorName];
+  if (!color) return;
+
+  const query: T.QueryDslQueryContainer = {
+    function_score: {
+      query: {
+        nested: {
+          path: 'dominantColorsHsl',
+          query: {
+            function_score: {
+              functions: [
+                {
+                  exp: {
+                    'dominantColorsHsl.h': {
+                      origin: color.h,
+                      offset: 2,
+                      scale: 4,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'dominantColorsHsl.s': {
+                      origin: color.s,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'dominantColorsHsl.l': {
+                      origin: color.l,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          score_mode: 'sum',
+        },
+      },
+      functions: [
+        {
+          script_score: {
+            script: '_score',
+          },
+        },
+      ],
+    },
+  };
+
+  const query2: T.QueryDslQueryContainer = {
+    bool: {
+      must: [
+        {
+          range: {
+            'dominantColorsHsl.h': {
+              gte: color.h - color.h * 0.2,
+              lte: color.h + color.h * 0.2,
+            },
+          },
+        },
+        {
+          range: {
+            'dominantColorsHsl.s': {
+              gte: color.s - color.s * 0.2,
+              lte: color.s + color.s * 0.2,
+            },
+          },
+        },
+        {
+          range: {
+            'dominantColorsHsl.l': {
+              gte: color.l - color.l * 0.2,
+              lte: color.l + color.l * 0.2,
+            },
+          },
+        },
+      ],
+    },
+  };
+
+  return [query];
 }
