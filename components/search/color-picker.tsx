@@ -34,6 +34,7 @@ export function ColorPicker({ params }: ColorPickerProps) {
     const updatedParams = new URLSearchParams(params);
     if (name === '') updatedParams.delete('color');
     else updatedParams.set('color', name);
+    updatedParams.delete('p');
     router.push(`${pathname}?${updatedParams}`);
   }
 

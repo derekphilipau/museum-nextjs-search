@@ -147,19 +147,8 @@ export async function searchCollections(
         esQuery.query.bool.must = [];
       }
       if (Array.isArray(esQuery?.query?.bool?.must)) {
-        for (const query of colorQuery) {
-          esQuery.query?.bool?.must.push(query);
-        }
+        esQuery.query?.bool?.must.push(colorQuery);
       }
-      /* TODO
-      const filters = getColorFilter(color);
-      if (filters) {
-        for (const filter of filters) {
-          console.log(filter);
-          addQueryBoolFilter(esQuery, filter);
-        }
-      }
-      */
       esQuery.sort = ['_score'];
     }
   }
@@ -419,6 +408,27 @@ function getColorQuery(colorName: string) {
   const color = colors?.[colorName];
   if (!color) return;
 
+  const sRange: any = {};
+  if (colorName !== 'black' && colorName !== 'white') {
+    // s is 360 degree value, so we need to account for the wrap around
+    const gte = color.s - 20 < 0 ? 360 + color.s - 20 : color.s - 20;
+    const lte = color.s + 20 > 360 ? color.s + 20 - 360 : color.s + 20;
+    sRange.gte = gte;
+    sRange.lte = lte;
+  }
+
+  const lRange: any = {};
+  if (colorName === 'black') {
+    lRange.lte = 30;
+  } else if (colorName === 'white') {
+    lRange.gte = 80;
+  } else {
+    const gte = color.s - 20 < 0 ? 0 : color.s - 20;
+    const lte = color.s + 20 > 100 ? 100 : color.s + 20;
+    lRange.gte = gte;
+    lRange.lte = lte;
+  }
+
   const query: T.QueryDslQueryContainer = {
     function_score: {
       query: {
@@ -426,7 +436,24 @@ function getColorQuery(colorName: string) {
           path: 'dominantColorsHsl',
           query: {
             function_score: {
+              score_mode: 'multiply',
               functions: [
+                {
+                  filter: {
+                    range: {
+                      'dominantColorsHsl.s': sRange,
+                    },
+                  },
+                  weight: 1,
+                },
+                {
+                  filter: {
+                    range: {
+                      'dominantColorsHsl.l': lRange,
+                    },
+                  },
+                  weight: 1,
+                },
                 {
                   exp: {
                     'dominantColorsHsl.h': {
@@ -470,103 +497,5 @@ function getColorQuery(colorName: string) {
     },
   };
 
-  const query2: T.QueryDslQueryContainer = {
-    bool: {
-      must: [
-        {
-          range: {
-            'dominantColorsHsl.h': {
-              gte: color.h - color.h * 0.2,
-              lte: color.h + color.h * 0.2,
-            },
-          },
-        },
-        {
-          range: {
-            'dominantColorsHsl.s': {
-              gte: color.s - color.s * 0.2,
-              lte: color.s + color.s * 0.2,
-            },
-          },
-        },
-        {
-          range: {
-            'dominantColorsHsl.l': {
-              gte: color.l - color.l * 0.2,
-              lte: color.l + color.l * 0.2,
-            },
-          },
-        },
-      ],
-    },
-  };
-
-  const query3: T.QueryDslQueryContainer = {
-    range: {
-      'dominantColorsHsl.l': {
-        gte: color.l - color.l * 0.2,
-        lte: color.l + color.l * 0.2,
-      },
-    },
-  };
-  return [query];
-}
-
-function getColorFilter(colorName: string) {
-  // colors object with properties for each color
-  const colors = {
-    red: { h: 0, s: 100, l: 50 },
-    orange: { h: 30, s: 100, l: 50 },
-    yellow: { h: 60, s: 100, l: 50 },
-    green: { h: 120, s: 100, l: 50 },
-    cyan: { h: 180, s: 100, l: 50 },
-    blue: { h: 240, s: 100, l: 50 },
-    purple: { h: 270, s: 100, l: 50 },
-    black: { h: 0, s: 0, l: 0 },
-    white: { h: 0, s: 0, l: 100 },
-  };
-
-  const color = colors?.[colorName];
-  if (!color) return;
-
-  const query2 = {
-    must: [
-      {
-        range: {
-          'dominantColorsHsl.h': {
-            gte: color.h - color.h * 0.2,
-            lte: color.h + color.h * 0.2,
-          },
-        },
-      },
-      {
-        range: {
-          'dominantColorsHsl.s': {
-            gte: color.s - color.s * 0.2,
-            lte: color.s + color.s * 0.2,
-          },
-        },
-      },
-      {
-        range: {
-          'dominantColorsHsl.l': {
-            gte: color.l - color.l * 0.2,
-            lte: color.l + color.l * 0.2,
-          },
-        },
-      },
-    ],
-  };
-
-  // return query2;
-  const filter1 = {
-    range: {
-      'dominantColorsHsl.h': {
-        gte: color.h - color.h * 0.5,
-        lte: color.h + color.h * 0.5,
-      },
-    },
-  };
-
-  return [filter1];
+  return query;
 }
