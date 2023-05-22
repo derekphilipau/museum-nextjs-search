@@ -4,7 +4,7 @@ import { siteConfig } from '@/config/site';
 import { Footer } from '@/components/layout/footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { Providers } from './layoutProviders';
-import './globals.css';
+import '../globals.css';
 
 // If loading a variable font, you don't need to specify the font weight
 const inter = Inter({
