@@ -2,13 +2,14 @@ import { Key } from 'react';
 
 import { FeatureObjectCard } from '@/components/feature/feature-object-card';
 import { ObjectCard } from '../search/object-card';
+import { Icons } from '@/components/icons';
 
 export function BlackWhiteFeature({ tour }: { tour: any }) {
   return (
     <>
     <section className="container pt-6 pb-8">
-        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl">
-          The American Galleries
+        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-2xl lg:text-3xl">
+          American Art
         </h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
           <a href="/tour/give-flowers" className="">To Give Flowers</a>
@@ -30,7 +31,8 @@ export function BlackWhiteFeature({ tour }: { tour: any }) {
           Gallery Installation
         </h1>
       </section>
-      <section className="relative h-[600px] w-screen min-w-max overflow-x-scroll">
+      <section className="relative h-[600px] w-screen min-w-max overflow-x-scroll"
+      style={{boxShadow: '0 0 20px 0 rgb(0 0 0 / 0.1)'}}>
         <div className="absolute h-full w-[1630px] bg-white"></div>
         <div className="absolute h-full w-[760px] bg-black"></div>
         {tour.tourObjects?.length > 0 &&

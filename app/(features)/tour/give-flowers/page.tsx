@@ -4,8 +4,8 @@ export default async function Page() {
   return (
     <>
       <section className="container pt-6 pb-8">
-        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl">
-          The American Galleries
+        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-2xl lg:text-3xl">
+          American Art
         </h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
           <a href="#" className="text-indigo-600">To Give Flowers</a>
