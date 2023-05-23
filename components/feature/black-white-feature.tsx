@@ -7,7 +7,7 @@ export function BlackWhiteFeature({ tour }: { tour: any }) {
   return (
     <>
     <section className="container pt-6 pb-8">
-        <h3 className="text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl mb-2">
+        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl">
           The American Galleries
         </h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">

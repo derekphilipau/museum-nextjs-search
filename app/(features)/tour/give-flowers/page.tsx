@@ -4,7 +4,7 @@ export default async function Page() {
   return (
     <>
       <section className="container pt-6 pb-8">
-        <h3 className="text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl mb-2">
+        <h3 className="mb-2 text-xl font-extrabold leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl">
           The American Galleries
         </h3>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
@@ -21,13 +21,13 @@ export default async function Page() {
       </section>
       <section className="container pt-6 pb-8">
         <h3 className="text-xl font-light italic leading-tight tracking-tighter sm:text-xl md:text-3xl lg:text-4xl">
-          from our Mother's gardens
+          from our Mother&apos;s gardens
         </h3>
         <h1 className="mt-2 text-3xl font-extrabold uppercase leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl">
-          "To Give Flowers"
+          &quot;To Give Flowers&quot;
         </h1>
       </section>
-      <section className="gap-4 bg-[url('/img/tour/bg2.jpg')] py-32 px-6 grid sm:grid-cols-3 lg:grid-cols-4 content-center gap-6">
+      <section className="grid content-center gap-6 bg-[url('/img/tour/bg2.jpg')] py-32 px-6 sm:grid-cols-3 lg:grid-cols-4">
         <div className="">
           <GiveFlowersCard
             id={2090}
