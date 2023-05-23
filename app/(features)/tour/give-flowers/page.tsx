@@ -101,7 +101,7 @@ export default async function Page() {
           />
         </div>
       </section>
-      <section className="gap-6 bg-[#1D4774] py-32 px-6 sm:flex sm:items-center sm:justify-center">
+      <section className="gap-6 bg-[#253A48] py-32 px-6 sm:flex sm:items-center sm:justify-center">
         <div className="py-6 sm:py-0">
           <GiveFlowersCard
             id={2889}
