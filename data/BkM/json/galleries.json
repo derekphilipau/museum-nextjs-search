@@ -107,6 +107,7 @@
     "name": "Luce Visible Storage and Study Center, 5th Floor",
     "floor": 5
   },
+  
   {
     "id": "european",
     "imgId": "f5-european-art",
@@ -117,6 +118,12 @@
     "id": "americas",
     "imgId": "f5-arts-americas",
     "name": "Arts of the Americas Galleries, 5th Floor",
+    "floor": 5
+  },
+  {
+    "id": "americas-colonies",
+    "imgId": "f5-arts-americas",
+    "name": "American Art Galleries, 5th Floor, From Colonies to States, 1660–1830",
     "floor": 5
   }
 ]
