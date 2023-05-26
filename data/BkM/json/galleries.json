@@ -1,5 +1,11 @@
 [
   {
+    "id": "pavilion",
+    "imgId": "f1-pavilion",
+    "name": "Martha A. and Robert S. Rubin Pavilion, 1st Floor",
+    "floor": 1
+  },
+  {
     "id": "islamic",
     "imgId": "f2-arts-islamic",
     "name": "Arts of the Islamic World, 2nd floor",

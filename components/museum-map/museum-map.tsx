@@ -57,7 +57,7 @@ export function MuseumMap({item}: { item: CollectionObjectDocument }) {
             1062.3,3561 	"/>
         <polygon style={getFillStyles('education-studios')} points="536.6,3777.5 423.1,3843 872.6,4102.5 986,4037 	"/>
         <polygon style={getFillStyles('robert-blum-gallery')} points="1494.4,3874.5 1381.8,3809.5 873.5,4103 986,4168 	"/>
-        <path style={getFillStyles('pavilion')} d="M1430.3,3911c140.7,66.3,349.9,63,481.1-12.8c113.7-65.6,139.9-161.7,68.9-239.7l-154.2,24l79.1-45.7
+        <path style={getFillStyles('f1-pavilion')} d="M1430.3,3911c140.7,66.3,349.9,63,481.1-12.8c113.7-65.6,139.9-161.7,68.9-239.7l-154.2,24l79.1-45.7
             l-112.6-65l-411.2,237.4l113,65.2L1430.3,3911z"/>
     </g>
     <g id="_x31__drawing">

@@ -95,11 +95,13 @@ export default async function Page({ params }) {
               __html: collectionObject?.description || '',
             }}
           ></div>
-          <div className="pt-4 flex flex-wrap">
-            <div className="min-w-0">
-            <MuseumMap item={collectionObject} />
-            </div>
+          <div className="lg:flex pt-4 gap-x-4">
+            <div>
             <ObjectDescription item={collectionObject} />
+            </div>
+            <div className="flex-0 mt-4">
+              <MuseumMap item={collectionObject} />
+            </div>
           </div>
           <div>
             <LanguageDisclaimer
