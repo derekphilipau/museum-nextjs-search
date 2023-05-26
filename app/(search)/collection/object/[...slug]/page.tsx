@@ -13,6 +13,7 @@ import { SimilarObjects } from '@/components/object/similar-objects';
 import { ImageViewer } from '@/components/search/image-viewer';
 import { LanguageDisclaimer } from '@/components/search/language-disclaimer';
 import { ObjectDescription } from '@/components/search/object-description';
+import { MuseumMap } from '@/components/museum-map/museum-map';
 
 async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
   const data = await getDocument('collections', id);
@@ -94,7 +95,10 @@ export default async function Page({ params }) {
               __html: collectionObject?.description || '',
             }}
           ></div>
-          <div className="pt-4">
+          <div className="pt-4 flex flex-wrap">
+            <div className="min-w-0">
+            <MuseumMap item={collectionObject} />
+            </div>
             <ObjectDescription item={collectionObject} />
           </div>
           <div>
