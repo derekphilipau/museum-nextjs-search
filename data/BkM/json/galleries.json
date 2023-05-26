@@ -84,6 +84,12 @@
     "floor": 4
   },
   {
+    "id": "igrassia",
+    "imgId": "f4-igrassia",
+    "name": "Contemporary Art, North Gallery",
+    "floor": 4
+  },  
+  {
     "id": "cupola",
     "imgId": "f4-decorative-arts",
     "name": "Cupola House, Pantry and Dining Decorative Art, Hall, 4th Floor",

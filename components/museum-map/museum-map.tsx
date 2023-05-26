@@ -171,8 +171,8 @@ export function MuseumMap({item}: { item: CollectionObjectDocument }) {
             1023.8,1199.3 1248.1,1328.8 1248.1,1372.8 	"/>
         <polygon style={getFillStyles('f4-decorative-arts')} points="759.6,1220.8 835,1264.3 724.1,1328.3 725.9,1372.3 949.3,1501.3 1025.5,1501.3 1101.7,1545.2 
             879.1,1673.7 427.1,1412.8 	"/>
-        <polygon style={getFillStyles('igrassia')} points="1101.7,1545.2 1025.5,1501.3 1248.1,1372.8 1323.4,1416.2 	"/>
-        <polygon style={getFillStyles('dinner-party')} points="1652.5,1226.2 1710.5,1344.7 1691.5,1355.7 1484.5,1323.2 	"/>
+        <polygon style={getFillStyles('f4-igrassia')} points="1101.7,1545.2 1025.5,1501.3 1248.1,1372.8 1323.4,1416.2 	"/>
+        <polygon style={getFillStyles('f4-dinner-party')} points="1652.5,1226.2 1710.5,1344.7 1691.5,1355.7 1484.5,1323.2 	"/>
         <path style={getFillStyles('eascfa')} d="M1626.5,1154.3l243.4,140.5l-263.3,152l-242.9-140.2L1626.5,1154.3z M1484.5,1323.2l207,32.5l19.1-11
             l-58-118.5L1484.5,1323.2z"/>
     </g>
