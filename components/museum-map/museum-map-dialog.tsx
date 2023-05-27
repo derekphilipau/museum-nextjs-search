@@ -32,7 +32,6 @@ export function MuseumMapDialog({ item }: { item: CollectionObjectDocument }) {
                 {item.title}
             </DialogTitle>
             <div className="h-screen overflow-y-scroll">
-              test
                 <div className="w-full">
                   <div className="flex max-w-md justify-center">
                     <MuseumMap item={item} />

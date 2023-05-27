@@ -5,8 +5,6 @@ export function MuseumMap({item}: { item: CollectionObjectDocument }) {
 
     if (!item?.id || !item?.museumLocation) return null;
 
-    console.log(item.museumLocation)
-
     const gallery = galleries.find(gallery => gallery.name === item.museumLocation);
 
     if (!gallery) return null;
