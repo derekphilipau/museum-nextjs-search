@@ -1,5 +1,4 @@
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import Link from 'next/link';
 import galleries from '@/data/BkM/json/galleries.json';
 
 export function MuseumMap({item}: { item: CollectionObjectDocument }) {
@@ -45,7 +44,7 @@ export function MuseumMap({item}: { item: CollectionObjectDocument }) {
 
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-         viewBox="0 0 2451 4215" className="h-72">
+         viewBox="0 0 2451 4215" className="h-full">
     
     <g id="shadow">
         <path style={{fill:'#E5E6E8'}} d="M1427.3,3928.8l-443,255.8l-711-410.5l630.5-364l34.6,20l36.4-21l387.1,223.5l299.6-173l149.8,86.5l254.6-147
