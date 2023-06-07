@@ -48,6 +48,8 @@ export function SearchPagination({
   const pathname = usePathname();
   const dict = getDictionary();
 
+  const showExperimental = false;
+
   function pageClick(newPage) {
     const updatedParams = new URLSearchParams(params);
     if (newPage > 1) updatedParams.set('p', newPage + '');
@@ -147,74 +149,82 @@ export function SearchPagination({
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={() =>
-                        clickChangeSearchType(
-                          'card',
-                          'swatch',
-                          card === 'swatch'
-                        )
-                      }
-                      variant={card === 'swatch' ? 'default' : 'ghost'}
-                      size="sm"
-                    >
-                      <Icons.paintbrush2 className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{dict['search.cardSwatch']}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={() =>
-                        clickChangeSearchType(
-                          'card',
-                          'palette',
-                          card === 'palette'
-                        )
-                      }
-                      variant={card === 'palette' ? 'default' : 'ghost'}
-                      size="sm"
-                    >
-                      <Icons.palette className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{dict['search.cardPalette']}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={() =>
-                        clickChangeSearchType('card', 'color', card === 'color')
-                      }
-                      variant={card === 'color' ? 'default' : 'ghost'}
-                      size="sm"
-                    >
-                      <Icons.pipette className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{dict['search.cardColor']}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            {showExperimental && (
+              <>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'swatch',
+                              card === 'swatch'
+                            )
+                          }
+                          variant={card === 'swatch' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.paintbrush2 className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardSwatch']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'palette',
+                              card === 'palette'
+                            )
+                          }
+                          variant={card === 'palette' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.palette className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardPalette']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'color',
+                              card === 'color'
+                            )
+                          }
+                          variant={card === 'color' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.pipette className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardColor']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </>
+            )}
             <div className="flex w-16">
               <Select value={size} onValueChange={(value) => sizeChange(value)}>
                 <SelectTrigger className="w-[180px]">
