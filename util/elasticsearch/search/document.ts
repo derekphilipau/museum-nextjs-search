@@ -17,7 +17,8 @@ import { similarCollectionObjects } from './similarObjects';
  */
 export async function getDocument(
   index: string,
-  id: number | string
+  id: number | string,
+  getAdditionalData: boolean = true
 ): Promise<ApiResponseDocument> {
   const esQuery: T.SearchRequest = {
     index,
@@ -32,7 +33,7 @@ export async function getDocument(
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   const data = response?.hits?.hits[0]?._source as BaseDocument;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
-  if (index === 'collections') {
+  if (index === 'collections' && getAdditionalData) {
     apiResponse.similar = await similarCollectionObjects(data, client);
     apiResponse.similarImageHistogram = await similarImageHistogram(
       data,

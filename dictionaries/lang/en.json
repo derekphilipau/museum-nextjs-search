@@ -1,5 +1,5 @@
 {
-  "site.title": "My Museum",
+  "site.title": "Brooklyn Museum",
   "nav.home": "Home",
   "nav.search": "Search",
   "organization.address1": "200 Eastern Parkway",
@@ -16,6 +16,9 @@
   "search.hideFilters": "Hide Filters",
   "search.layoutGrid": "Grid view",
   "search.layoutList": "List view",
+  "search.cardPalette": "Palette view",
+  "search.cardSwatch": "Swatch view",
+  "search.cardColor": "Color view",
   "search.resultsPage": "results, page",
   "search.of": "of",
   "search.previous": "Previous",

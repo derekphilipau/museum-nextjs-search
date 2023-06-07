@@ -28,6 +28,7 @@ interface SearchPaginationProps {
   totalPages: number;
   isShowFilters: boolean;
   layout: string;
+  card: string;
   isShowViewOptions: boolean;
 }
 
@@ -40,11 +41,14 @@ export function SearchPagination({
   totalPages,
   isShowFilters,
   layout,
+  card,
   isShowViewOptions,
 }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const dict = getDictionary();
+
+  const showExperimental = false;
 
   function pageClick(newPage) {
     const updatedParams = new URLSearchParams(params);
@@ -75,12 +79,23 @@ export function SearchPagination({
     router.push(`${pathname}?${updatedParams}`);
   }
 
+  function clickChangeSearchType(
+    name: string,
+    value: string,
+    isDelete = false
+  ) {
+    const updatedParams = new URLSearchParams(params);
+    if (isDelete) updatedParams.delete(name);
+    else updatedParams.set(name, value);
+    router.push(`${pathname}?${updatedParams}`);
+  }
+
   return (
     <nav
       className="items-center justify-between gap-x-4 sm:flex"
       aria-label="Pagination"
     >
-      <div className="flex items-center justify-start gap-x-4">
+      <div className="flex items-center justify-start gap-x-2">
         {isShowViewOptions && (
           <>
             {!isShowFilters &&
@@ -96,12 +111,12 @@ export function SearchPagination({
                   </Button>
                 </div>
               )}
-            <div className="hidden sm:block">
+            <div>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      onClick={() => clickChangeLayout('grid')}
+                      onClick={() => clickChangeSearchType('layout', 'grid')}
                       variant="ghost"
                       size="sm"
                       disabled={layout === 'grid'}
@@ -115,12 +130,12 @@ export function SearchPagination({
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="hidden sm:block">
+            <div>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      onClick={() => clickChangeLayout('list')}
+                      onClick={() => clickChangeSearchType('layout', 'list')}
                       variant="ghost"
                       size="sm"
                       disabled={layout === 'list'}
@@ -134,6 +149,82 @@ export function SearchPagination({
                 </Tooltip>
               </TooltipProvider>
             </div>
+            {showExperimental && (
+              <>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'swatch',
+                              card === 'swatch'
+                            )
+                          }
+                          variant={card === 'swatch' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.paintbrush2 className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardSwatch']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'palette',
+                              card === 'palette'
+                            )
+                          }
+                          variant={card === 'palette' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.palette className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardPalette']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() =>
+                            clickChangeSearchType(
+                              'card',
+                              'color',
+                              card === 'color'
+                            )
+                          }
+                          variant={card === 'color' ? 'default' : 'ghost'}
+                          size="sm"
+                        >
+                          <Icons.pipette className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{dict['search.cardColor']}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </>
+            )}
             <div className="flex w-16">
               <Select value={size} onValueChange={(value) => sizeChange(value)}>
                 <SelectTrigger className="w-[180px]">

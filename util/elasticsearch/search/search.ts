@@ -98,7 +98,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 export async function searchCollections(
   params: any
 ): Promise<ApiResponseSearch> {
-  let { index, p, size, q } = params;
+  let { index, p, size, q, color } = params;
 
   // Defaults for missing params:
   index = 'collections';
@@ -138,6 +138,19 @@ export async function searchCollections(
       },
     ];
     esQuery.sort = [{ startDate: 'desc' }];
+  }
+
+  if (color) {
+    const colorQuery = getColorQuery(color);
+    if (colorQuery) {
+      if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+        esQuery.query.bool.must = [];
+      }
+      if (Array.isArray(esQuery?.query?.bool?.must)) {
+        esQuery.query?.bool?.must.push(colorQuery);
+      }
+      esQuery.sort = ['_score'];
+    }
   }
 
   addQueryBoolDateRange(esQuery, params);
@@ -313,6 +326,14 @@ function addQueryBoolFilterTerm(
   });
 }
 
+function addQueryBoolFilter(esQuery: any, filter: any): void {
+  if (!filter) return;
+  esQuery.query ??= {};
+  esQuery.query.bool ??= {};
+  esQuery.query.bool.filter ??= [];
+  esQuery.query.bool.filter.push(filter);
+}
+
 /**
  * Add an exists clause to a bool filter query
  *
@@ -368,4 +389,113 @@ function addQueryAggs(esQuery: any, indexName: string | string[] | undefined) {
     }
     esQuery.aggs = aggs;
   }
+}
+
+function getColorQuery(colorName: string) {
+  // colors object with properties for each color
+  const colors = {
+    red: { h: 0, s: 100, l: 50 },
+    orange: { h: 30, s: 100, l: 50 },
+    yellow: { h: 60, s: 100, l: 50 },
+    green: { h: 120, s: 100, l: 50 },
+    cyan: { h: 180, s: 100, l: 50 },
+    blue: { h: 240, s: 100, l: 50 },
+    purple: { h: 270, s: 100, l: 50 },
+    black: { h: 0, s: 0, l: 0 },
+    white: { h: 0, s: 0, l: 100 },
+  };
+
+  const color = colors?.[colorName];
+  if (!color) return;
+
+  const sRange: any = {};
+  if (colorName !== 'black' && colorName !== 'white') {
+    // s is 360 degree value, so we need to account for the wrap around
+    const gte = color.s - 20 < 0 ? 360 + color.s - 20 : color.s - 20;
+    const lte = color.s + 20 > 360 ? color.s + 20 - 360 : color.s + 20;
+    sRange.gte = gte;
+    sRange.lte = lte;
+  }
+
+  const lRange: any = {};
+  if (colorName === 'black') {
+    lRange.lte = 30;
+  } else if (colorName === 'white') {
+    lRange.gte = 80;
+  } else {
+    const gte = color.s - 20 < 0 ? 0 : color.s - 20;
+    const lte = color.s + 20 > 100 ? 100 : color.s + 20;
+    lRange.gte = gte;
+    lRange.lte = lte;
+  }
+
+  const query: T.QueryDslQueryContainer = {
+    function_score: {
+      query: {
+        nested: {
+          path: 'dominantColorsHsl',
+          query: {
+            function_score: {
+              score_mode: 'multiply',
+              functions: [
+                {
+                  filter: {
+                    range: {
+                      'dominantColorsHsl.s': sRange,
+                    },
+                  },
+                  weight: 1,
+                },
+                {
+                  filter: {
+                    range: {
+                      'dominantColorsHsl.l': lRange,
+                    },
+                  },
+                  weight: 1,
+                },
+                {
+                  exp: {
+                    'dominantColorsHsl.h': {
+                      origin: color.h,
+                      offset: 2,
+                      scale: 4,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'dominantColorsHsl.s': {
+                      origin: color.s,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'dominantColorsHsl.l': {
+                      origin: color.l,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          score_mode: 'sum',
+        },
+      },
+      functions: [
+        {
+          script_score: {
+            script: '_score',
+          },
+        },
+      ],
+    },
+  };
+
+  return query;
 }

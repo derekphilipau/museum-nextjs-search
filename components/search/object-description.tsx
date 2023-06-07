@@ -29,8 +29,8 @@ export function ObjectDescription({ item }: ObjectDescriptionProps) {
         <DescriptionRow name="accessionNumber" item={item} />
         <DescriptionRow name="creditLine" item={item} />
         <DescriptionRow name="exhibitions" item={item} isLink={true} />
-        <DescriptionRow name="museumLocation" item={item} isLink={true} />
         <DescriptionRow name="rightsType" item={item} />
+        <DescriptionRow name="museumLocation" item={item} isLink={true} />
       </dl>
     </div>
   );

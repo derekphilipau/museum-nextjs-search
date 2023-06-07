@@ -1,0 +1,151 @@
+{
+  "title": "Black White",
+  "subtitle": "American Galleries",
+  "slug": "black-white",
+  "tourLabel": "A tour of black and white objects",
+  "tourObjects": [
+    {
+      "id": 491,
+      "tourLabel": "Woman in Manteau",
+      "positionClassName": "",
+      "style": {
+        "width": "192px",
+        "position": "absolute",
+        "top": "70px",
+        "left": "20px"
+      }
+    },
+    {
+      "id": 166509,
+      "tourLabel": "Woman Standing",
+      "positionClassName": "w-72",
+      "style": {
+        "width": "240px",
+        "position": "absolute",
+        "top": "30px",
+        "left": "250px"
+      }
+    },
+    {
+      "id": 166505,
+      "tourLabel": "Self Portraits Both Young/Old",
+      "positionClassName": "w-32",
+      "style": {
+        "width": "128px",
+        "position": "absolute",
+        "top": "100px",
+        "left": "510px"
+      }
+    },
+    {
+      "id": 405,
+      "tourLabel": "Lady in Black",
+      "positionClassName": "w-32",
+      "style": {
+        "width": "128px",
+        "position": "absolute",
+        "top": "250px",
+        "left": "530px"
+      }
+    },
+    {
+      "id": 149205,
+      "tourLabel": "Black-White Definition New York",
+      "positionClassName": "w-36",
+      "style": {
+        "width": "144px",
+        "position": "absolute",
+        "top": "150px",
+        "left": "690px"
+      }
+    },
+    {
+      "id": 73414,
+      "tourLabel": "Static and Revolving",
+      "positionClassName": "w-52",
+      "style": {
+        "width": "208px",
+        "position": "absolute",
+        "top": "20px",
+        "left": "880px"
+      }
+    },
+    {
+      "id": 163540,
+      "tourLabel": "Jar",
+      "positionClassName": "w-20",
+      "style": {
+        "width": "80px",
+        "position": "absolute",
+        "top": "450px",
+        "left": "150px"
+      }
+    },
+    {
+      "id": 149213,
+      "tourLabel": "Black-White with Yellow",
+      "positionClassName": "w-32",
+      "style": {
+        "width": "128px",
+        "position": "absolute",
+        "top": "240px",
+        "left": "850px"
+      }
+    },
+    {
+      "id": 207865,
+      "tourLabel": "Houdon Paul-Louis",
+      "positionClassName": "w-24",
+      "style": {
+        "width": "96px",
+        "position": "absolute",
+        "top": "400px",
+        "left": "950px"
+      }
+    },
+    {
+      "id": 218182,
+      "tourLabel": "Black Brooklyn",
+      "positionClassName": "w-44",
+      "style": {
+        "width": "176px",
+        "position": "absolute",
+        "top": "230px",
+        "left": "1080px"
+      }
+    },
+    {
+      "id": 68978,
+      "tourLabel": "Excavation",
+      "positionClassName": "w-64",
+      "style": {
+        "width": "256px",
+        "position": "absolute",
+        "top": "50px",
+        "left": "1150px"
+      }
+    },
+    {
+      "id": 216210,
+      "tourLabel": "Looking Back Into the Future",
+      "positionClassName": "w-72",
+      "style": {
+        "width": "200px",
+        "position": "absolute",
+        "top": "300px",
+        "left": "1300px"
+      }
+    },
+    {
+      "id": 92835,
+      "tourLabel": "Caveman's Dream",
+      "positionClassName": "w-24",
+      "style": {
+        "width": "96px",
+        "position": "absolute",
+        "top": "120px",
+        "left": "1500px"
+      }
+    }
+  ]
+}

@@ -1,14 +1,15 @@
 /**
  * Import Elasticsearch data from JSON files.
  *
- * Temporary script, to be removed after the histogram data is added to the collections data import script.
+ * Temporary script, to be removed after the dominant color data is added to the collections data import script.
  *
  * npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/updateHistogramCommand.ts
  */
 import * as fs from 'fs';
 import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
-import { getImageHistogram } from '@/util/image';
+import convert from 'color-convert';
+import Vibrant from 'node-vibrant';
 
 const CLOUD_URL =
   'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
@@ -31,10 +32,16 @@ async function updateHistograms() {
     if (!obj) continue;
     if (obj.image) {
       try {
-        obj.imageHistogram = await getImageHistogram(
-          CLOUD_URL + encodeURIComponent(obj.image)
-        );
-        console.log(obj.image);
+        const imageUrl = CLOUD_URL + encodeURIComponent(obj.image);
+        const palette = await Vibrant.from(imageUrl).getPalette();
+        console.log(palette);
+        const colors: any = [];
+        for (const swatch in palette) {
+          const hsl = palette?.[swatch]?.hsl;
+          if (hsl) colors.push(hsl);
+        }
+        obj.dominantColorsHsl = colors;
+        console.log(obj.dominantColorsHsl);
         await snooze(0.1);
       } catch (error) {
         console.error(error);
