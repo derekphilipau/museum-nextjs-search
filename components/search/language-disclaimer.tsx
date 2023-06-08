@@ -20,7 +20,7 @@ export function LanguageDisclaimer({ item, formId }) {
           </div>
           <div className="ml-3 flex-1 sm:flex sm:items-center sm:justify-between">
             <p className="text-sm">
-              {dict['object.languageDisclaimer.question']}
+              {dict['artwork.languageDisclaimer.question']}
             </p>
             {!isOpen && (
               <Button
@@ -30,9 +30,9 @@ export function LanguageDisclaimer({ item, formId }) {
                 className="px-0 sm:p-3"
                 aria-label="Display contact form"
               >
-                {dict['object.languageDisclaimer.contactUs']}
+                {dict['artwork.languageDisclaimer.contactUs']}
                 <span className="sr-only">
-                  {dict['object.languageDisclaimer.toggle']}
+                  {dict['artwork.languageDisclaimer.toggle']}
                 </span>
               </Button>
             )}

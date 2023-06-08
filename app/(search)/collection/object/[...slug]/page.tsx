@@ -112,12 +112,12 @@ export default async function Page({ params }) {
         </div>
       </section>
       <SimilarObjects
-        title={dict['object.similar']}
+        title={dict['artwork.similar']}
         similar={similarCollectionObjects}
       />
 
       <SimilarObjects
-        title={dict['object.similarHistogram']}
+        title={dict['artwork.similarHistogram']}
         similar={similarImageHistogram}
       />
 

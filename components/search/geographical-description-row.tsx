@@ -14,7 +14,7 @@ interface DescriptionRowProps {
 export function GeographicalDescriptionRow({ item }: DescriptionRowProps) {
   const dict = getDictionary();
   const displayName =
-    dict?.[`object.field.geographicalLocations`] || 'Unknown field';
+    dict?.[`artwork.field.geographicalLocations`] || 'Unknown field';
   const searchUrl = '/search/collections?';
 
   let val = item?.geographicalLocations;

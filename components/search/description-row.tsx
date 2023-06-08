@@ -18,7 +18,7 @@ export function DescriptionRow({
   isLink = false,
 }: DescriptionRowProps) {
   const dict = getDictionary();
-  const displayName = dict?.[`object.field.${name}`] || 'Unknown field';
+  const displayName = dict?.[`artwork.field.${name}`] || 'Unknown field';
   const searchUrl = '/search/collections?';
 
   let val = value ? value : item?.[name];

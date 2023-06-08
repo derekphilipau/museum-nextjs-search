@@ -45,7 +45,7 @@ export function SimilarObjects({ title, similar }: SimilarObjectsProps) {
             size="sm"
             aria-label="Show More"
           >
-            {dict['object.showMore']}
+            {dict['artwork.showMore']}
           </Button>
         )}
       </section>
