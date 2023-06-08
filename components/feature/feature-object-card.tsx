@@ -24,7 +24,7 @@ export function FeatureObjectCard({ tourObject }: { tourObject: any }) {
               src={getSmallOrRestrictedImageUrl(
                 tourObject.image,
                 tourObject.copyrightRestricted
-              )}
+              ) || ''}
               className="object-contain"
               alt=""
               width={400}

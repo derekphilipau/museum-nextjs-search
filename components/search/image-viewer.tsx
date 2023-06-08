@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Key } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {
@@ -100,7 +100,7 @@ export function ImageViewer({ item }) {
                             src={getSmallOrRestrictedImageUrl(
                               image?.filename,
                               item.copyrightRestricted
-                            )}
+                            ) || ''}
                             className={
                               item.copyrightRestricted
                                 ? 'max-h-96 object-contain'
@@ -148,7 +148,7 @@ export function ImageViewer({ item }) {
       {sortedImages.length > 1 && (
         <div className="my-6 flex flex-wrap justify-start gap-2">
           {sortedImages.map(
-            (image, index) =>
+            (image, index: Key) =>
               image?.filename && (
                 <div
                   key={index}
@@ -157,7 +157,7 @@ export function ImageViewer({ item }) {
                 >
                   <figure key={index}>
                     <Image
-                      src={getRestrictedImageUrl(image.filename)}
+                      src={getRestrictedImageUrl(image.filename) || ''}
                       className="max-h-16 object-contain"
                       alt=""
                       width={200}

@@ -27,10 +27,10 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   if (!collectionObject) return {};
 
   const caption = encode(getCaption(collectionObject));
-  const thumb = getSmallOrRestrictedImageUrl(
+  const images = [getSmallOrRestrictedImageUrl(
     collectionObject?.image,
     collectionObject?.copyrightRestricted
-  );
+  ) || ''];
 
   return {
     title: collectionObject.title,
@@ -38,11 +38,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
     openGraph: {
       title: collectionObject.title || '',
       description: caption,
-      images: [
-        {
-          url: thumb,
-        },
-      ],
+      images,
     },
   };
 }

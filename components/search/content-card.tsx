@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { NONE_IMG } from '@/util/image';
+
+import { Icons } from '@/components/icons';
 
 function getContainerClass(layout) {
   if (layout === 'grid') return 'py-4';
@@ -37,13 +38,10 @@ export function ContentCard({ item, layout, showType }) {
                   height={400}
                 />
               ) : (
-                <Image
-                  src={NONE_IMG}
-                  className="h-48 object-contain"
-                  alt=""
-                  width={400}
-                  height={400}
-                />
+                <div className="flex h-48 w-full items-center justify-center">
+                  <Icons.imageOff className="h-24 w-24 text-neutral-300 group-hover:text-neutral-400" />
+                  <span className="sr-only">Image Unavailable</span>
+                </div>
               )}
               <figcaption></figcaption>
             </figure>
