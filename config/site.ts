@@ -13,10 +13,6 @@ export const siteConfig: SiteConfig = {
   defaultLocale: 'en',
   mainNav: [
     {
-      dict: 'nav.home',
-      href: '/',
-    },
-    {
       dict: 'nav.search',
       href: '/search/collections?hasPhoto=true',
     },
