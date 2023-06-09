@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Key } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {
@@ -100,7 +100,7 @@ export function ImageViewer({ item }) {
                             src={getSmallOrRestrictedImageUrl(
                               image?.filename,
                               item.copyrightRestricted
-                            )}
+                            ) || ''}
                             className={
                               item.copyrightRestricted
                                 ? 'max-h-96 object-contain'
@@ -131,16 +131,18 @@ export function ImageViewer({ item }) {
             <DialogContent className="h-full min-w-full">
               <DialogHeader className="">
                 <DialogTitle className="z-50">
-                  <span className="bg-opacity/50 rounded-lg bg-white px-4 py-3 dark:bg-neutral-900">
+                  <span className="bg-white px-4 py-3 dark:bg-neutral-900">
                     {item.title}
                   </span>
                 </DialogTitle>
-                {item?.image && (
+              </DialogHeader>
+              {item?.image && (
+                <div className="h-64">
                   <OpenSeaDragonViewer
                     image={getLargeImageUrl(selectedImage?.filename)}
                   />
+                </div>
                 )}
-              </DialogHeader>
             </DialogContent>
           </Dialog>
         </div>
@@ -148,7 +150,7 @@ export function ImageViewer({ item }) {
       {sortedImages.length > 1 && (
         <div className="my-6 flex flex-wrap justify-start gap-2">
           {sortedImages.map(
-            (image, index) =>
+            (image, index: Key) =>
               image?.filename && (
                 <div
                   key={index}
@@ -157,7 +159,7 @@ export function ImageViewer({ item }) {
                 >
                   <figure key={index}>
                     <Image
-                      src={getRestrictedImageUrl(image.filename)}
+                      src={getRestrictedImageUrl(image.filename) || ''}
                       className="max-h-16 object-contain"
                       alt=""
                       width={200}

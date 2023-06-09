@@ -6,17 +6,13 @@ import { getObjectUrlWithSlug } from '@/util/various';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
-export function SimilarObjectCard({
+export function SimilarCollectionObjectCard({
   item,
 }: {
   item: CollectionObjectDocument;
 }) {
   if (!item) return null;
 
-  let imageSrc = getSmallOrRestrictedImageUrl(
-    item.image,
-    item.copyrightRestricted
-  );
   const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -29,7 +25,7 @@ export function SimilarObjectCard({
               src={getSmallOrRestrictedImageUrl(
                 item.image,
                 item.copyrightRestricted
-              )}
+              ) || ''}
               className="h-48 object-contain"
               alt=""
               width={400}

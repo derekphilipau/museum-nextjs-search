@@ -8,11 +8,11 @@ import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BaseDocument } from '@/types/baseDocument';
 import type { Term } from '@/types/term';
-import { ArchiveCard } from '@/components/search/archive-card';
-import { ColorCard } from '@/components/search/color-card';
-import { ContentCard } from '@/components/search/content-card';
-import { ObjectCard } from '@/components/search/object-card';
-import { PaletteCard } from '@/components/search/palette-card';
+import { ArchiveCard } from '@/components/search-card/archive-card';
+import { ColorCard } from '@/components/search-card/color-card';
+import { ContentCard } from '@/components/search-card/content-card';
+import { CollectionObjectCard } from '@/components/collection-object/collection-object-card';
+import { PaletteCard } from '@/components/search-card/palette-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -20,8 +20,8 @@ import { SearchFilters } from '@/components/search/search-filters';
 import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
 import { SearchQueryInput } from '@/components/search/search-query-input';
-import { SwatchCard } from '@/components/search/swatch-card';
-import { TermCard } from '@/components/search/term-card';
+import { SwatchCard } from '@/components/search-card/swatch-card';
+import { TermCard } from '@/components/search-card/term-card';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
@@ -251,7 +251,7 @@ export default async function Page({ params, searchParams }) {
                         />
                       )}
                       {item.type === 'object' && cardType === '' && (
-                        <ObjectCard
+                        <CollectionObjectCard
                           item={item}
                           layout={layout}
                           showType={index === 'all'}

@@ -1,7 +1,7 @@
 import { Key } from 'react';
 
 import { FeatureObjectCard } from '@/components/feature/feature-object-card';
-import { ObjectCard } from '../search/object-card';
+import { CollectionObjectCard } from '../collection-object/collection-object-card';
 import { Icons } from '@/components/icons';
 
 export function BlackWhiteFeature({ tour }: { tour: any }) {
@@ -54,7 +54,7 @@ export function BlackWhiteFeature({ tour }: { tour: any }) {
                 item && (
                   <div className="" key={i}>
                     {item.type === 'object' && (
-                      <ObjectCard item={item} layout="grid" showType={false} />
+                      <CollectionObjectCard item={item} layout="grid" showType={false} />
                     )}
                   </div>
                 )

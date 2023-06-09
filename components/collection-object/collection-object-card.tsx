@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { NONE_IMG, getSmallOrRestrictedImageUrl } from '@/util/image';
+import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import {
   getObjectUrlWithSlug,
   trimStringToLengthAtWordBoundary,
 } from '@/util/various';
+
+import { Icons } from '@/components/icons';
 
 function getContainerClass(layout) {
   if (layout === 'grid') return 'py-4';
@@ -17,7 +19,7 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function ObjectCard({ item, layout, showType }) {
+export function CollectionObjectCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 
@@ -41,20 +43,17 @@ export function ObjectCard({ item, layout, showType }) {
                   src={getSmallOrRestrictedImageUrl(
                     item.image,
                     item.copyrightRestricted
-                  )}
+                  ) || ''}
                   className="h-48 object-contain"
                   alt=""
                   width={400}
                   height={400}
                 />
               ) : (
-                <Image
-                  src={NONE_IMG}
-                  className="h-48 object-contain"
-                  alt=""
-                  width={400}
-                  height={400}
-                />
+                <div className="flex h-48 w-full items-center justify-center">
+                  <Icons.imageOff className="h-24 w-24 text-neutral-300 group-hover:text-neutral-400" />
+                  <span className="sr-only">Image Unavailable</span>
+                </div>
               )}
               <figcaption></figcaption>
             </figure>

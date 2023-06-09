@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { ChevronsUpDown } from 'lucide-react';
 
-import { useDebounce } from '@/components/forms/debounce';
+import { useDebounce } from '@/util/debounce';
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
