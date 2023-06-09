@@ -131,16 +131,18 @@ export function ImageViewer({ item }) {
             <DialogContent className="h-full min-w-full">
               <DialogHeader className="">
                 <DialogTitle className="z-50">
-                  <span className="bg-opacity/50 rounded-lg bg-white px-4 py-3 dark:bg-neutral-900">
+                  <span className="bg-white px-4 py-3 dark:bg-neutral-900">
                     {item.title}
                   </span>
                 </DialogTitle>
-                {item?.image && (
+              </DialogHeader>
+              {item?.image && (
+                <div className="h-64">
                   <OpenSeaDragonViewer
                     image={getLargeImageUrl(selectedImage?.filename)}
                   />
+                </div>
                 )}
-              </DialogHeader>
             </DialogContent>
           </Dialog>
         </div>
