@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import { SimilarObjectCard } from '@/components/search/similar-object-card';
+import { SimilarCollectionObjectCard } from '@/components/collection-object/similar-collection-object-card';
 import { Button } from '@/components/ui/button';
 
 const SIMILAR_MAX_ITEMS = 24;
@@ -15,7 +15,7 @@ interface SimilarObjectsProps {
   similar: CollectionObjectDocument[];
 }
 
-export function SimilarObjects({ title, similar }: SimilarObjectsProps) {
+export function SimilarCollectionObjectList({ title, similar }: SimilarObjectsProps) {
   const dict = getDictionary();
   const [showAllSimilar, setShowAllSimilar] = useState(false);
 
@@ -33,7 +33,7 @@ export function SimilarObjects({ title, similar }: SimilarObjectsProps) {
               (item, i) =>
                 item && (
                   <div className="" key={i}>
-                    <SimilarObjectCard item={item} />
+                    <SimilarCollectionObjectCard item={item} />
                   </div>
                 )
             )}

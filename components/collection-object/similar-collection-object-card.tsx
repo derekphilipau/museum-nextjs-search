@@ -6,7 +6,7 @@ import { getObjectUrlWithSlug } from '@/util/various';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
-export function SimilarObjectCard({
+export function SimilarCollectionObjectCard({
   item,
 }: {
   item: CollectionObjectDocument;

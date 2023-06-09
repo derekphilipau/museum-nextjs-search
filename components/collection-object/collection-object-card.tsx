@@ -19,7 +19,7 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function ObjectCard({ item, layout, showType }) {
+export function CollectionObjectCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 

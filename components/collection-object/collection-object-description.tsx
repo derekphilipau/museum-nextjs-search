@@ -4,11 +4,11 @@ import type { CollectionObjectDocument } from '@/types/collectionObjectDocument'
 import { DescriptionRow } from './description-row';
 import { GeographicalDescriptionRow } from './geographical-description-row';
 
-interface ObjectDescriptionProps {
+interface CollectionObjectDescriptionProps {
   item: CollectionObjectDocument;
 }
 
-export function ObjectDescription({ item }: ObjectDescriptionProps) {
+export function CollectionObjectDescription({ item }: CollectionObjectDescriptionProps) {
   if (!item?.id) return null;
 
   const maker = item.primaryConstituent || 'Unknown';

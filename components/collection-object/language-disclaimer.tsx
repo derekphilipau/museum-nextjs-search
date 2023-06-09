@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
-import ObjectContactForm from '@/components/forms/object-contact-form';
+import CollectionObjectContactForm from '@/components/collection-object-contact-form/collection-object-contact-form';
 import { Button } from '@/components/ui/button';
 import { Icons } from '../icons';
 
@@ -41,7 +41,7 @@ export function LanguageDisclaimer({ item, formId }) {
       </div>
       {isOpen && (
         <div className="p-4">
-          <ObjectContactForm item={item} formId={formId} />
+          <CollectionObjectContactForm item={item} formId={formId} />
         </div>
       )}
     </div>

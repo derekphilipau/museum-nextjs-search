@@ -1,7 +1,7 @@
 import { Key } from 'react';
 
 import { FeatureObjectCard } from '@/components/feature/feature-object-card';
-import { ObjectCard } from '../search/object-card';
+import { CollectionObjectCard } from '../collection-object/collection-object-card';
 
 export function BlackWhiteFeatureFull({ tour }: { tour: any }) {
   return (

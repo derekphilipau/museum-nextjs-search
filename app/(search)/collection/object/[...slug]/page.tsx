@@ -9,10 +9,10 @@ import { encode } from 'html-entities';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import { SimilarObjects } from '@/components/object/similar-objects';
-import { ImageViewer } from '@/components/search/image-viewer';
-import { LanguageDisclaimer } from '@/components/search/language-disclaimer';
-import { ObjectDescription } from '@/components/search/object-description';
+import { SimilarCollectionObjectList } from '@/components/collection-object/similar-collection-object-list';
+import { ImageViewer } from '@/components/collection-object-image/image-viewer';
+import { LanguageDisclaimer } from '@/components/collection-object/language-disclaimer';
+import { CollectionObjectDescription } from '@/components/collection-object/collection-object-description';
 import { MuseumMapDialog } from '@/components/museum-map/museum-map-dialog';
 
 async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
@@ -93,7 +93,7 @@ export default async function Page({ params }) {
           ></div>
           <div className="gap-x-4 pt-4 lg:flex">
             <div>
-            <ObjectDescription item={collectionObject} />
+            <CollectionObjectDescription item={collectionObject} />
             </div>
             <div className="flex-0 my-4">
               <MuseumMapDialog item={collectionObject} />
@@ -107,12 +107,12 @@ export default async function Page({ params }) {
           </div>
         </div>
       </section>
-      <SimilarObjects
+      <SimilarCollectionObjectList
         title={dict['artwork.similar']}
         similar={similarCollectionObjects}
       />
 
-      <SimilarObjects
+      <SimilarCollectionObjectList
         title={dict['artwork.similarHistogram']}
         similar={similarImageHistogram}
       />
