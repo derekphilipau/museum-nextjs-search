@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 interface SearchFilterTagProps {
   params?: any;
@@ -11,6 +12,8 @@ interface SearchFilterTagProps {
 export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const dict = getDictionary();
 
   function buttonClick() {
     console.log('remove filter: ' + name + ' value: ' + value);
@@ -27,6 +30,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
         type="button"
         className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
         onClick={() => buttonClick()}
+        aria-label={dict['button.removeFilter']}
       >
         <span className="sr-only">Remove filter option</span>
         <svg

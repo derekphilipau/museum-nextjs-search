@@ -58,7 +58,7 @@ export default function CollectionObjectContactForm({ item, formId }) {
       <div className="mt-6 grid w-full max-w-sm items-center gap-1.5">
         <Button
           type="submit"
-          aria-label="Submit Form"
+          aria-label={dict['artwork.contactForm.submit']}
           disabled={state.submitting}
         >
           {dict['artwork.contactForm.submit']}

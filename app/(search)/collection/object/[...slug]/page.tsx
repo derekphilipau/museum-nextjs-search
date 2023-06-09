@@ -74,7 +74,7 @@ export default async function Page({ params }) {
               {collectionObject?.primaryConstituentDates}
             </div>
           )}
-          <h4 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
+          <h3 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
             {collectionObject?.collections?.map(
               (collection, i) =>
                 collection && (
@@ -84,7 +84,7 @@ export default async function Page({ params }) {
                   </span>
                 )
             )}
-          </h4>
+          </h3>
           <div
             className="mb-4 text-neutral-700 dark:text-neutral-400"
             dangerouslySetInnerHTML={{

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
@@ -41,7 +40,7 @@ export function SearchFilters({
           onClick={() => hideFilters()}
           variant="ghost"
           size="sm"
-          aria-label="Hide Filters"
+          aria-label={dict['button.hideFilters']}
         >
           <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
           {dict['search.hideFilters']}
