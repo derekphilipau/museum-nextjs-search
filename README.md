@@ -4,12 +4,23 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 ## Demo
 
-This project has been deployed on Vercel at https://bkm-next-search.vercel.app/ or https://museum-nextjs-search.vercel.app/
-However, my Elasticsearch trial is running out and the demo will probably be dead by the time you read this.
+This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
-## Dataset
+## Datasets
+
+### Collections Data
 
 All data was collected via the [Brooklyn Museum Open API](https://www.brooklynmuseum.org/opencollection/api/docs).
+
+### Archives Data
+
+The Archives data was collected using the OAI-PMH harvesting API of Brooklyn Museum's [ArchivesSpace](https://archivesspace.org/) service.
+
+The Dublin Core metadata is limited.  It would be better to use ArchivesSpace's native API to index all the metadata fields like Language, Type, Names, etc.
+
+### Getty Union List of Artist Names (ULAN) Data
+
+ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) and converted to JSON using the `transformUlan.ts` script.  When updating the `terms` index, the script attempts to find a matching artist name from this JSON file.  If found, the ULAN artist data is added to the terms index document.
 
 ## Next.js template
 
