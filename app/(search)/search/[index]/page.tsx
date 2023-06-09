@@ -21,7 +21,7 @@ import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
 import { SearchQueryInput } from '@/components/search/search-query-input';
 import { SwatchCard } from '@/components/search-card/swatch-card';
-import { TermCard } from '@/components/term/term-card';
+import { TermCard } from '@/components/search-card/term-card';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
