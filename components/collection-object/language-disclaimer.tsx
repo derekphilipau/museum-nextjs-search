@@ -28,7 +28,7 @@ export function LanguageDisclaimer({ item, formId }) {
                 variant="ghost"
                 size="sm"
                 className="px-0 sm:p-3"
-                aria-label="Display contact form"
+                aria-label={dict['artwork.languageDisclaimer.toggle']}
               >
                 {dict['artwork.languageDisclaimer.contactUs']}
                 <span className="sr-only">

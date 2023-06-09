@@ -32,7 +32,7 @@ export function MainNav({ items }: MainNavProps) {
         {dict['site.title']}
       </Link>
       {items?.length ? (
-        <nav className="hidden gap-6 md:flex" aria-label="Main menu">
+        <nav className="hidden gap-6 md:flex" aria-label={dict['button.mainMenu']}>
           {items?.map(
             (item, index) =>
               item.href && (
@@ -55,7 +55,7 @@ export function MainNav({ items }: MainNavProps) {
           <Button
             variant="ghost"
             className="-ml-4 text-2xl font-bold hover:bg-transparent focus:ring-0 md:hidden"
-            aria-label="Open Menu"
+            aria-label={dict['button.openMenu']}
           >
             <Icons.menu className="mr-4 h-5 w-5" />
             <span className="font-bold">{dict['site.title']}</span>

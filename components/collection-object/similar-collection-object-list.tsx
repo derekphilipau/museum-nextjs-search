@@ -24,9 +24,9 @@ export function SimilarCollectionObjectList({ title, similar }: SimilarObjectsPr
   return (
     <div className="bg-neutral-100 dark:bg-neutral-800">
       <section className="container pt-6 pb-8 md:py-8">
-        <h2 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
+        <h3 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
           {title}
-        </h2>
+        </h3>
         <div className="grid grid-cols-2 gap-6 pb-8 md:grid-cols-4 md:pb-10 lg:grid-cols-6">
           {similar?.length > 0 &&
             similar.slice(0, (showAllSimilar ? SIMILAR_MAX_ITEMS : SIMILAR_MIN_ITEMS)).map(
@@ -43,7 +43,7 @@ export function SimilarCollectionObjectList({ title, similar }: SimilarObjectsPr
             onClick={() => setShowAllSimilar(true)}
             variant="default"
             size="sm"
-            aria-label="Show More"
+            aria-label={dict['artwork.showMore']}
           >
             {dict['artwork.showMore']}
           </Button>

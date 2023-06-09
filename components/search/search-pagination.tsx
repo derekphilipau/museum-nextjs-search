@@ -93,7 +93,7 @@ export function SearchPagination({
   return (
     <nav
       className="items-center justify-between gap-x-4 sm:flex"
-      aria-label="Pagination"
+      aria-label={dict['button.pagination']}
     >
       <div className="flex items-center justify-start gap-x-2">
         {isShowViewOptions && (
@@ -105,6 +105,7 @@ export function SearchPagination({
                     onClick={() => clickShowFilters()}
                     variant="ghost"
                     size="sm"
+                    aria-label={dict['search.showFilters']}
                   >
                     <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
                     {dict['search.showFilters']}
@@ -120,6 +121,7 @@ export function SearchPagination({
                       variant="ghost"
                       size="sm"
                       disabled={layout === 'grid'}
+                      aria-label={dict['search.layoutGrid']}
                     >
                       <Icons.layoutGrid className="h-5 w-5" />
                     </Button>
@@ -139,6 +141,7 @@ export function SearchPagination({
                       variant="ghost"
                       size="sm"
                       disabled={layout === 'list'}
+                      aria-label={dict['search.layoutList']}
                     >
                       <Icons.layoutList className="h-5 w-5" />
                     </Button>
@@ -165,6 +168,7 @@ export function SearchPagination({
                           }
                           variant={card === 'swatch' ? 'default' : 'ghost'}
                           size="sm"
+                          aria-label={dict['search.cardSwatch']}
                         >
                           <Icons.paintbrush2 className="h-5 w-5" />
                         </Button>
@@ -189,6 +193,7 @@ export function SearchPagination({
                           }
                           variant={card === 'palette' ? 'default' : 'ghost'}
                           size="sm"
+                          aria-label={dict['search.cardPalette']}
                         >
                           <Icons.palette className="h-5 w-5" />
                         </Button>
@@ -213,6 +218,7 @@ export function SearchPagination({
                           }
                           variant={card === 'color' ? 'default' : 'ghost'}
                           size="sm"
+                          aria-label={dict['search.cardColor']}
                         >
                           <Icons.pipette className="h-5 w-5" />
                         </Button>
@@ -227,7 +233,10 @@ export function SearchPagination({
             )}
             <div className="flex w-16">
               <Select value={size} onValueChange={(value) => sizeChange(value)}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger
+                  className="w-[180px]"
+                  aria-label={dict['button.resultsPerPage']}
+                >
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,6 +260,7 @@ export function SearchPagination({
           onClick={() => pageClick(p - 1)}
           variant="ghost"
           size="sm"
+          aria-label={dict['search.previous']}
         >
           <Icons.chevronLeft className="mr-2 h-5 w-5" aria-hidden="true" />
           {dict['search.previous']}
@@ -260,6 +270,7 @@ export function SearchPagination({
           onClick={() => pageClick(p + 1)}
           variant="ghost"
           size="sm"
+          aria-label={dict['search.next']}
         >
           {dict['search.next']}
           <Icons.chevronRight className="ml-2 h-5 w-5" aria-hidden="true" />

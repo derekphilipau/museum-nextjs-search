@@ -64,7 +64,7 @@ export function DateFilter({ params }: DateFilterProps) {
           variant="ghost"
           size="sm"
           className="flex w-full items-center justify-between p-1"
-          aria-label="Expand search filter"
+          aria-label={dict['button.expandFilter']}
         >
           <h4 className="text-sm font-semibold">{displayName}</h4>
           <div>

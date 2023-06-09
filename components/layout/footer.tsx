@@ -38,7 +38,7 @@ export function Footer({ items }: FooterProps) {
         </div>
       </div>
       {items?.length ? (
-        <nav className="mt-6 mb-10 flex gap-6" aria-label="Main menu">
+        <nav className="mt-6 mb-10 flex gap-6" aria-label={dict['button.mainMenu']}>
           {items?.map(
             (item, index) =>
               item.href && (

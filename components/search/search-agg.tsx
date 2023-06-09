@@ -2,11 +2,12 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { getDictionary } from '@/dictionaries/dictionaries';
+import { useDebounce } from '@/util/debounce';
 import { getBooleanValue } from '@/util/various';
 import { ChevronsUpDown, Plus, X } from 'lucide-react';
 
 import type { AggOption } from '@/types/aggOption';
-import { useDebounce } from '@/util/debounce';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -40,6 +41,8 @@ export function SearchAgg({
   const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
   const [searchOptions, setSearchOptions] = useState<AggOption[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const dict = getDictionary();
 
   function checkboxChange(key: string, checked: string | boolean) {
     const myChecked = getBooleanValue(checked);
@@ -103,7 +106,7 @@ export function SearchAgg({
           variant="ghost"
           size="sm"
           className="flex w-full items-center justify-between p-1"
-          aria-label="Expand search filter"
+          aria-label={dict['button.expandFilter']}
         >
           <h4 className="text-sm font-semibold">{aggDisplayName}</h4>
           <div>
