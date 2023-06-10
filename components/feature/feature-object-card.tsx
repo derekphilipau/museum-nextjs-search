@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import { getObjectUrlWithSlug } from '@/util/various';
 
 import {
@@ -21,10 +20,7 @@ export function FeatureObjectCard({ tourObject }: { tourObject: any }) {
         <HoverCardTrigger>
           <Link href={href}>
             <Image
-              src={getSmallOrRestrictedImageUrl(
-                tourObject.image,
-                tourObject.copyrightRestricted
-              ) || ''}
+              src={tourObject.imageThumbnailUrl}
               className="object-contain"
               alt=""
               width={400}

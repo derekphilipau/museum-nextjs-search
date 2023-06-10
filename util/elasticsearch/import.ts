@@ -139,9 +139,10 @@ export async function bulk(
  */
 export async function importJsonFileData(
   indexName: string,
-  dataFilename: string,
   idFieldName: string,
-  isCreateIndex = true
+  dataFilename: string,
+  transformer: (row: any) => any = (row) => row,
+  isCreateIndex = true,
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
   const client = getClient();
@@ -154,8 +155,21 @@ export async function importJsonFileData(
   });
   let documents: any[] = [];
   for await (const line of rl) {
-    const obj = line ? JSON.parse(line) : undefined;
-    if (obj !== undefined) documents.push(obj);
+    try {
+      const obj = line ? JSON.parse(line) : undefined;
+      if (obj !== undefined) {
+        if (transformer !== undefined) {
+          const transformedObj = await transformer(obj);
+          if (transformedObj) documents.push(transformedObj);
+        } else {
+          documents.push(obj);
+        }
+      }
+    } catch (err) {
+      console.error(`Error parsing line ${line}: ${err}`);
+    }
+
+
     if (documents.length >= limit) {
       await bulk(client, indexName, documents, idFieldName);
       documents = [];

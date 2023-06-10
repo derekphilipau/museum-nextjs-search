@@ -17,6 +17,8 @@ import {
   termsDataFile,
 } from '../dataFiles';
 
+import { transformable as collectionsTransformable } from '../transform/transformCollectionObjectDocument';
+
 const idField = 'id';
 
 loadEnvConfig(process.cwd());
@@ -44,8 +46,15 @@ async function run() {
       `Import collections index from ${collectionsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonFileData('collections', collectionsDataFile, idField);
+    await importJsonFileData(
+      'collections',
+      'id',
+      collectionsDataFile,
+      collectionsTransformable.transform,
+      true
+    )
 
+    /*
   if (
     (await ask(`Import content index from ${contentDataFile}? (y/n) `)) === 'y'
   )
@@ -66,7 +75,7 @@ async function run() {
     'y'
   )
     await importDublinCoreData('archives', archivesDataFile, idField);
-
+    */
   questionsDone();
 }
 

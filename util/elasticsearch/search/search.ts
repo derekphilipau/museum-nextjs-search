@@ -288,11 +288,7 @@ function addQueryBoolFilterTerms(esQuery: any, indexName: any, params: any) {
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
       if (filter === 'onView' && params?.[filter] === 'true')
-        addQueryBoolMustNotFilter(
-          esQuery,
-          'museumLocation',
-          'This item is not on view'
-        );
+        addQueryBoolFilterTerm(esQuery, 'onView', true);
       else if (filter === 'hasPhoto' && params?.[filter] === 'true')
         addQueryBoolFilterExists(esQuery, 'image');
       else if (filter === 'isUnrestricted' && params?.[filter] === 'true')
@@ -362,7 +358,7 @@ function addQueryBoolFilterExists(esQuery: any, name: string): void {
 function addQueryBoolMustNotFilter(
   esQuery: any,
   name: string,
-  value: string
+  value: string | boolean | number | undefined
 ): void {
   if (!value) return;
   esQuery.query ??= {};

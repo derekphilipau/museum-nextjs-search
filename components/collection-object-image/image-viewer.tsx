@@ -3,11 +3,6 @@
 import { useCallback, useEffect, useState, Key } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import {
-  getLargeImageUrl,
-  getRestrictedImageUrl,
-  getSmallOrRestrictedImageUrl,
-} from '@/util/image';
 import { getCaption } from '@/util/various';
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -24,31 +19,15 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 });
 
 export function ImageViewer({ item }) {
-  const [sortedImages, setSortedImages] = useState(getSortedImages(item));
+  const images = item?.images;
   const [selectedImage, setSelectedImage] = useState<any>({});
   const [open, setOpen] = useState(false);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false });
 
-  /**
-   * Sometimes the item's main image (item.image) is ranked at the same level
-   * as other item images.  Force the main image to have the highest rank (0).
-   */
-  function getSortedImages(item) {
-    if (item?.images?.length) {
-      if (item.image) {
-        const index = item.images.findIndex((o) => o.filename === item.image);
-        if (index !== -1 && item.images[index]?.rank) {
-          item.images[index].rank = 0;
-        }
-      }
-      return item?.images?.sort((a, b) => a.rank - b.rank) || [];
-    }
-  }
-
   const onSelect = useCallback(() => {
     if (!embla) return;
-    setSelectedImage(sortedImages?.[embla.selectedScrollSnap()]);
-  }, [embla, sortedImages]);
+    setSelectedImage(images?.[embla.selectedScrollSnap()]);
+  }, [embla, images]);
 
   useEffect(() => {
     if (!embla) return;
@@ -58,31 +37,31 @@ export function ImageViewer({ item }) {
 
   if (!item || !item?.id || !(item?.images?.length > 0)) return null;
 
-  function getThumbnailClass(filename) {
+  function getThumbnailClass(imageThumbnailUrl) {
     const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';
-    if (filename === selectedImage?.filename)
+    if (imageThumbnailUrl === selectedImage?.imageThumbnailUrl)
       return `${base} border border-neutral-400`;
     return base;
   }
 
   function clickImage(index) {
-    setSelectedImage(sortedImages?.[index]);
+    setSelectedImage(images?.[index]);
     if (!item?.copyrightRestricted) setOpen(true);
   }
 
   function clickThumbnail(index) {
-    setSelectedImage(sortedImages?.[index]);
+    setSelectedImage(images?.[index]);
     if (!embla) return;
     embla.scrollTo(index);
   }
 
   return (
     <div className="flex flex-col items-center">
-      {sortedImages?.length > 0 && (
+      {images?.length > 0 && (
         <div className="relative">
           <div className="embla overflow-hidden" ref={emblaRef}>
             <div className="embla__container flex">
-              {sortedImages.map(
+              {images.map(
                 (image, index) =>
                   image.filename && (
                     <div
@@ -97,10 +76,7 @@ export function ImageViewer({ item }) {
                         </div>
                         <figure key={index}>
                           <Image
-                            src={getSmallOrRestrictedImageUrl(
-                              image?.filename,
-                              item.copyrightRestricted
-                            ) || ''}
+                            src={image.imageThumbnailUrl}
                             className={
                               item.copyrightRestricted
                                 ? 'max-h-96 object-contain'
@@ -136,10 +112,10 @@ export function ImageViewer({ item }) {
                   </span>
                 </DialogTitle>
               </DialogHeader>
-              {item?.image && (
+              {selectedImage.imageUrl && (
                 <div className="h-64">
                   <OpenSeaDragonViewer
-                    image={getLargeImageUrl(selectedImage?.filename)}
+                    image={selectedImage.imageUrl}
                   />
                 </div>
                 )}
@@ -147,19 +123,19 @@ export function ImageViewer({ item }) {
           </Dialog>
         </div>
       )}
-      {sortedImages.length > 1 && (
+      {images.length > 1 && (
         <div className="my-6 flex flex-wrap justify-start gap-2">
-          {sortedImages.map(
+          {images.map(
             (image, index: Key) =>
               image?.filename && (
                 <div
                   key={index}
-                  className={getThumbnailClass(image.filename)}
+                  className={getThumbnailClass(image.imageThumbnailUrl)}
                   onClick={() => clickThumbnail(index)}
                 >
                   <figure key={index}>
                     <Image
-                      src={getRestrictedImageUrl(image.filename) || ''}
+                      src={image.imageThumbnailUrl}
                       className="max-h-16 object-contain"
                       alt=""
                       width={200}

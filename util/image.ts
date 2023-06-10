@@ -20,6 +20,16 @@ export function getSmallOrRestrictedImageUrl(
   return getSmallImageUrl(filename);
 }
 
+export function getLargeOrRestrictedImageUrl(
+  filename: string | undefined,
+  isCopyrightRestricted: boolean | string | undefined
+) {
+  if (!filename) return;
+  if (getBooleanValue(isCopyrightRestricted))
+    return getRestrictedImageUrl(filename);
+  return getLargeImageUrl(filename);
+}
+
 export function getSmallImageUrl(filename: string | undefined) {
   if (!filename) return;
   return `${IMG_SM_BASE_URL}${filename}`;

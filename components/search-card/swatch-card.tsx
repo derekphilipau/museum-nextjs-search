@@ -2,7 +2,6 @@ import { Key } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import {
   getObjectUrlWithSlug,
   trimStringToLengthAtWordBoundary,
@@ -45,12 +44,9 @@ export function SwatchCard({ item, layout, showType }) {
           )}
           <div className="relative aspect-square items-center justify-center">
             <figure>
-              {item.image ? (
+              {item.imageThumbnailUrl ? (
                 <Image
-                  src={getSmallOrRestrictedImageUrl(
-                    item.image,
-                    item.copyrightRestricted
-                  ) || ''}
+                  src={item.imageThumbnailUrl}
                   className="h-72 w-full object-cover"
                   alt=""
                   width={400}

@@ -2,8 +2,7 @@
  * Define locations of data files
  */
 
-export const collectionsDataFile = './data/BkM/json/collections.jsonl'; // Entire collection ~100,000 records
-// export const collectionsDataFile = './data/BkM/json/collectionsSample.jsonl'; // Sample collection ~10,000 records
+export const collectionsDataFile = './data/BrooklynMuseum/collections.jsonl'; // Entire collection ~100,000 records
 export const contentDataFile = './data/BkM/json/content.jsonl';
 export const termsDataFile = './data/BkM/json/terms.jsonl';
 export const artistTermsDataFile = './data/BkM/json/artistTerms.jsonl';

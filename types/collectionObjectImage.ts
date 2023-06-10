@@ -1,5 +1,6 @@
 export interface CollectionObjectImage {
-  filename: string;
+  imageUrl: string;
+  imageThumbnailUrl: string;
   year?: number;
   view?: string;
   rank?: number;

@@ -11,9 +11,6 @@ import * as readline from 'node:readline';
 import convert from 'color-convert';
 import Vibrant from 'node-vibrant';
 
-const CLOUD_URL =
-  'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
-
 function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
 }
@@ -30,9 +27,9 @@ async function updateHistograms() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.image) {
+    if (obj.imageThumbnailUrl) {
       try {
-        const imageUrl = CLOUD_URL + encodeURIComponent(obj.image);
+        const imageUrl = encodeURIComponent(obj.imageThumbnailUrl);
         const palette = await Vibrant.from(imageUrl).getPalette();
         console.log(palette);
         const colors: any = [];

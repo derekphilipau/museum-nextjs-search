@@ -50,6 +50,7 @@ export const collections: T.IndicesIndexSettings = {
       highlight: S.booleanField,
       section: S.searchableAggregatedKeywordAnalyzerField,
       museumLocation: S.searchableAggregatedKeywordAnalyzerField,
+      onView: S.booleanField,
       rightsType: S.keywordField,
       labels: S.disabledOjectField,
       primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,

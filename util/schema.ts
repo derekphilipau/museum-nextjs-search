@@ -1,5 +1,4 @@
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import { getSmallOrRestrictedImageUrl } from './image';
 
 function getDimensionsCM(dimensions: string | undefined) {
   // H x W x D
@@ -33,11 +32,8 @@ export function getSchemaVisualArtwork(
     '@type': 'VisualArtwork',
   };
   if (item.title) schema.name = item.title;
-  if (item.image)
-    schema.image = getSmallOrRestrictedImageUrl(
-      item.image,
-      item.copyrightRestricted
-    );
+  if (item.imageThumbnailUrl)
+    schema.image = item.imageThumbnailUrl;
   if (item.description) schema.abstract = item.description;
   if (item.primaryConstituent) {
     schema.creator = [
