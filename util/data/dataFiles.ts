@@ -3,7 +3,7 @@
  */
 
 export const collectionsDataFile = './data/BrooklynMuseum/collections.jsonl'; // Entire collection ~100,000 records
-export const contentDataFile = './data/BkM/json/content.jsonl';
+export const contentDataFile = './data/BrooklynMuseum/content.jsonl';
 export const termsDataFile = './data/BkM/json/terms.jsonl';
 export const artistTermsDataFile = './data/BkM/json/artistTerms.jsonl';
 export const archivesDataFile = './data/BkM/json/archivesSpaceDCRecords.jsonl';

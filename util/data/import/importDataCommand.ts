@@ -16,8 +16,8 @@ import {
   contentDataFile,
   termsDataFile,
 } from '../dataFiles';
-
-import { transformable as collectionsTransformable } from '../transform/transformCollectionObjectDocument';
+import { transformable as collectionsTransformable } from './transform/collectionObject/transformBrooklynMuseumCollectionObject';
+import { transformable as contentTransformable } from './transform/content/transformBrooklynMuseumContent';
 
 const idField = 'id';
 
@@ -48,17 +48,24 @@ async function run() {
   )
     await importJsonFileData(
       'collections',
-      'id',
+      idField,
       collectionsDataFile,
       collectionsTransformable.transform,
       true
-    )
+    );
 
-    /*
   if (
     (await ask(`Import content index from ${contentDataFile}? (y/n) `)) === 'y'
   )
-    await importJsonFileData('content', contentDataFile, idField);
+    await importJsonFileData(
+      'content',
+      idField,
+      contentDataFile,
+      contentTransformable.transform,
+      true
+    );
+
+  /*
 
   if ((await ask(`Import terms index from ${termsDataFile}? (y/n) `)) === 'y')
     await importJsonFileData('terms', termsDataFile, idField);

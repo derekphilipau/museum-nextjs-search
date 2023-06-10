@@ -1,5 +1,5 @@
-import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
+import type { BaseDocument } from '@/types/baseDocument';
 
 export interface Transformable {
-  transform(obj: any): Promise<CollectionObjectDocument>;
+  transform(obj: any): Promise<BaseDocument>;
 }

@@ -1,5 +1,6 @@
 export interface BaseDocument {
   type: string;
+  source?: string;
   url?: string;
   id: number;
   title?: string;
