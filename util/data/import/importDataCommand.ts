@@ -6,7 +6,6 @@
 
 import { abort, ask, questionsDone } from '@/util/command';
 import { importJsonFileData } from '@/util/elasticsearch/import';
-import { importDublinCoreData } from '@/util/elasticsearch/importDublinCore';
 import { loadEnvConfig } from '@next/env';
 
 import {
@@ -16,8 +15,9 @@ import {
   contentDataFile,
   termsDataFile,
 } from '../dataFiles';
-import { transformable as collectionsTransformable } from './transform/collectionObject/transformBrooklynMuseumCollectionObject';
+import { transformable as collectionsTransformable } from './transform/collections/transformBrooklynMuseumCollectionObject';
 import { transformable as contentTransformable } from './transform/content/transformBrooklynMuseumContent';
+import { transformable as archiveTransformable } from './transform/archives/transformBrooklynMuseumArchives';
 
 const idField = 'id';
 
@@ -76,13 +76,19 @@ async function run() {
     )) === 'y'
   )
     await importJsonFileData('terms', artistTermsDataFile, idField, false);
-
+      */
   if (
     (await ask(`Import archives index from ${archivesDataFile}? (y/n) `)) ===
     'y'
   )
-    await importDublinCoreData('archives', archivesDataFile, idField);
-    */
+    await importJsonFileData(
+      'archives',
+      idField,
+      archivesDataFile,
+      archiveTransformable.transform,
+      true
+    );
+
   questionsDone();
 }
 

@@ -1,8 +1,6 @@
-import * as fs from 'fs';
-import * as readline from 'node:readline';
-
-import { getClient } from './client';
-import { ERR_CLIENT, bulk, createIndex, snooze } from './import';
+import { type BaseDocument } from '@/types/baseDocument';
+import { type ArchiveDocument } from '@/types/archiveDocument';
+import { Transformable } from '@/types/transformable';
 
 /**
  * Return an array or a single value from a Dublin Core property.
@@ -101,21 +99,27 @@ function getLanguage(metadata: any) {
   }
 }
 
-function translateDublinCore(doc: any) {
+async function transform(doc: {
+  [key: string]: any;
+}): Promise<BaseDocument | undefined> {
   const md = doc?.metadata?.['oai_dc:dc'];
   if (md === undefined) return undefined;
 
-  const id = getDublinCoreId(md);
+  const id = getDublinCoreId(md) || doc.url;
   const url = getDublinCoreUrl(md);
   const accessionNumber = getDublinCoreAccession(md);
   const dates = getDates(md);
 
+  const searchText = accessionNumber;
+
   return {
     type: 'dc_object',
+    source: 'Brooklyn Museum',
     url,
     id,
     title: getDublinCoreProperty(md, 'dc:title'),
     description: getDublinCoreProperty(md, 'dc:description'),
+    searchText,
     accessionNumber,
     primaryConstituent: getDublinCoreProperty(md, 'dc:creator'),
     subject: getDublinCoreProperty(md, 'dc:subject'),
@@ -127,41 +131,9 @@ function translateDublinCore(doc: any) {
     date: dates?.date,
     startDate: dates?.startDate,
     endDate: dates?.endDate,
-  };
+  } as ArchiveDocument;
 }
 
-/**
- * Import data from a Dublin Core formatted jsonl file (one JSON object per row, no endline commas)
- *
- * @param indexName  Name of the index.
- * @param dataFilename  Name of the file containing the data.
- * @param idFieldName  Optional name of the field to use as the document ID.
- */
-export async function importDublinCoreData(
-  indexName: string,
-  dataFilename: string,
-  idFieldName: string
-) {
-  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
-  const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
-  await createIndex(client, indexName);
-  const fileStream = fs.createReadStream(dataFilename);
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
-  let documents: any[] = [];
-  for await (const line of rl) {
-    const obj = line ? JSON.parse(line) : undefined;
-    if (obj !== undefined) documents.push(translateDublinCore(obj));
-    if (documents.length >= limit) {
-      await bulk(client, indexName, documents, idFieldName);
-      documents = [];
-      await snooze(2);
-    }
-  }
-  if (documents.length > 0) {
-    await bulk(client, indexName, documents, idFieldName);
-  }
-}
+export const transformable: Transformable = {
+  transform: transform,
+};

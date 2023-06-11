@@ -141,7 +141,7 @@ export async function importJsonFileData(
   indexName: string,
   idFieldName: string,
   dataFilename: string,
-  transformer: (row: any) => any = (row) => row,
+  transform: (row: any) => any = (row) => row,
   isCreateIndex = true,
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
@@ -158,8 +158,8 @@ export async function importJsonFileData(
     try {
       const obj = line ? JSON.parse(line) : undefined;
       if (obj !== undefined) {
-        if (transformer !== undefined) {
-          const transformedObj = await transformer(obj);
+        if (transform !== undefined) {
+          const transformedObj = await transform(obj);
           if (transformedObj) documents.push(transformedObj);
         } else {
           documents.push(obj);

@@ -6,7 +6,7 @@ export const collectionsDataFile = './data/BrooklynMuseum/collections.jsonl'; //
 export const contentDataFile = './data/BrooklynMuseum/content.jsonl';
 export const termsDataFile = './data/BkM/json/terms.jsonl';
 export const artistTermsDataFile = './data/BkM/json/artistTerms.jsonl';
-export const archivesDataFile = './data/BkM/json/archivesSpaceDCRecords.jsonl';
+export const archivesDataFile = './data/BrooklynMuseum/archivesSpaceDCRecords.jsonl';
 
 export const ulanArtistsFile = './data/ULAN/json/ulanArtists.jsonl';
 export const ulanCorporateBodiesFile =
