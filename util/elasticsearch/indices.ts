@@ -4,6 +4,7 @@ import * as S from './settings';
 
 const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
   type: S.keywordField,
+  source: S.keywordField,
   url: S.keywordField,
   id: S.keywordField,
   title: S.suggestUnaggregatedStandardAnalyzerField,
@@ -28,7 +29,7 @@ export const collections: T.IndicesIndexSettings = {
     properties: {
       ...baseDocument,
       imageHistogram: S.denseVectorHistogramField,
-      images: S.objectField,
+      images: S.disabledOjectField,
       dominantColorsHsl: S.nestedField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
@@ -50,6 +51,7 @@ export const collections: T.IndicesIndexSettings = {
       highlight: S.booleanField,
       section: S.searchableAggregatedKeywordAnalyzerField,
       museumLocation: S.searchableAggregatedKeywordAnalyzerField,
+      onView: S.booleanField,
       rightsType: S.keywordField,
       labels: S.disabledOjectField,
       primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,

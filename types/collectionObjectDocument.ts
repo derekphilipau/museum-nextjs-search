@@ -29,6 +29,7 @@ export interface CollectionObjectDocument extends BaseDocument {
   highlight?: boolean;
   section?: string;
   museumLocation?: string;
+  onView?: boolean;
   rightsType?: string;
   labels?: string[];
   primaryConstituent?: string;

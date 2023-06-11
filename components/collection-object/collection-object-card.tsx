@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
-import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import {
   getObjectUrlWithSlug,
   trimStringToLengthAtWordBoundary,
@@ -38,12 +37,9 @@ export function CollectionObjectCard({ item, layout, showType }) {
           )}
           <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
             <figure>
-              {item.image ? (
+              {item.imageThumbnailUrl ? (
                 <Image
-                  src={getSmallOrRestrictedImageUrl(
-                    item.image,
-                    item.copyrightRestricted
-                  ) || ''}
+                  src={item.imageThumbnailUrl}
                   className="h-48 object-contain"
                   alt=""
                   width={400}

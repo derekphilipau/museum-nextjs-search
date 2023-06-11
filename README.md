@@ -116,7 +116,7 @@ From the command line, run:
 npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/importDataCommand.ts
 ```
 
-The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds. It is currently set to use the sample dataset, edit `./util/data/dataFiles.ts` to use the full dataset. There are about 10,000 documents in the sample dataset and 100,000 documents in the default dataset.
+The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
 
 ## License
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import { getObjectUrlWithSlug } from '@/util/various';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
@@ -19,21 +18,20 @@ export function SimilarCollectionObjectCard({
   return (
     <Link href={href}>
       <div className="py-4">
-        <div className="flex items-center justify-center">
-          <figure>
-            <Image
-              src={getSmallOrRestrictedImageUrl(
-                item.image,
-                item.copyrightRestricted
-              ) || ''}
-              className="h-48 object-contain"
-              alt=""
-              width={400}
-              height={400}
-            />
-            <figcaption></figcaption>
-          </figure>
-        </div>
+        {item.imageThumbnailUrl && (
+          <div className="flex items-center justify-center">
+            <figure>
+              <Image
+                src={item.imageThumbnailUrl}
+                className="h-48 object-contain"
+                alt=""
+                width={400}
+                height={400}
+              />
+              <figcaption></figcaption>
+            </figure>
+          </div>
+        )}
         <div className="pt-2">
           <h4 className="font-semibold text-neutral-900 dark:text-white">
             {item.title}

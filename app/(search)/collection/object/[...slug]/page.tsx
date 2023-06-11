@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { getDocument } from '@/util/elasticsearch/search/document';
-import { getSmallOrRestrictedImageUrl } from '@/util/image';
 import { getSchemaVisualArtworkJson } from '@/util/schema';
 import { getCaption } from '@/util/various';
 import { encode } from 'html-entities';
@@ -27,10 +26,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   if (!collectionObject) return {};
 
   const caption = encode(getCaption(collectionObject));
-  const images = [getSmallOrRestrictedImageUrl(
-    collectionObject?.image,
-    collectionObject?.copyrightRestricted
-  ) || ''];
+  const images = [collectionObject?.imageThumbnailUrl || ''];
 
   return {
     title: collectionObject.title,

@@ -17,7 +17,7 @@ export function MuseumMapDialog({ item }: { item: CollectionObjectDocument }) {
   if (
     !item?.id ||
     !item?.museumLocation ||
-    item?.museumLocation === 'This item is not on view'
+    !item?.onView
   )
     return null;
 

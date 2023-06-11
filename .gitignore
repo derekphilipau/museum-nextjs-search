@@ -47,3 +47,5 @@ data/BkM/raw/20221221_102750_object.jsonl
 data/ULAN/json/ulanArtists.jsonl
 data/ULAN/json/ulanCorporateBodies.jsonl
 data/ULAN/raw/*
+data/BrooklynMuseum/collections.jsonl
+data/BrooklynMuseum/archivesSpaceDCRecords.jsonl

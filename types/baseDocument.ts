@@ -1,6 +1,7 @@
 export interface BaseDocument {
   type: string;
-  url: string;
+  source?: string;
+  url?: string;
   id: number;
   title?: string;
   description?: string;
@@ -8,7 +9,8 @@ export interface BaseDocument {
   keywords?: string;
   boostedKeywords?: string;
   constituents?: string[];
-  image?: string;
+  imageUrl?: string;
+  imageThumbnailUrl?: string;
   imageAlt?: string;
   date?: string;
   startDate?: string;

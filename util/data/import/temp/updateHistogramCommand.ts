@@ -10,9 +10,6 @@ import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
 import { getImageHistogramHSV } from '@/util/image';
 
-const CLOUD_URL =
-  'https://d1lfxha3ugu3d4.cloudfront.net/images/opencollection/objects/size1/';
-
 function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
 }
@@ -29,12 +26,12 @@ async function updateHistograms() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.image) {
+    if (obj.imageThumbnailUrl) {
       try {
         obj.imageHistogram = await getImageHistogramHSV(
-          CLOUD_URL + encodeURIComponent(obj.image)
+          encodeURIComponent(obj.imageThumbnailUrl)
         );
-        console.log(obj.image);
+        console.log(obj.imageThumbnailUrl);
         await snooze(0.1);
       } catch (error) {
         console.error(error);
