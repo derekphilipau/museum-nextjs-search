@@ -22,11 +22,41 @@ The Dublin Core metadata is limited.  It would be better to use ArchivesSpace's 
 
 ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) and converted to JSON using the `transformUlan.ts` script.  When updating the `terms` index, the script attempts to find a matching artist name from this JSON file.  If found, the ULAN artist data is added to the terms index document.
 
-## Elasticsearch Indices
 
-Basic Elasticsearch field types are defined in `util/elasticsearch/settings.ts`, while the actual indices are defined in `/util/elasticsearch/indices.ts`.
+## Elasticsearch
 
-### Base Document
+### Elasticsearch Field Types
+
+Basic Elasticsearch index, field types, analyzers, and filters are defined in `util/elasticsearch/settings.ts`.
+
+### Index Definition
+
+Adjust number_of_shards and number_of_replicas for your use case.
+
+#### Analyzers & Filters
+
+[Mapping Character Filters](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-mapping-charfilter.html):
+* `hyphenApostropheMappingFilter` - replaces hyphens with spaces and removes single quotes.
+* `articleCharFilter` - UNUSED - replaces common articles (de, van, der, etc.) with spaces.  Originally intended to help with searching names containing many articles.
+
+[Filters](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenfilters.html):
+* `enSnowball` - stems words using a [Snowball-generated stemmer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-snowball-tokenfilter.html) for English language
+
+[Analyzers](https://www.elastic.co/guide/en/elasticsearch/reference/current/analyzer.html):
+* `unaggregatedStandardAnalyzer` - For common text fields that are not aggregated.
+* `aggregatedKeywordAnalyzer` - For aggregated keyword fields
+* `aggregatedSimpleKeywordAnalyzer` - Not filtered, although converted to lowercase.
+* `suggestAnalyzer` - For search_as_you_type fields, not currently implemented. TODO.
+
+#### Field definitions
+
+Most definitions are straight-forward.  Some search and suggest fields contain subfields "search" and "suggest" used for those use-cases.
+
+### Elasticsearch Indices
+
+Indices are defined in `/util/elasticsearch/indices.ts`.
+
+#### Base Document
 
 The base document defines common fields for all indices, these are the fields used for cross-index search.  The Elasticsearch Base Document fields are defined in `indices.ts` and the associated Typescript interface is defined in `/types/baseDocument.ts`.
 
@@ -47,7 +77,7 @@ The base document defines common fields for all indices, these are the fields us
 * `startDate` - A date representing the start date.  Used for date range filtering.
 * `endDate` - A date representing the end date.  Used for date range filtering.
 
-### Collection Document
+#### Collection Document
 
 Includes all Base Document fields as well as:
 
@@ -89,22 +119,22 @@ Includes all Base Document fields as well as:
 * `primaryGeographicalLocationType` - Type of location, e.g. "Place made"
 
 
-### Content Document
+#### Content Document
 
 Content documents represent a web page or resource, typically from a museum's website.  The fields are the same as Base Document.
 
-### Archives Document
+#### Archives Document
 
 Archives documents represent archival collections.  The fields are the same as Base Document with the addition of:
 
-* `accessionNumber` - `dc:identifier` - The accession number.
-* `primaryConstituent` - `dc:creator` - Primary constituent, often the primary maker, e.g. the artist.
-* `subject` - `dc:subject` - The subject of the archival collection.
-* `language` - `dc:language` - The language of the archival collection, e.g. "en".
-* `publisher` - `dc:publisher` - The publisher of the record, e.g. "Brooklyn Museum Archives"
-* `format` - `dc:format` - e.g. "17.916 Linear Feet; 43 document boxes"
-* `rights` - `dc:rights` - e.g. "Collection is open for research; permission of archivist required..."
-* `relation` - `dc:relation` - e.g. "Office of the Director records, DIR"
+* `accessionNumber` - (`dc:identifier`) The accession number.
+* `primaryConstituent` - (`dc:creator`) Primary constituent, often the primary maker, e.g. the artist.
+* `subject` - (`dc:subject`) The subject of the archival collection.
+* `language` - (`dc:language`) The language of the archival collection, e.g. "en".
+* `publisher` - (`dc:publisher`) The publisher of the record, e.g. "Brooklyn Museum Archives"
+* `format` - (`dc:format`) e.g. "17.916 Linear Feet; 43 document boxes"
+* `rights` - (`dc:rights`) e.g. "Collection is open for research; permission of archivist required..."
+* `relation` - (`dc:relation`) e.g. "Office of the Director records, DIR"
 
 
 ## Next.js template
