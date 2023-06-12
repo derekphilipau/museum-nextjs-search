@@ -3,39 +3,23 @@
  *
  * Temporary script, to be removed after the dominant color data is added to the collections data import script.
  *
- * npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/updateDominantColorsCommand.ts
-
-
-{
-  "id": 121640,
-  "image": "30.1478.25_PS1.jpg",
-  "dominantColorsHsl": [
-    { "h": 17, "s": 38, "l": 43 },
-    { "h": 10, "s": 51, "l": 32 },
-    { "h": 37, "s": 43, "l": 76 },
-    { "h": 19, "s": 30, "l": 50 },
-    { "h": 177, "s": 14, "l": 27 },
-    { "h": 41, "s": 33, "l": 72 }
-  ]
-}
-
-
-*/
+ * npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/updateHistogramCommand.ts
+ */
 import * as fs from 'fs';
 import { createWriteStream } from 'fs';
 import * as readline from 'node:readline';
+import convert from 'color-convert';
 import Vibrant from 'node-vibrant';
 
 function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
 }
 
-async function updateDominantColors() {
+async function updateHistograms() {
   const outputStream = createWriteStream(
-    './data/BrooklynMuseum/calculatedFields/dominantColorsHsl.jsonl'
+    './data/BkM/json/collections.dominant.jsonl'
   );
-  
-  const fileStream = fs.createReadStream('./data/BrooklynMuseum/collections.jsonl');
+  const fileStream = fs.createReadStream('./data/BkM/json/collections.jsonl');
   const rl = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity,
@@ -65,7 +49,7 @@ async function updateDominantColors() {
 }
 
 async function run() {
-  await updateDominantColors();
+  await updateHistograms();
 }
 
 run();

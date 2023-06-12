@@ -49,5 +49,3 @@ data/ULAN/json/ulanCorporateBodies.jsonl
 data/ULAN/raw/*
 data/BrooklynMuseum/collections.jsonl
 data/BrooklynMuseum/archivesSpaceDCRecords.jsonl
-public/data/BrooklynMuseum/*.jsonl
-public/data/BrooklynMuseum/calculatedFields/*.jsonl

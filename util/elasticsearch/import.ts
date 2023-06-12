@@ -1,5 +1,5 @@
-//import * as fs from 'fs';
-//import * as readline from 'node:readline';
+import * as fs from 'fs';
+import * as readline from 'node:readline';
 import { Client } from '@elastic/elasticsearch';
 
 import { getClient } from './client';
@@ -137,7 +137,6 @@ export async function bulk(
  * @param dataFilename  Name of the file containing the data.
  * @param idFieldName  Optional name of the field to use as the document ID.
  */
-/*
 export async function importJsonFileData(
   indexName: string,
   idFieldName: string,
@@ -181,4 +180,3 @@ export async function importJsonFileData(
     await bulk(client, indexName, documents, idFieldName);
   }
 }
-*/
