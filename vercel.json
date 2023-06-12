@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/all?key=hDL4apAsIM7YUzCyYU8Y2AKtcMGlrR",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
