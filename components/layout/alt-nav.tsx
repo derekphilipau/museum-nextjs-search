@@ -7,7 +7,25 @@ import { buttonVariants } from '@/components/ui/button';
 
 export function AltNav() {
   return (
-    <nav className="flex items-center space-x-1">
+    <>
+      {siteConfig?.links?.github && (
+        <Link
+          href={siteConfig.links.github}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <div
+            className={buttonVariants({
+              size: 'sm',
+              variant: 'ghost',
+              className: 'text-neutral-700 dark:text-neutral-400',
+            })}
+          >
+            <Icons.github className="h-5 w-5" />
+            <span className="sr-only">Github</span>
+          </div>
+        </Link>
+      )}
       {siteConfig?.links?.instagram && (
         <Link
           href={siteConfig.links.instagram}
@@ -41,6 +59,6 @@ export function AltNav() {
         </Link>
       )}
       <ThemeToggle />
-    </nav>
+    </>
   );
 }

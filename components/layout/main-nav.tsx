@@ -82,9 +82,7 @@ export function MainNav({ items }: MainNavProps) {
                 </DropdownMenuItem>
               )
           )}
-          <DropdownMenuItem asChild>
-            <AltNav />
-          </DropdownMenuItem>
+          <AltNav />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
