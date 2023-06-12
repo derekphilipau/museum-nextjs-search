@@ -4,6 +4,7 @@ interface SiteConfig {
   defaultLocale: string;
   mainNav: NavItem[];
   links?: {
+    github?: string;
     twitter?: string;
     instagram?: string;
   };
@@ -17,10 +18,9 @@ export const siteConfig: SiteConfig = {
       href: '/search/collections?hasPhoto=true',
     },
   ],
-  /*
   links: {
-    twitter: 'https://twitter.com/brooklynmuseum',
-    instagram: 'https://www.instagram.com/brooklynmuseum',
+    github: 'https://github.com/derekphilipau/museum-nextjs-search',
+    // twitter: 'https://twitter.com/xxx',
+    // instagram: 'https://www.instagram.com/xxx',
   },
-  */
 };
