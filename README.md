@@ -6,6 +6,16 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
+## Overview
+
+A typical approach for building a collections website is to periodically sync data from a backend collections management system (sometimes augmented with data from an internal CMS) into a relational database which is queried by a frontend website.
+
+This project takes a different approach, using Elasticsearch as the primary data store and Next.js as the frontend.  Note that the collections data is read-only, the actual datastore is in the backend system.  Using the last exported files, the Elasticsearch indices can be rebuilt within a handful of minutes, even with collections of 200,000 documents.
+
+TODO: I originally intended to implement the "Cloud Function Periodic Sync" using Vercel Edge Functions, but that environment is too limiting, in particular the lack of support for native Node.js API's.  In the future I will implement this using AWS Lambda or Google Cloud Functions.  For the time being, Elasticsearch indices are updated manually via command line scripts.
+
+![System Design](./doc/img/CollectionsSystem.png)
+
 ## Datasets
 
 ### Collections Data
@@ -200,7 +210,7 @@ For cloud deployments (for example on Vercel), add the same variables to the Env
 
 ```
 ELASTICSEARCH_USE_CLOUD=true
-ELASTICSEARCH_CLOUD_ID=elastic-brooklyn-museum:dXMtY2VudlasfdkjfdwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwadslfjk;ldfksjfdlNmE2M2IwMmaslfkjfdlksj2ZTU5MzZmMg==
+ELASTICSEARCH_CLOUD_ID=elastic-museum-test:dXMtY2VudlasfdkjfdwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwadslfjk;ldfksjfdlNmE2M2IwMmaslfkjfdlksj2ZTU5MzZmMg==
 ELASTICSEARCH_CLOUD_USERNAME=elastic
 ELASTICSEARCH_CLOUD_PASSWORD=aslflsafdkjlkjslakdfj
 ELASTICSEARCH_HOST=localhost
@@ -236,6 +246,13 @@ The import process will take some time, as it inserts 100 documents at a time us
 ## License
 
 Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+
+## Lighthouse Score
+
+One should see 100's across the board for the Lighthouse score.  Slightly lower score for performance due to relying on Brooklyn Museum image CDN.
+
+![Lighthouse Score](./doc/img/Lighthouse.png)
+
 
 ## Screenshots
 
