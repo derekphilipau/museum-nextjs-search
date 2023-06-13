@@ -35,6 +35,10 @@ ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) 
 
 ## Elasticsearch
 
+### Elasticsearch DSL
+
+This project uses Elasticsearch [Query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) with the Elasticsearch [Javascript Client](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/index.html) to manage indices and query data.
+
 ### Elasticsearch Field Types
 
 Basic Elasticsearch index, field types, analyzers, and filters are defined in `util/elasticsearch/settings.ts`.
@@ -146,6 +150,44 @@ Archives documents represent archival collections.  The fields are the same as B
 * `rights` - (`dc:rights`) e.g. "Collection is open for research; permission of archivist required..."
 * `relation` - (`dc:relation`) e.g. "Office of the Director records, DIR"
 
+
+### Elasticsearch Queries
+
+##### Multi-match Search
+
+Text queries are currently searched with multi_match default [`best_fields`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html).  Fields can be weighted to give priority, in this case `boostedKeywords` is very heavily weighted for cases where you want a document to appear first if it contains an important keyword.
+
+```
+multi_match: {
+    query: q,
+    type: 'best_fields',
+    operator: 'and',
+    fields: [
+        'boostedKeywords^20',
+        'constituents^4', // TODO
+        'title^2',
+        'keywords^2',
+        'description',
+        'searchText',
+        'accessionNumber',
+    ],
+},
+```
+
+#### Collection Object Similarity
+
+How one defines object similarity will vary from institution to institution.  There are a number of approaches to querying Elasticsearch for similar documents, notably [`more_like_this`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html).
+
+This project uses a custom bool query of boosted should terms.  [similarObjects.ts](./util/elasticsearch/search/similarObjects.ts) specifies which fields are used along with a boost value for each.  The primary constituent (e.g. Artist, Maker, etc.) is given the most weight.  These fields can be adjusted based on your institution's concept of object similarity.  The current weights are:
+
+* `primaryConstituent` - 4
+* `dynasty` - 2
+* `period` - 2
+* `classification` - 1.5
+* `medium` - 1
+* `collections` - 1
+* `exhibitions` - 1
+* `primaryGeographicalLocation` - 1
 
 ## Next.js template
 
