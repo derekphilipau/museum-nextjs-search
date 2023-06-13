@@ -26,6 +26,7 @@
   "search.hasPhoto": "Has Photo",
   "search.onView": "On View",
   "search.openAccess": "Open Access",
+  "search.noResults": "Sorry, we couldn’t find any results matching your criteria.",
   "button.mainMenu": "Main Menu",
   "button.openMenu": "Open Menu",
   "button.expandFilter": "Expand search filter",

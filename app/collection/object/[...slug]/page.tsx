@@ -14,14 +14,17 @@ import { LanguageDisclaimer } from '@/components/collection-object/language-disc
 import { CollectionObjectDescription } from '@/components/collection-object/collection-object-description';
 import { MuseumMapDialog } from '@/components/museum-map/museum-map-dialog';
 
-async function getCollectionObject(id: number): Promise<ApiResponseDocument> {
-  const data = await getDocument('collections', id);
-  return data;
-}
-
 export async function generateMetadata({ params }): Promise<Metadata> {
   const id = params.slug[0];
-  const data = await getCollectionObject(id);
+  let data: ApiResponseDocument | undefined = undefined;
+  try {
+    data = await getDocument('collections', id);
+  } catch (error) {
+    console.log(error);
+    return {};
+    // don't do anything so that the error page can be rendered later
+  }
+
   const collectionObject = data?.data as CollectionObjectDocument;
   if (!collectionObject) return {};
 
@@ -41,13 +44,19 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 
 export default async function Page({ params }) {
   const id = params.slug[0];
-  const data = await getCollectionObject(id);
+  const dict = getDictionary();
+
+  let data: ApiResponseDocument = await getDocument('collections', id);
+
+  if (!data?.data) {
+    throw new Error('Collection object not found.');
+  }
+
   const collectionObject = data?.data as CollectionObjectDocument;
   const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
   const similarImageHistogram =
     data?.similarImageHistogram as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
-  const dict = getDictionary();
 
   return (
     <>

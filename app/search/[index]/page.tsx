@@ -31,6 +31,7 @@ function getLayoutGridClass(layout: string) {
 
 export default async function Page({ params, searchParams }) {
   const dict = getDictionary();
+  let errorMessage = dict['search.noResults'];
 
   const index = params?.index || 'all';
   const q = searchParams?.q || '';
@@ -55,7 +56,7 @@ export default async function Page({ params, searchParams }) {
   const filterArr = Object.entries(aggFilters);
 
   // Query Elasticsearch
-  const response: ApiResponseSearch = await search({ index, ...searchParams });
+  let response: ApiResponseSearch = await search({ index, ...searchParams });
   const items: BaseDocument[] = response?.data || [];
   const terms: Term[] = response?.terms || [];
   const filters: Term[] = response?.filters || [];
@@ -272,7 +273,7 @@ export default async function Page({ params, searchParams }) {
               )}
             {!(items?.length > 0) && (
               <h3 className="my-10 mb-4 text-lg md:text-xl">
-                Sorry, we couldn’t find any results matching your criteria.
+                {errorMessage}
               </h3>
             )}
           </div>
