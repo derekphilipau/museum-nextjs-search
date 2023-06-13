@@ -19,7 +19,7 @@ export function SimilarCollectionObjectCard({
     <Link href={href}>
       <div className="py-4">
         {item.imageThumbnailUrl && (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:bg-neutral-800">
             <figure>
               <Image
                 src={item.imageThumbnailUrl}
