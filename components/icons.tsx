@@ -4,6 +4,7 @@ import {
   ChevronRight,
   ChevronUp,
   CircleSlashed,
+  Download,
   Expand,
   Github,
   ImageOff,
@@ -48,4 +49,5 @@ export const Icons = {
   pipette: Pipette,
   paintbrush2: Paintbrush2,
   circleSlashed: CircleSlashed,
+  download: Download,
 };

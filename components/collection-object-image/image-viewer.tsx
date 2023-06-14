@@ -1,18 +1,20 @@
 'use client';
 
-import { useCallback, useEffect, useState, Key } from 'react';
+import { Key, useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { getCaption } from '@/util/various';
 import useEmblaCarousel from 'embla-carousel-react';
 
 import { Icons } from '@/components/icons';
+import { buttonVariants } from '@/components/ui/button';
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+  FullScreenDialog,
+} from '@/components/ui/full-screen-dialog';
 
 const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
   ssr: false,
@@ -63,7 +65,7 @@ export function ImageViewer({ item }) {
             <div className="embla__container flex">
               {images.map(
                 (image, index) =>
-                  image.filename && (
+                  image.imageUrl && (
                     <div
                       key={index}
                       className="embla__slide min-w-0"
@@ -93,8 +95,8 @@ export function ImageViewer({ item }) {
               )}
             </div>
           </div>
-          <div className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
-            {getCaption(item, selectedImage?.filename)}
+          <div className="mt-4 break-words text-xs text-neutral-500 dark:text-neutral-400">
+            {getCaption(item, selectedImage?.imageUrl)}
             {item.copyrightRestricted && (
               <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
                 This image is presented as a &quot;thumbnail&quot; because it is
@@ -103,31 +105,34 @@ export function ImageViewer({ item }) {
               </p>
             )}
           </div>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="h-full min-w-full">
+          <FullScreenDialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="">
               <DialogHeader className="">
-                <DialogTitle className="z-50">
-                  <span className="bg-white px-4 py-3 dark:bg-neutral-900">
-                    {item.title}
-                  </span>
+                <DialogTitle className="">
+                  <span className="mr-3">{item.title}</span>
+                  <Link
+                    href={selectedImage?.imageUrl}
+                    className={buttonVariants({ variant: 'default', size: 'sm' })}
+                    aria-label='Download File'
+                  >
+                    <Icons.download className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                  </Link>
                 </DialogTitle>
               </DialogHeader>
               {selectedImage.imageUrl && (
-                <div className="h-64">
-                  <OpenSeaDragonViewer
-                    image={selectedImage.imageUrl}
-                  />
+                <div className="">
+                  <OpenSeaDragonViewer image={selectedImage.imageUrl} />
                 </div>
-                )}
+              )}
             </DialogContent>
-          </Dialog>
+          </FullScreenDialog>
         </div>
       )}
       {images.length > 1 && (
         <div className="my-6 flex flex-wrap justify-start gap-2">
           {images.map(
             (image, index: Key) =>
-              image?.filename && (
+              image?.imageUrl && (
                 <div
                   key={index}
                   className={getThumbnailClass(image.imageThumbnailUrl)}

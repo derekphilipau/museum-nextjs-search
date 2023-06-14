@@ -49,7 +49,7 @@ export function getCaption(
   caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
   caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
   caption += item?.copyright ? `${item.copyright} ` : '';
-  caption += filename ? `(Photo: Brooklyn Museum, ${filename})` : '';
+  caption += item?.source ? `(Photo: ${item.source})` : '';
   return stripBasicHtml(stripLineBreaks(caption?.trim()));
 }
 
