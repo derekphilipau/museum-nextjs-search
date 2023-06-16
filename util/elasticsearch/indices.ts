@@ -30,7 +30,7 @@ export const collections: T.IndicesIndexSettings = {
     properties: {
       ...baseDocument,
       imageHistogram: S.denseVectorHistogramField,
-      images: S.disabledOjectField,
+      images: S.disabledObjectField,
       dominantColorsHsl: S.nestedField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
@@ -54,7 +54,7 @@ export const collections: T.IndicesIndexSettings = {
       museumLocation: S.searchableAggregatedKeywordAnalyzerField,
       onView: S.booleanField,
       rightsType: S.keywordField,
-      labels: S.disabledOjectField,
+      labels: S.disabledObjectField,
       primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,
       primaryConstituentDates: S.keywordField,
       primaryConstituentRole: S.keywordField,
@@ -119,6 +119,7 @@ export const terms: T.IndicesIndexSettings = {
       alternates: S.unaggregatedStandardAnalyzerTextField,
       summary: S.textField,
       description: S.textField,
+      data: S.objectField,
     },
   },
 };

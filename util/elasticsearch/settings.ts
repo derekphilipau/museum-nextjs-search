@@ -57,7 +57,7 @@ export const analysis: T.IndicesIndexSettingsAnalysis = {
 export const keywordField: T.MappingProperty = { type: 'keyword' };
 export const textField: T.MappingProperty = { type: 'text' };
 export const objectField: T.MappingProperty = { type: 'object' };
-export const disabledOjectField: T.MappingProperty = {
+export const disabledObjectField: T.MappingProperty = {
   type: 'object',
   enabled: false,
 };
