@@ -1,5 +1,7 @@
 /**
  * For use with http://ulandownloads.getty.edu/ ULAN XML files.
+ *
+ * npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/transform/transformCommand.ts
  */
 
 import { abort, ask, questionsDone } from '@/util/command';
@@ -18,7 +20,7 @@ async function run() {
 
   if (
     (await ask(
-      `Transform ULAN XML to Elasticsearch JSON terms? (Only needed if ULAN data has been modified.) (y/n) `
+      `Transform ULAN XML to Elasticsearch JSON terms? (Only needed if ULAN XML data has been updated.) (y/n) `
     )) === 'y'
   )
     await transformUlan();

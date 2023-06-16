@@ -1,5 +1,11 @@
 /**
+ * 
  * For use with http://ulandownloads.getty.edu/ ULAN XML files.
+ * 
+ * This script transforms the ULAN XML files into a JSONL file with simplified objects represenitng ULAN terms.
+ * 
+ * No need to run this script if the data/ULAN/json/ulanArtists.jsonl exists and the ULAN XML files have not changed.
+ * 
  */
 import * as fs from 'fs';
 import * as readline from 'node:readline';
@@ -16,10 +22,13 @@ const parser = new xml2js.Parser();
 export interface UlanTerm {
   id: string;
   type: string;
-  preferred?: string | null;
-  alternates?: string[] | null;
-  summary?: string | null;
-  description?: string | null;
+  preferredTerm?: string | null;
+  nonPreferredTerms?: string[] | null;
+  descriptiveNotes?: string | null;
+  biography?: string | null;
+  birthDate?: string | null;
+  deathDate?: string | null;
+  sex?: string | null;
 }
 
 function transformSubject(ulan): UlanTerm | undefined {
@@ -35,13 +44,13 @@ function transformSubject(ulan): UlanTerm | undefined {
     type = type.replace(/\s\[\d+\]$/, '');
   }
 
-  let description: string | null = null;
+  let descriptiveNotes: string | null = null;
   if (subject?.Descriptive_Notes?.length > 0) {
     for (const notes of subject.Descriptive_Notes) {
       const language = notes?.Descriptive_Note?.[0].Note_Language?.[0];
       const text = notes?.Descriptive_Note?.[0].Note_Text?.[0];
       if (language === 'English' && text) {
-        description = text;
+        descriptiveNotes = text;
         break;
       }
     }
@@ -66,22 +75,23 @@ function transformSubject(ulan): UlanTerm | undefined {
   if (preferredTerm === null) return;
   if (nonPreferredTerms?.length === 0) nonPreferredTerms = null;
 
-  let biography = null;
-  if (subject?.Biographies?.[0]?.Preferred_Biography?.length > 0) {
-    const bio = subject.Biographies[0].Preferred_Biography[0];
-    if (bio?.Biography_Text?.[0]) {
-      biography = bio.Biography_Text[0];
-    }
-  }
-
-  return {
+  const ulanTerm: UlanTerm = {
     id,
     type,
-    preferred: preferredTerm,
-    alternates: nonPreferredTerms,
-    summary: biography,
-    description,
-  };
+    preferredTerm,
+    nonPreferredTerms,
+    descriptiveNotes,
+  }
+
+  if (subject?.Biographies?.[0]?.Preferred_Biography?.length > 0) {
+    const xmlBio = subject.Biographies[0].Preferred_Biography[0];
+    ulanTerm.biography = xmlBio?.Biography_Text?.[0] ? xmlBio.Biography_Text[0] : null;
+    ulanTerm.birthDate = xmlBio?.Birth_Date?.[0] ? xmlBio.Birth_Date[0] : null;
+    ulanTerm.deathDate = xmlBio?.Death_Date?.[0] ? xmlBio.Death_Date[0] : null;
+    ulanTerm.sex = xmlBio?.Sex?.[0] ? xmlBio.Sex[0] : null;
+  }  
+
+  return ulanTerm;
 }
 
 async function writeJsonSubject(xmlSubject: string) {
