@@ -8,7 +8,7 @@ import { abort, ask, questionsDone } from '@/util/command';
 import { importJsonlFileData } from './importDatafile';
 import { loadEnvConfig } from '@next/env';
 
-const idField = 'id';
+const ID_FIELD_NAME = 'id';
 
 loadEnvConfig(process.cwd());
 
@@ -52,7 +52,7 @@ async function run() {
   )
     await importJsonlFileData(
       'collections',
-      idField,
+      ID_FIELD_NAME,
       collectionsDataFile,
       collectionsTransformable.transform,
       true
@@ -63,7 +63,7 @@ async function run() {
   )
     await importJsonlFileData(
       'content',
-      idField,
+      ID_FIELD_NAME,
       contentDataFile,
       contentTransformable.transform,
       true
@@ -72,14 +72,14 @@ async function run() {
   /*
 
   if ((await ask(`Import terms index from ${termsDataFile}? (y/n) `)) === 'y')
-    await importJsonlFileData('terms', termsDataFile, idField);
+    await importJsonlFileData('terms', termsDataFile, ID_FIELD_NAME);
 
   if (
     (await ask(
       `Import artist terms index from ${artistTermsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonlFileData('terms', artistTermsDataFile, idField, false);
+    await importJsonlFileData('terms', artistTermsDataFile, ID_FIELD_NAME, false);
       */
   if (
     (await ask(`Import archives index from ${archivesDataFile}? (y/n) `)) ===
@@ -87,7 +87,7 @@ async function run() {
   )
     await importJsonlFileData(
       'archives',
-      idField,
+      ID_FIELD_NAME,
       archivesDataFile,
       archiveTransformable.transform,
       true

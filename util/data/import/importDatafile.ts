@@ -5,7 +5,8 @@ import { getClient } from '@/util/elasticsearch/client';
 import {
   ERR_CLIENT,
   bulk,
-  createIndex,
+  createTimestampedIndex,
+  setIndexAsAlias,
   snooze,
 } from '@/util/elasticsearch/import';
 
@@ -26,7 +27,11 @@ export async function importJsonlFileData(
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
-  if (isCreateIndex) await createIndex(client, indexName);
+
+  let realIndexName = indexName;
+  if (isCreateIndex) {
+    realIndexName = await createTimestampedIndex(client, indexName)
+  }
 
   const fileStream = fs
     .createReadStream(dataFilename)
@@ -52,12 +57,17 @@ export async function importJsonlFileData(
     }
 
     if (documents.length >= limit) {
-      await bulk(client, indexName, documents, idFieldName);
+      await bulk(client, realIndexName, documents, idFieldName);
       documents = [];
       await snooze(2);
     }
   }
   if (documents.length > 0) {
-    await bulk(client, indexName, documents, idFieldName);
+    await bulk(client, realIndexName, documents, idFieldName);
+  }
+
+  if (isCreateIndex && indexName !== realIndexName) {
+    // We just populated a timestamped index, point alias to it
+    await setIndexAsAlias(client, indexName, realIndexName)
   }
 }

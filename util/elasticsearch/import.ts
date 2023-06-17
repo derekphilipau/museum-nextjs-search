@@ -1,4 +1,5 @@
 import { Client } from '@elastic/elasticsearch';
+import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import { type BaseDocument } from '@/types/baseDocument';
 import { archives, collections, content, terms } from './indices';
@@ -75,6 +76,117 @@ export async function createIndex(
 }
 
 /**
+ * Generates a timestamped index name.
+ *
+ * This function takes an index name as a string, generates a timestamp,
+ * and then appends this timestamp to the original index name. The timestamp
+ * is derived from the current date and time, and is formatted to remove any
+ * characters that might not be suitable in an index name.
+ *
+ * @param indexName The original index name.
+ * @returns The original index name appended with a timestamp.
+ */
+export function getTimestampedIndexName(indexName: string): string {
+  // Generate an ISO string for the current date and time.
+  const timestamp = new Date().toISOString();
+
+  // Format the timestamp to remove 'T', ':', and any characters after (and including) the '.'
+  const formattedTimestamp = timestamp
+    .replace('T', '_') // Replace 'T' with '_'
+    .replaceAll(':', '') // Remove ':'
+    .replace(/\..+?Z/, ''); // Remove any characters after and including the '.'
+
+  // Append the formatted timestamp to the original index name and return.
+  return `${indexName}_${formattedTimestamp}`;
+}
+
+/**
+ * Create an Elasticsearch index.
+ *
+ * @param client Elasticsearch client.
+ * @param indexName Name of the index.
+ */
+export async function createTimestampedIndex(
+  client: Client,
+  indexName: string
+) {
+  const timestampedIndexName = getTimestampedIndexName(indexName);
+
+  if (!indices[indexName]) {
+    throw new Error(`Index ${indexName} does not exist in indices definition`);
+  }
+  await client.indices.create({
+    index: timestampedIndexName,
+    body: indices[indexName],
+  });
+  return timestampedIndexName;
+}
+
+/**
+ * Associate a timestamped index with an alias.  If the alias already exists,
+ * it will be removed from any other indices and associated with the new index.
+ * Any old indices will be deleted.
+ * 
+ * @param client Elasticsearch client.
+ * @param aliasName Name of the alias.
+ * @param newIndexName Name of the new timestamped index.
+ */
+export async function setIndexAsAlias(
+  client: Client,
+  aliasName: string,
+  newIndexName: string
+) {
+  // Get status of OpenSearch:
+  const statusResponse: T.IndicesStatsResponse = await client.indices.stats();
+
+  // Check if the alias already exists
+  const aliasExists = await client.indices.existsAlias({
+    name: aliasName,
+  });
+  if (!aliasExists) {
+    // Alias does not exist
+    // If an index already exists with the alias name, delete it
+    await deleteIndex(client, aliasName);
+  } else {
+    // Alias already exists
+    const aliasResponse: T.IndicesGetAliasResponse =
+      await client.indices.getAlias({
+        name: aliasName,
+      });
+    if (aliasResponse) {
+      // Response is an object with keys that are the real index names,
+      // and values that are objects with keys that are the alias names:
+      // { 'content_2023-06-17_031903': { aliases: { content: {} } } }
+      for (const oldIndexName of Object.keys(aliasResponse)) {
+        // Remove the old aliases
+        await client.indices.deleteAlias({
+          name: aliasName,
+          index: oldIndexName,
+        });
+      }
+    }
+  }
+
+  // Switch alias to new index
+  await client.indices.putAlias({
+    name: aliasName,
+    index: newIndexName,
+  });
+
+  // Now, remove all old timestamped indices
+  if (statusResponse.indices && typeof statusResponse.indices === 'object') {
+    for (const timestampedIndexName of Object.keys(statusResponse.indices)) {
+      if (
+        aliasName === timestampedIndexName.split('_', 1)[0] &&
+        timestampedIndexName !== newIndexName
+      ) {
+        await deleteIndex(client, timestampedIndexName);
+      }
+    }
+  }
+}
+
+/**
  * Count the number of documents in an index.
  *
  * @param client Elasticsearch client.
@@ -94,7 +206,7 @@ async function countIndex(client: Client, indexName: string) {
  *
  * @param client Elasticsearch client.
  * @param indexName Name of the index.
- * @param documents Array of documents to insert or update.
+ * @param documents Array of BaseDocument to insert or update.
  * @param idFieldName Optional name of the field to use as the document ID.
  * @param method Either 'index' or 'update'.
  */
