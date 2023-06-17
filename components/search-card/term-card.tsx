@@ -5,9 +5,9 @@ import type { Term } from '@/types/term';
 export function TermCard({ term }: { term: Term }) {
   let href = '';
   let name = '';
-  if (term.field === 'primaryConstituent') {
+  if (term.field === 'primaryConstituent.name') {
     name = 'Artist';
-    href = `/search/collections?primaryConstituent=${term.value}`;
+    href = `/search/collections?primaryConstituent.name=${term.value}`;
   } else if (term.field === 'classification') {
     name = 'Classification';
     href = `/search/collections?classification=${term.value}`;

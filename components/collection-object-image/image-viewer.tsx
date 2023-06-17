@@ -39,9 +39,9 @@ export function ImageViewer({ item }) {
 
   if (!item || !item?.id || !(item?.images?.length > 0)) return null;
 
-  function getThumbnailClass(imageThumbnailUrl) {
+  function getThumbnailClass(thumbnailUrl: string) {
     const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';
-    if (imageThumbnailUrl === selectedImage?.imageThumbnailUrl)
+    if (thumbnailUrl === selectedImage?.image?.thumbnailUrl)
       return `${base} border border-neutral-400`;
     return base;
   }
@@ -65,7 +65,7 @@ export function ImageViewer({ item }) {
             <div className="embla__container flex">
               {images.map(
                 (image, index) =>
-                  image.imageUrl && (
+                  image.url && (
                     <div
                       key={index}
                       className="embla__slide min-w-0"
@@ -78,7 +78,7 @@ export function ImageViewer({ item }) {
                         </div>
                         <figure key={index}>
                           <Image
-                            src={image.imageThumbnailUrl}
+                            src={image.thumbnailUrl}
                             className={
                               item.copyrightRestricted
                                 ? 'max-h-96 object-contain'
@@ -96,7 +96,7 @@ export function ImageViewer({ item }) {
             </div>
           </div>
           <div className="mt-4 break-words text-xs text-neutral-500 dark:text-neutral-400">
-            {getCaption(item, selectedImage?.imageUrl)}
+            {getCaption(item, selectedImage?.url)}
             {item.copyrightRestricted && (
               <p className="mt-4 text-xs italic text-neutral-500 dark:text-neutral-400">
                 This image is presented as a &quot;thumbnail&quot; because it is
@@ -111,7 +111,7 @@ export function ImageViewer({ item }) {
                 <DialogTitle className="">
                   <span className="mr-3">{item.title}</span>
                   <Link
-                    href={selectedImage?.imageUrl}
+                    href={selectedImage?.url}
                     className={buttonVariants({ variant: 'default', size: 'sm' })}
                     aria-label='Download File'
                   >
@@ -119,9 +119,9 @@ export function ImageViewer({ item }) {
                   </Link>
                 </DialogTitle>
               </DialogHeader>
-              {selectedImage.imageUrl && (
+              {selectedImage.url && (
                 <div className="">
-                  <OpenSeaDragonViewer image={selectedImage.imageUrl} />
+                  <OpenSeaDragonViewer image={selectedImage.url} />
                 </div>
               )}
             </DialogContent>
@@ -132,15 +132,15 @@ export function ImageViewer({ item }) {
         <div className="my-6 flex flex-wrap justify-start gap-2">
           {images.map(
             (image, index: Key) =>
-              image?.imageUrl && (
+              image?.url && (
                 <div
                   key={index}
-                  className={getThumbnailClass(image.imageThumbnailUrl)}
+                  className={getThumbnailClass(image.thumbnailUrl)}
                   onClick={() => clickThumbnail(index)}
                 >
                   <figure key={index}>
                     <Image
-                      src={image.imageThumbnailUrl}
+                      src={image.thumbnailUrl}
                       className="max-h-16 object-contain"
                       alt=""
                       width={200}

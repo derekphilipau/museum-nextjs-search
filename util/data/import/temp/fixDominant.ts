@@ -32,9 +32,9 @@ async function updateHistograms() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.dominantColorsHsl) {
+    if (obj.image?.dominantColorsHsl) {
       const newColors: any = [];
-      for (const color of obj.dominantColorsHsl) {
+      for (const color of obj.image?.dominantColorsHsl) {
         const newColor = {
           // conert to h, s, l as integers
           h: Math.round(color[0] * 360),
@@ -43,7 +43,7 @@ async function updateHistograms() {
         };
         newColors.push(newColor);
       }
-      obj.dominantColorsHsl = newColors;
+      obj.image?.dominantColorsHsl = newColors;
     }
     outputStream.write(`${JSON.stringify(obj)}\n`);
   }

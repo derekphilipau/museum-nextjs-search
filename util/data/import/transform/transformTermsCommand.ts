@@ -7,9 +7,9 @@
 import { abort, ask, questionsDone } from '@/util/command';
 import { loadEnvConfig } from '@next/env';
 
-import { createArtistTerms } from './transformBkMArtists';
+import { createArtistTerms } from './transformArtists';
 import { createTerms } from './transformTerms';
-import { transformUlan } from './transformUlan';
+import { transformUlan } from './ulan/transformUlan';
 
 loadEnvConfig(process.cwd());
 

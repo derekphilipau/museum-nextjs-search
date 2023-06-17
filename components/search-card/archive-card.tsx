@@ -7,7 +7,7 @@ export function ArchiveCard({ item, showType }) {
   if (!item || !item.url) return null;
   const dict = getDictionary();
 
-  const primaryConstituent = item.primaryConstituent;
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
 
   return (
     <Link href={item.url}>
@@ -22,7 +22,7 @@ export function ArchiveCard({ item, showType }) {
             {item.title}
             {item.date ? `, ${item.date}` : ''}
           </h4>
-          <h5 className="text-lg">{primaryConstituent}</h5>
+          <h5 className="text-lg">{primaryConstituentName}</h5>
           {Array.isArray(item.description) &&
             item.description.map(
               (d: string, i: Key) =>

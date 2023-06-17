@@ -27,9 +27,9 @@ async function updateHistograms() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.imageThumbnailUrl) {
+    if (obj.image?.thumbnailUrl) {
       try {
-        const imageUrl = encodeURIComponent(obj.imageThumbnailUrl);
+        const imageUrl = encodeURIComponent(obj.thumbnailUrl);
         const palette = await Vibrant.from(imageUrl).getPalette();
         console.log(palette);
         const colors: any = [];
@@ -37,8 +37,8 @@ async function updateHistograms() {
           const hsl = palette?.[swatch]?.hsl;
           if (hsl) colors.push(hsl);
         }
-        obj.dominantColorsHsl = colors;
-        console.log(obj.dominantColorsHsl);
+        obj.image.dominantColorsHsl = colors;
+        console.log(obj.image.dominantColorsHsl);
         await snooze(0.1);
       } catch (error) {
         console.error(error);

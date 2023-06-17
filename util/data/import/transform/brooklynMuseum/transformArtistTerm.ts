@@ -1,14 +1,9 @@
-import * as fs from 'fs';
-import { createReadStream, createWriteStream } from 'fs';
-import * as readline from 'node:readline';
-import { options } from '@/util/elasticsearch/search/options';
-
+import { type BaseDocument } from '@/types/baseDocument';
+import { Transformable } from '@/types/transformable';
 import {
-  artistTermsDataFile,
-  collectionsDataFile,
-  ulanArtistsFile,
-  ulanCorporateBodiesFile,
-} from '../../dataFiles';
+  TERM_TYPE,
+  DOC_SOURCE,
+} from './util';
 
 function cleanAlternateArtistName(name: string): string {
   if (!name) return '';
@@ -41,22 +36,6 @@ function getStartEndDates(bio: string) {
   return null;
 }
 
-/**
- * Read each line /data/ULAN/ulanArtists.json file into an array of objects
- */
-async function getJsonLData(filename: string): Promise<any[]> {
-  const data: any[] = [];
-  const inputStream = createReadStream(filename);
-  const rl = readline.createInterface({
-    input: inputStream,
-    crlfDelay: Infinity,
-  });
-  for await (const line of rl) {
-    const obj = JSON.parse(line);
-    data.push(obj);
-  }
-  return data;
-}
 
 function checkMatchedArtistTerms(ulanMatches, tmsDateObj) {
   if (ulanMatches?.length === 1) {
@@ -95,11 +74,12 @@ async function correlate() {
     crlfDelay: Infinity,
   });
   let artists: string[] = [];
+  // Read through each line of the collections data
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
-    if (obj?.primaryConstituent?.length > 0) {
-      const artist = obj.primaryConstituent;
-      const dates = obj.primaryConstituentDates;
+    if (obj?.primaryConstituent?.name?.length > 0) {
+      const artist = obj.primaryConstituent?.name;
+      const dates = obj.primaryConstituent?.dates;
       const tmsDateObj = getStartEndDates(dates);
 
       if (artists.includes(artist)) continue; // We've already encountered this artist
@@ -150,7 +130,7 @@ async function correlate() {
           source: 'ULAN',
           sourceId: foundTerm.id,
           sourceType: foundTerm.type,
-          field: 'primaryConstituent',
+          field: 'primaryConstituent.name',
           value: artist,
           preferred: foundTerm.preferred,
           alternates: uniqueAlternates,
@@ -163,7 +143,7 @@ async function correlate() {
           source: 'TMS',
           sourceId: null,
           sourceType: 'constituent',
-          field: 'primaryConstituent',
+          field: 'primaryConstituent.name',
           value: artist,
           preferred: null,
           alternates: null,
@@ -176,6 +156,25 @@ async function correlate() {
   }
 }
 
-export async function createArtistTerms() {
-  await correlate();
+
+async function transform(doc: {
+  [key: string]: any;
+}): Promise<BaseDocument> {
+  return {
+    type: TERM_TYPE,
+    source: DOC_SOURCE,
+    id: doc.url,
+    url: doc.url,
+    title: doc.title,
+    searchText: doc.text,
+    keywords: doc.keywords,
+    image: {
+      url: doc.image,
+      thumbnailUrl: doc.image,
+    },
+  } as BaseDocument;
 }
+
+export const transformable: Transformable = {
+  transform,
+};

@@ -1,6 +1,10 @@
 import { type BaseDocument } from '@/types/baseDocument';
 import { type ArchiveDocument } from '@/types/archiveDocument';
 import { Transformable } from '@/types/transformable';
+import {
+  ARCHIVE_TYPE,
+  DOC_SOURCE,
+} from './util';
 
 /**
  * Return an array or a single value from a Dublin Core property.
@@ -113,15 +117,17 @@ async function transform(doc: {
   const searchText = accessionNumber;
 
   return {
-    type: 'dc_object',
-    source: 'Brooklyn Museum',
+    type: ARCHIVE_TYPE,
+    source: DOC_SOURCE,
     url,
     id,
     title: getDublinCoreProperty(md, 'dc:title'),
     description: getDublinCoreProperty(md, 'dc:description'),
     searchText,
     accessionNumber,
-    primaryConstituent: getDublinCoreProperty(md, 'dc:creator'),
+    primaryConstituent: {
+      name: getDublinCoreProperty(md, 'dc:creator')
+    },
     subject: getDublinCoreProperty(md, 'dc:subject'),
     language: getLanguage(md),
     publisher: getDublinCoreProperty(md, 'dc:publisher'),
@@ -135,5 +141,5 @@ async function transform(doc: {
 }
 
 export const transformable: Transformable = {
-  transform: transform,
+  transform,
 };

@@ -12,10 +12,8 @@ const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
   searchText: S.unaggregatedStandardAnalyzerTextField,
   keywords: S.unaggregatedStandardAnalyzerTextField,
   boostedKeywords: S.unaggregatedStandardAnalyzerTextField,
-  constituents: S.unaggregatedStandardAnalyzerTextField,
-  imageUrl: S.keywordField,
-  imageThumbnailUrl: S.keywordField,
-  imageAlt: S.keywordField,
+  primaryConstituent: S.constituentObjectField,
+  image: S.imageObjectField,
   date: S.textField,
   startDate: S.dateField,
   endDate: S.dateField,
@@ -29,9 +27,8 @@ export const collections: T.IndicesIndexSettings = {
   mappings: {
     properties: {
       ...baseDocument,
-      imageHistogram: S.denseVectorHistogramField,
-      images: S.disabledObjectField,
-      dominantColorsHsl: S.nestedField,
+      constituents: S.constituentObjectField,
+      images: S.imageObjectField,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
       accessionDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,
@@ -55,18 +52,10 @@ export const collections: T.IndicesIndexSettings = {
       onView: S.booleanField,
       rightsType: S.keywordField,
       labels: S.disabledObjectField,
-      primaryConstituent: S.suggestSearchableAggregatedKeywordAnalyzerField,
-      primaryConstituentDates: S.keywordField,
-      primaryConstituentRole: S.keywordField,
       collections: S.searchableAggregatedKeywordAnalyzerField,
       exhibitions: S.searchableAggregatedKeywordAnalyzerField,
-      geographicalLocations: S.objectField,
-      primaryGeographicalLocationContinent:
-        S.searchableAggregatedKeywordAnalyzerField,
-      primaryGeographicalLocationCountry:
-        S.searchableAggregatedKeywordAnalyzerField,
-      primaryGeographicalLocation: S.searchableAggregatedKeywordAnalyzerField,
-      primaryGeographicalLocationType: S.keywordField,
+      primaryGeographicalLocation: S.geographicalLocationObjectField,
+      geographicalLocations: S.geographicalLocationObjectField,
     },
   },
 };
@@ -92,7 +81,6 @@ export const archives: T.IndicesIndexSettings = {
     properties: {
       ...baseDocument,
       accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
-      primaryConstituent: S.searchableAggregatedSimpleKeywordAnalyzerField,
       subject: S.searchableAggregatedSimpleKeywordAnalyzerField,
       language: S.searchableAggregatedSimpleKeywordAnalyzerField,
       publisher: S.keywordField,

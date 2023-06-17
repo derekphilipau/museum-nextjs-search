@@ -163,7 +163,7 @@ export default async function Page({ params, searchParams }) {
           {filters?.length > 0 &&
             filters.map(
               (term: Term, i: Key) =>
-                term?.field === 'primaryConstituent' && (
+                term?.field === 'primaryConstituent.name' && (
                   <div className="mb-4">
                     <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
                       {dict[`index.collections.agg.${term.field}`]}
@@ -258,10 +258,10 @@ export default async function Page({ params, searchParams }) {
                           showType={index === 'all'}
                         />
                       )}
-                      {item.type === 'dc_object' && (
+                      {item.type === 'archive' && (
                         <ArchiveCard item={item} showType={index === 'all'} />
                       )}
-                      {item.type === 'page' && (
+                      {item.type === 'content' && (
                         <ContentCard
                           item={item}
                           layout={layout}

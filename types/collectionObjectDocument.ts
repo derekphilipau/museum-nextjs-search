@@ -1,16 +1,10 @@
-import type { BaseDocument } from './baseDocument';
-import type { CollectionObjectImage } from './collectionObjectImage';
-
-export interface CollectionObjectGeographicalLocation {
-  id: number;
-  name: string;
-  type: string;
-}
+import type { DocumentGeographicalLocation, DocumentConstituent, DocumentImage, BaseDocument } from './baseDocument';
 
 export interface CollectionObjectDocument extends BaseDocument {
-  imageHistogram?: number[];
-  images?: CollectionObjectImage[];
+  constituents?: DocumentConstituent[];
+  images?: DocumentImage[];
   accessionNumber?: string;
+  accessionDate?: string;
   period?: string;
   dynasty?: string;
   provenance?: string;
@@ -32,14 +26,8 @@ export interface CollectionObjectDocument extends BaseDocument {
   onView?: boolean;
   rightsType?: string;
   labels?: string[];
-  primaryConstituent?: string;
-  primaryConstituentDates?: string;
-  primaryConstituentRole?: string;
   collections?: string[];
   exhibitions?: string[];
-  geographicalLocations?: CollectionObjectGeographicalLocation[];
-  primaryGeographicalLocationContinent?: string;
-  primaryGeographicalLocationCountry?: string;
-  primaryGeographicalLocation?: string;
-  primaryGeographicalLocationType?: string;
+  primaryGeographicalLocation?: DocumentGeographicalLocation;
+  geographicalLocations?: DocumentGeographicalLocation[];
 }

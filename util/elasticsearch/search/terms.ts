@@ -17,7 +17,7 @@ const TERMS_PAGE_SIZE = 12; // 12 results per aggregation terms search
  * @param client Elasticsearch client
  * @returns ApiResponseDocument containing Term
  */
-// primaryConstituent: 'Oscar yi Hou' }
+// primaryConstituent.name: 'Oscar yi Hou' }
 export async function getTerm(
   field: string,
   value: string,

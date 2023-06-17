@@ -8,22 +8,26 @@ import { abort, ask, questionsDone } from '@/util/command';
 import { importJsonFileData } from '@/util/elasticsearch/import';
 import { loadEnvConfig } from '@next/env';
 
-import {
-  archivesDataFile,
-  artistTermsDataFile,
-  collectionsDataFile,
-  contentDataFile,
-  termsDataFile,
-} from '../dataFiles';
-import { transformable as collectionsTransformable } from './transform/collections/transformBrooklynMuseumCollectionObject';
-import { transformable as contentTransformable } from './transform/content/transformBrooklynMuseumContent';
-import { transformable as archiveTransformable } from './transform/archives/transformBrooklynMuseumArchives';
-
 const idField = 'id';
 
 loadEnvConfig(process.cwd());
 
 async function run() {
+
+  const dataset = process.env.DATASET || 'brooklynMuseum';
+  let ctm = await import(`./transform/${dataset}/transformCollectionObject`);
+  const collectionsTransformable = ctm.transformable;
+  ctm = await import(`./transform/${dataset}/transformContent`);
+  const contentTransformable = ctm.transformable;
+  ctm = await import(`./transform/${dataset}/transformArchive`);
+  const archiveTransformable = ctm.transformable;  
+
+  const collectionsDataFile = `./data/${dataset}/collections.jsonl`;
+  const contentDataFile = `./data/${dataset}/content.jsonl`;
+  const termsDataFile = `./data/${dataset}/terms.jsonl`;
+  const artistTermsDataFile = `./data/${dataset}/artistTerms.jsonl`;
+  const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl`;
+
   console.log('Import Elasticsearch data from JSON files.');
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true')
     console.log('WARNING: Using Elasticsearch Cloud');

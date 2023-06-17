@@ -22,7 +22,7 @@ export function CollectionObjectCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 
-  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
 
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -37,9 +37,9 @@ export function CollectionObjectCard({ item, layout, showType }) {
           )}
           <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
             <figure>
-              {item.imageThumbnailUrl ? (
+              {item.image?.thumbnailUrl ? (
                 <Image
-                  src={item.imageThumbnailUrl}
+                  src={item.image?.thumbnailUrl}
                   className="h-48 object-contain"
                   alt=""
                   width={400}
@@ -65,10 +65,10 @@ export function CollectionObjectCard({ item, layout, showType }) {
             {item.title}
             {item.date ? `, ${item.date}` : ''}
           </h4>
-          <h5 className="text-lg">{primaryConstituent}</h5>
-          {item.primaryConstituentDates && (
+          <h5 className="text-lg">{primaryConstituentName}</h5>
+          {item.primaryConstituent?.dates && (
             <span className="text-sm text-neutral-700 dark:text-neutral-400">
-              {item.primaryConstituentDates}
+              {item.primaryConstituent?.dates}
             </span>
           )}
           {layout === 'list' && (

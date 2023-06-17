@@ -53,7 +53,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent^4',
+            'primaryConstituent.name^4',
             'title^2',
             'keywords^2',
             'description',
@@ -92,6 +92,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;
+  console.log(res)
   return res;
 }
 
@@ -121,7 +122,7 @@ export async function searchCollections(
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'constituents^4', // TODO
+            'constituents.name^4', // TODO
             'title^2',
             'keywords^2',
             'description',
@@ -239,8 +240,8 @@ async function getFilterTerm(
   if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
-      if (params?.[filter] && filter === 'primaryConstituent') {
-        // TODO: Only returns primaryConstituent filter term
+      if (params?.[filter] && filter === 'primaryConstituent.name') {
+        // TODO: Only returns primaryConstituent.name filter term
         const response = await getTerm(filter, params?.[filter], client);
         return response?.data as Term;
       }
@@ -290,7 +291,7 @@ function addQueryBoolFilterTerms(esQuery: any, indexName: any, params: any) {
       if (filter === 'onView' && params?.[filter] === 'true')
         addQueryBoolFilterTerm(esQuery, 'onView', true);
       else if (filter === 'hasPhoto' && params?.[filter] === 'true')
-        addQueryBoolFilterExists(esQuery, 'image');
+        addQueryBoolFilterExists(esQuery, 'image.url');
       else if (filter === 'isUnrestricted' && params?.[filter] === 'true')
         addQueryBoolFilterTerm(esQuery, 'copyrightRestricted', false);
       else addQueryBoolFilterTerm(esQuery, filter, params?.[filter]);

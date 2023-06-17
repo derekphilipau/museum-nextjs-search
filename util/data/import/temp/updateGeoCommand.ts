@@ -22,9 +22,9 @@ async function update() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.primaryGeographicalLocationCountry) {
+    if (obj.primaryGeographicalLocation?.country) {
       const countryData = countries.find(
-        (c) => c.country === obj.primaryGeographicalLocationCountry
+        (c) => c.country === obj.primaryGeographicalLocation.country
       );
       if (countryData) {
         obj.geographicalCoordinates = {
@@ -34,11 +34,11 @@ async function update() {
       }
     }
     if (
-      obj.primaryGeographicalLocationContinent &&
+      obj.primaryGeographicalLocation?.continent &&
       !obj.geographicalCoordinates
     ) {
       const continentData = continents.find(
-        (c) => c.continent === obj.primaryGeographicalLocationContinent
+        (c) => c.continent === obj.primaryGeographicalLocation.continent
       );
       if (continentData) {
         obj.geographicalCoordinates = {

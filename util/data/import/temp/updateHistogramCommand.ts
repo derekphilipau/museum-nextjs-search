@@ -26,12 +26,12 @@ async function updateHistograms() {
   for await (const line of rl) {
     const obj = line ? JSON.parse(line) : undefined;
     if (!obj) continue;
-    if (obj.imageThumbnailUrl) {
+    if (obj.image?.thumbnailUrl) {
       try {
         obj.imageHistogram = await getImageHistogramHSV(
-          encodeURIComponent(obj.imageThumbnailUrl)
+          encodeURIComponent(obj.image?.thumbnailUrl)
         );
-        console.log(obj.imageThumbnailUrl);
+        console.log(obj.image?.thumbnailUrl);
         await snooze(0.1);
       } catch (error) {
         console.error(error);

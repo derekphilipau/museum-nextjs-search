@@ -130,3 +130,44 @@ export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
     },
   },
 };
+
+export const constituentObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: keywordField,
+    dates: textField,
+    birthYear: integerField,
+    deathYear: integerField,
+    nationality: keywordField,
+    gender: keywordField,
+    role: keywordField,
+    source: keywordField,
+    sourceId: keywordField,
+    wikiQid: keywordField,
+    ulanId: keywordField,
+  },
+};
+
+export const geographicalLocationObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: searchableAggregatedKeywordAnalyzerField,
+    continent: searchableAggregatedKeywordAnalyzerField,
+    country: searchableAggregatedKeywordAnalyzerField,
+    type: keywordField,
+  },
+};
+
+
+export const imageObjectField: T.MappingProperty = {
+  properties: {
+    url: keywordField,
+    thumbnailUrl: keywordField,
+    alt: textField,
+    dominantColorsHsl: nestedField,
+    histogram: denseVectorHistogramField,
+    year: integerField,
+    view: keywordField,
+    rank: integerField,
+  },
+};

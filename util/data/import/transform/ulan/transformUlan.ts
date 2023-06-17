@@ -15,7 +15,7 @@ import {
   ulanArtistsFile,
   ulanCorporateBodiesFile,
   ulanRawFilenames,
-} from '../../dataFiles';
+} from '../../../dataFiles';
 
 const parser = new xml2js.Parser();
 

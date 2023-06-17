@@ -70,6 +70,41 @@ Most definitions are straight-forward.  Some search and suggest fields contain s
 
 Indices are defined in `/util/elasticsearch/indices.ts`.
 
+### Re-used Object Fields
+
+Some object fields are re-used across multiple indices.  
+
+Constituent:
+* `id` - Source-dependent ID of the constituent
+* `name` - Name of the constituent, e.g. "Pablo Picasso"
+* `dates` - A free-form string representing the dates of a constituent, often the birth & death of an artist, e.g. "ca. 1483–1556"
+* `birthYear` - Birth year of the constituent
+* `deathYear` - Death year of the constituent
+* `nationality` - Array of nationalities of the constituent
+* `gender` - Gender.  Note that ULAN seems to only record 'Male', 'Female', and 'N/A'
+* `role` - Role of the constituent, e.g. "Artist", "Maker", "Photographer", etc.
+* `source` - Source of the constituent, e.g. "Brooklyn Museum", "Getty ULAN"
+* `sourceId` - Source-dependent ID of the constituent
+* `wikiQid` - Wikidata QID of the constituent
+* `ulanId` - ULAN ID of the constituent
+
+Geographical Location:
+* `id` - Source-dependent ID of the location
+* `name` - Name of the location, e.g. "New York, New York, United States"
+* `continent` - Continent of the location, e.g. "North America"
+* `country` - Country of the location, e.g. "United States"
+* `type` - Type of location, e.g. "City", "State", "Country", etc.
+
+Image:
+* `url` - The URL of the image
+* `thumbnailUrl` - The URL of the thumbnail
+* `alt` - The alt text for the image
+* `dominantColorsHsl` - An array of arrays of HSL colors, used for color search
+* `histogram` - An array of numbers, used for color search
+* `year` - The year of the image
+* `view` - The view of the image, e.g. "front", "back", "detail", etc.
+* `rank` - The rank of the image, used for sorting
+
 #### Base Document
 
 The base document defines common fields for all indices, these are the fields used for cross-index search.  The Elasticsearch Base Document fields are defined in `indices.ts` and the associated Typescript interface is defined in `/types/baseDocument.ts`.
@@ -83,10 +118,8 @@ The base document defines common fields for all indices, these are the fields us
 * `searchText` - The text used for full-text search.  This can be configured on a per-index basis to allow global search to include special fields like accession number.
 * `keywords` - An array of keywords for the document
 * `boostedKeywords` - An array of keywords that should be boosted in search results
-* `constituents` - Entities associated with the document, e.g. artists, photographers, organization, etc.
-* `imageUrl` - The URL of the image
-* `imageThumbnailUrl` - The URL of the thumbnail
-* `imageAlt` - The alt text for the image
+* `primaryConstituent` - The primary constituent of the document, e.g. the artist of a painting.
+* `image` - Image.  The main image of the document
 * `date` - A string representing the date, no strict format.
 * `startDate` - A date representing the start date.  Used for date range filtering.
 * `endDate` - A date representing the end date.  Used for date range filtering.
@@ -95,9 +128,8 @@ The base document defines common fields for all indices, these are the fields us
 
 Includes all Base Document fields as well as:
 
-* `imageHistogram` - Experimental field, deprecated.
-* `images` - An array of images associated with the document.
-* `dominantColorHsl` - The dominant color of the main image in HSL format.  Experimental, deprecated.
+* `constituents` - Constituent array.  Entities associated with the document, e.g. artists, photographers, organization, etc.
+* `images` - Image array.  Images associated with the document.
 * `accessionNumber` - The accession number.
 * `accessionDate` - Free-form date field for accession date.
 * `period` - The period, e.g. "Edo Period", "Middle Kingdom", etc.
@@ -121,16 +153,10 @@ Includes all Base Document fields as well as:
 * `onView` - Whether or not the object is currently on view.
 * `rightsType` - Specifies copyright type, e.g. "Creative Commons-BY"
 * `labels` - Array of gallery labels.  TODO: Define type & add to searchText?
-* `primaryConstituent` - Primary constituent, often the primary maker, e.g. the artist.
-* `primaryConstituentDates` - A free-form string representing the dates of a constituent, often the birth & death of an artist, e.g. "ca. 1483–1556"
-* `primaryConstituentRole` - The role of the primary constituent.  Often "Artist" or "Maker".
 * `collections` - An array of collections the object belongs to.
 * `exhibitions` - An array of exhibitions the object has been in.  TODO: Assumes exhibitions have unique names.
-* `geographicLocations` - An array of geographic locations associated with the object.
-* `primaryGeographicalLocationContinent` - The primary continent associated with the object.
-* `primaryGeographicalLocationCountry` - The primary country associated with the object.
-* `primaryGeographicalLocation` - The primary location associated with the object.
-* `primaryGeographicalLocationType` - Type of location, e.g. "Place made"
+* `geographicLocations` - Geographical Location array. Geographic locations associated with the object.
+* `primaryGeographicalLocation` - Geographical Location. The primary location associated with the object.
 
 
 #### Content Document
@@ -180,14 +206,14 @@ How one defines object similarity will vary from institution to institution.  Th
 
 This project uses a custom bool query of boosted should terms.  [similarObjects.ts](./util/elasticsearch/search/similarObjects.ts) specifies which fields are used along with a boost value for each.  The primary constituent (e.g. Artist, Maker, etc.) is given the most weight.  These fields can be adjusted based on your institution's concept of object similarity.  The current weights are:
 
-* `primaryConstituent` - 4
+* `primaryConstituent.name` - 4
 * `dynasty` - 2
 * `period` - 2
 * `classification` - 1.5
 * `medium` - 1
 * `collections` - 1
 * `exhibitions` - 1
-* `primaryGeographicalLocation` - 1
+* `primaryGeographicalLocation.name` - 1
 
 ## Next.js template
 
@@ -224,7 +250,7 @@ Searches can be performed against any index. Search requests are of the form:
 GET `http://localhost:3000/api/search/[index]?[querystring]`
 
 Querystring parameters are the same as those for the Web UI:
-GET `http://localhost:3000/api/search/collections?f=true&primaryConstituent=George%20Bradford%20Brainerd`
+GET `http://localhost:3000/api/search/collections?f=true&.name=George%20Bradford%20Brainerd`
 
 ### Document API
 

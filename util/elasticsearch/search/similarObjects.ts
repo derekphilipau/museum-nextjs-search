@@ -53,10 +53,10 @@ export async function similarCollectionObjects(
   };
 
   if (
-    document.primaryConstituent &&
-    document.primaryConstituent !== UNKNOWN_CONSTITUENT
+    document.primaryConstituent?.name &&
+    document.primaryConstituent?.name !== UNKNOWN_CONSTITUENT
   ) {
-    addShouldTerms(document, esQuery, 'primaryConstituent', 4);
+    addShouldTerms(document, esQuery, 'primaryConstituent.name', 4);
   }
   //addShouldTerms(esQuery, 'style', document.style, 3.5)
   //addShouldTerms(esQuery, 'movement', document.movement, 3)
@@ -69,7 +69,7 @@ export async function similarCollectionObjects(
   addShouldTerms(document, esQuery, 'collections', 1);
   //addShouldTerms(esQuery, 'artistRole', document, 1)
   addShouldTerms(document, esQuery, 'exhibitions', 1);
-  addShouldTerms(document, esQuery, 'primaryGeographicalLocation', 1);
+  addShouldTerms(document, esQuery, 'primaryGeographicalLocation.name', 1);
 
   if (!client) client = getClient();
   if (client === undefined) return [];
