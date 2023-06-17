@@ -100,9 +100,11 @@ export const terms: T.IndicesIndexSettings = {
   },
   mappings: {
     properties: {
+      id: S.keywordField,
       source: S.keywordField,
       sourceId: S.keywordField,
       sourceType: S.keywordField,
+      index: S.keywordField,
       field: S.keywordField,
       value: S.unaggregatedStandardAnalyzerTextField,
       preferred: S.unaggregatedStandardAnalyzerTextField,

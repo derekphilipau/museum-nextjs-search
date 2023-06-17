@@ -2,9 +2,11 @@
  * An ES term
  */
 export interface Term {
+  id: string;
   source: string;
   sourceId: string;
-  sourceType: string;
+  sourceType?: string | null;
+  index: string;
   field: string;
   value: string | null;
   preferred?: string | null;

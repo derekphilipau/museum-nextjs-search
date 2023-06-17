@@ -5,22 +5,23 @@
  */
 
 import { abort, ask, questionsDone } from '@/util/command';
-import { importJsonlFileData } from './importDatafile';
 import { loadEnvConfig } from '@next/env';
+
+import { importJsonlFileData } from './importDatafile';
+import { updateAllTerms } from './updateTerms';
 
 const ID_FIELD_NAME = 'id';
 
 loadEnvConfig(process.cwd());
 
 async function run() {
-
   const dataset = process.env.DATASET || 'brooklynMuseum';
   let ctm = await import(`./transform/${dataset}/transformCollectionObject`);
   const collectionsTransformable = ctm.transformable;
   ctm = await import(`./transform/${dataset}/transformContent`);
   const contentTransformable = ctm.transformable;
   ctm = await import(`./transform/${dataset}/transformArchive`);
-  const archiveTransformable = ctm.transformable;  
+  const archiveTransformable = ctm.transformable;
 
   const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
   const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
@@ -69,18 +70,6 @@ async function run() {
       true
     );
 
-  /*
-
-  if ((await ask(`Import terms index from ${termsDataFile}? (y/n) `)) === 'y')
-    await importJsonlFileData('terms', termsDataFile, ID_FIELD_NAME);
-
-  if (
-    (await ask(
-      `Import artist terms index from ${artistTermsDataFile}? (y/n) `
-    )) === 'y'
-  )
-    await importJsonlFileData('terms', artistTermsDataFile, ID_FIELD_NAME, false);
-      */
   if (
     (await ask(`Import archives index from ${archivesDataFile}? (y/n) `)) ===
     'y'
@@ -92,6 +81,8 @@ async function run() {
       archiveTransformable.transform,
       true
     );
+
+  if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
 
   questionsDone();
 }

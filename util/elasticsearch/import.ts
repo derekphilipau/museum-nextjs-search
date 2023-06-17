@@ -54,6 +54,43 @@ async function deleteIndex(client: Client, indexName: string) {
 }
 
 /**
+ * Delete all documents from an index that have a given field or source.
+ * Create the index if it doesn't exist.
+ *
+ * @param indexName name of the index
+ * @param sourceName name of the source, e.g. 'MoMA'
+ * @param fieldName OR name of the field, e.g. 'title'
+ */
+export async function deleteDocuments(
+  client: Client,
+  indexName: string,
+  fieldName?: string,
+  sourceName?: string
+) {
+  // delete all documents where source = sourceName or field = fieldName
+  if (!fieldName && !sourceName)
+    throw new Error('Must specify either fieldName or sourceName');
+  if (await existsIndex(client, indexName)) {
+    const deleteQuery = {
+      index: indexName,
+      body: {
+        query: {
+          match: {},
+        },
+      },
+    };
+    if (sourceName) {
+      deleteQuery.body.query.match = { source: sourceName };
+    } else {
+      deleteQuery.body.query.match = { field: fieldName };
+    }
+    await client.deleteByQuery(deleteQuery);
+  } else {
+    await createIndex(client, indexName);
+  }
+}
+
+/**
  * Create an Elasticsearch index.
  *
  * @param client Elasticsearch client.
@@ -126,7 +163,7 @@ export async function createTimestampedIndex(
  * Associate a timestamped index with an alias.  If the alias already exists,
  * it will be removed from any other indices and associated with the new index.
  * Any old indices will be deleted.
- * 
+ *
  * @param client Elasticsearch client.
  * @param aliasName Name of the alias.
  * @param newIndexName Name of the new timestamped index.
@@ -211,9 +248,9 @@ async function countIndex(client: Client, indexName: string) {
  * @param method Either 'index' or 'update'.
  */
 export async function bulk(
-  client: Client,
+  client: Client | undefined,
   indexName: string,
-  documents: BaseDocument[],
+  documents: any[],
   idFieldName: string,
   method = 'index'
 ) {
