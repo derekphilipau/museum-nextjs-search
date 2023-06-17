@@ -4,7 +4,7 @@ import {
   TERM_TYPE,
   DOC_SOURCE,
 } from './util';
-
+/*
 function cleanAlternateArtistName(name: string): string {
   if (!name) return '';
   return name
@@ -155,7 +155,7 @@ async function correlate() {
     }
   }
 }
-
+*/
 
 async function transform(doc: {
   [key: string]: any;

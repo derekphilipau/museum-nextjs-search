@@ -43,7 +43,7 @@ async function updateHistograms() {
         };
         newColors.push(newColor);
       }
-      obj.image?.dominantColorsHsl = newColors;
+      obj.image.dominantColorsHsl = newColors;
     }
     outputStream.write(`${JSON.stringify(obj)}\n`);
   }
