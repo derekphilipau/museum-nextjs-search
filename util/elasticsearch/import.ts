@@ -1,8 +1,6 @@
-import * as fs from 'fs';
-import * as readline from 'node:readline';
 import { Client } from '@elastic/elasticsearch';
 
-import { getClient } from './client';
+import { type BaseDocument } from '@/types/baseDocument';
 import { archives, collections, content, terms } from './indices';
 
 export const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
@@ -67,6 +65,9 @@ export async function createIndex(
   deleteIfExists = true
 ) {
   if (deleteIfExists) await deleteIndex(client, indexName);
+  if (!indices[indexName]) {
+    throw new Error(`Index ${indexName} does not exist in indices definition`);
+  }
   await client.indices.create({
     index: indexName,
     body: indices[indexName],
@@ -100,12 +101,12 @@ async function countIndex(client: Client, indexName: string) {
 export async function bulk(
   client: Client,
   indexName: string,
-  documents: any,
+  documents: BaseDocument[],
   idFieldName: string,
   method = 'index'
 ) {
   if (client === undefined) throw new Error(ERR_CLIENT);
-  if (documents === undefined || documents?.length === 0) return;
+  if (!documents || documents?.length === 0) return;
   const operations = documents.flatMap((doc) => [
     {
       [method]: {
@@ -128,55 +129,4 @@ export async function bulk(
       operations?.length / 2
     } docs, index size now ${await countIndex(client, indexName)}`
   );
-}
-
-/**
- * Import data from a jsonl file (one JSON object per row, no endline commas)
- *
- * @param indexName  Name of the index.
- * @param dataFilename  Name of the file containing the data.
- * @param idFieldName  Optional name of the field to use as the document ID.
- */
-export async function importJsonFileData(
-  indexName: string,
-  idFieldName: string,
-  dataFilename: string,
-  transform: (row: any) => any = (row) => row,
-  isCreateIndex = true,
-) {
-  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
-  const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
-  if (isCreateIndex) await createIndex(client, indexName);
-  const fileStream = fs.createReadStream(dataFilename);
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
-  let documents: any[] = [];
-  for await (const line of rl) {
-    try {
-      const obj = line ? JSON.parse(line) : undefined;
-      if (obj !== undefined) {
-        if (transform !== undefined) {
-          const transformedObj = await transform(obj);
-          if (transformedObj) documents.push(transformedObj);
-        } else {
-          documents.push(obj);
-        }
-      }
-    } catch (err) {
-      console.error(`Error parsing line ${line}: ${err}`);
-    }
-
-
-    if (documents.length >= limit) {
-      await bulk(client, indexName, documents, idFieldName);
-      documents = [];
-      await snooze(2);
-    }
-  }
-  if (documents.length > 0) {
-    await bulk(client, indexName, documents, idFieldName);
-  }
 }

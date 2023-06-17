@@ -5,7 +5,7 @@
  */
 
 import { abort, ask, questionsDone } from '@/util/command';
-import { importJsonFileData } from '@/util/elasticsearch/import';
+import { importJsonlFileData } from './importDatafile';
 import { loadEnvConfig } from '@next/env';
 
 const idField = 'id';
@@ -22,11 +22,11 @@ async function run() {
   ctm = await import(`./transform/${dataset}/transformArchive`);
   const archiveTransformable = ctm.transformable;  
 
-  const collectionsDataFile = `./data/${dataset}/collections.jsonl`;
-  const contentDataFile = `./data/${dataset}/content.jsonl`;
-  const termsDataFile = `./data/${dataset}/terms.jsonl`;
-  const artistTermsDataFile = `./data/${dataset}/artistTerms.jsonl`;
-  const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl`;
+  const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
+  const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
+  const termsDataFile = `./data/${dataset}/terms.jsonl.gz`;
+  const artistTermsDataFile = `./data/${dataset}/artistTerms.jsonl.gz`;
+  const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl.gz`;
 
   console.log('Import Elasticsearch data from JSON files.');
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true')
@@ -50,7 +50,7 @@ async function run() {
       `Import collections index from ${collectionsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'collections',
       idField,
       collectionsDataFile,
@@ -61,7 +61,7 @@ async function run() {
   if (
     (await ask(`Import content index from ${contentDataFile}? (y/n) `)) === 'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'content',
       idField,
       contentDataFile,
@@ -72,20 +72,20 @@ async function run() {
   /*
 
   if ((await ask(`Import terms index from ${termsDataFile}? (y/n) `)) === 'y')
-    await importJsonFileData('terms', termsDataFile, idField);
+    await importJsonlFileData('terms', termsDataFile, idField);
 
   if (
     (await ask(
       `Import artist terms index from ${artistTermsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonFileData('terms', artistTermsDataFile, idField, false);
+    await importJsonlFileData('terms', artistTermsDataFile, idField, false);
       */
   if (
     (await ask(`Import archives index from ${archivesDataFile}? (y/n) `)) ===
     'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'archives',
       idField,
       archivesDataFile,
