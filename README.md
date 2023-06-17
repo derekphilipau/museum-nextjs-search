@@ -284,6 +284,7 @@ On [Formspree](https://formspree.io/) you should set up a basic contact form and
 For cloud deployments (for example on Vercel), add the same variables to the Environment Variables of your deployment.
 
 ```
+DATASET=brooklynMuseum
 ELASTICSEARCH_USE_CLOUD=true
 ELASTICSEARCH_CLOUD_ID=elastic-museum-test:dXMtY2VudlasfdkjfdwLmNsb3VkLmVzLmlvOjQ0MyQ5ZDhiNWQ2NDM0NTA0ODgwadslfjk;ldfksjfdlNmE2M2IwMmaslfkjfdlksj2ZTU5MzZmMg==
 ELASTICSEARCH_CLOUD_USERNAME=elastic
@@ -293,6 +294,7 @@ ELASTICSEARCH_PROTOCOL=https
 ELASTICSEARCH_PORT=9200
 ELASTICSEARCH_CA_FILE=./secrets/http_ca.crt
 ELASTICSEARCH_API_KEY=DssaSLfdsFKJidsljfakslfjfLIJEWLiMkJPQzNwSzVmQQ==
+ELASTICSEARCH_BULK_LIMIT=500
 FORMSPREE_FORM_ID=mskbksar
 ```
 
@@ -306,9 +308,7 @@ If you have not yet loaded the Elasticsearch data, you should see an error on th
 
 ### Loading the data
 
-The main data file with collection objects is `./data/BkM/json/collections.jsonl`. It has been gzipped to fit into github. Just run `gunzip collections.jsonl.gz` to decompress it.
-
-`importDataCommand.ts` will load data from .jsonl files in the `data/BkM/json/` directory into Elasticsearch indices. **_Warning: This will erase Elasticsearch indices._**
+The main data file with collection objects is `./data/BrooklynMuseum/archivesSpaceDCRecords.jsonl.gz`.  `importDataCommand.ts` will load compressed data from .jsonl.gz files in the `data/BrooklynMuseum/` directory into Elasticsearch indices. **_Warning: This will erase Elasticsearch indices._**
 
 From the command line, run:
 
@@ -316,7 +316,7 @@ From the command line, run:
 npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/importDataCommand.ts
 ```
 
-The import process will take some time, as it inserts 100 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
+The import process will take some time, as it inserts 500 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
 
 ## License
 
