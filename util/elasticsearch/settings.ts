@@ -135,12 +135,15 @@ export const constituentObjectField: T.MappingProperty = {
   properties: {
     id: keywordField,
     name: keywordField,
+    prefix: keywordField,
+    suffix: keywordField,
     dates: textField,
     birthYear: integerField,
     deathYear: integerField,
     nationality: keywordField,
     gender: keywordField,
     role: keywordField,
+    rank: integerField,
     source: keywordField,
     sourceId: keywordField,
     wikiQid: keywordField,
@@ -158,15 +161,25 @@ export const geographicalLocationObjectField: T.MappingProperty = {
   },
 };
 
+export const museumLocationObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: searchableAggregatedKeywordAnalyzerField,
+    isPublic: booleanField,
+    isFloor: booleanField,
+    parentId: keywordField,
+  },
+};
 
 export const imageObjectField: T.MappingProperty = {
   properties: {
+    id: keywordField,
     url: keywordField,
     thumbnailUrl: keywordField,
     alt: textField,
     dominantColorsHsl: nestedField,
     histogram: denseVectorHistogramField,
-    year: integerField,
+    date: textField,
     view: keywordField,
     rank: integerField,
   },

@@ -3,12 +3,15 @@
 export interface DocumentConstituent {
   id?: string;
   name: string;
+  prefix: string;
+  suffix: string;
   dates?: string;
   birthYear?: number;
   deathYear?: number;
   nationality?: string[];
   gender?: string;
   role?: string;
+  rank?: number;
   source?: string;
   sourceId?: string;
   wikiQid?: string;
@@ -23,6 +26,14 @@ export interface DocumentGeographicalLocation {
   type?: string;
 }
 
+export interface DocumentMuseumLocation {
+  id?: string;
+  name: string;
+  isPublic?: boolean;
+  isFloor?: boolean;
+  parentId?: string;
+}
+
 export interface DocumentImageHslColor {
   h: number;
   s: number;
@@ -30,12 +41,13 @@ export interface DocumentImageHslColor {
 }
 
 export interface DocumentImage {
+  id?: string;
   url?: string;
   thumbnailUrl?: string;
   alt?: string;
   dominantColorsHsl?: DocumentImageHslColor[][];
   histogram?: number[];
-  year?: number;
+  date?: string;
   view?: string;
   rank?: number;
 }
@@ -44,7 +56,7 @@ export interface BaseDocument {
   type: string;
   source?: string;
   url?: string;
-  id: number;
+  id: string;
   title?: string;
   description?: string;
   searchText?: string;

@@ -1,4 +1,4 @@
-import type { DocumentGeographicalLocation, DocumentConstituent, DocumentImage, BaseDocument } from './baseDocument';
+import type { DocumentGeographicalLocation, DocumentMuseumLocation, DocumentConstituent, DocumentImage, BaseDocument } from './baseDocument';
 
 export interface CollectionObjectDocument extends BaseDocument {
   constituents?: DocumentConstituent[];
@@ -22,10 +22,12 @@ export interface CollectionObjectDocument extends BaseDocument {
   copyrightRestricted?: boolean;
   highlight?: boolean;
   section?: string;
-  museumLocation?: string;
+  museumLocation?: DocumentMuseumLocation;
   onView?: boolean;
   rightsType?: string;
+  completeness?: number;
   labels?: string[];
+  relatedObjects?: string[];
   collections?: string[];
   exhibitions?: string[];
   primaryGeographicalLocation?: DocumentGeographicalLocation;

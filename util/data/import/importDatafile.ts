@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as readline from 'node:readline';
-import zlib from 'zlib';
+import zlib from 'zlib'; // TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
   ERR_CLIENT,
