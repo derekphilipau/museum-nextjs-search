@@ -105,6 +105,13 @@ Image:
 * `view` - The view of the image, e.g. "front", "back", "detail", etc.
 * `rank` - The rank of the image, used for sorting
 
+Museum Location:
+* `id` - Source-dependent ID of the location
+* `name` - Name of the location, e.g. ""
+* `isPublic` - Whether the location is public
+* `isFloor` - Whether the location is a floor
+* `parentId` - The ID of the parent location
+
 #### Base Document
 
 The base document defines common fields for all indices, these are the fields used for cross-index search.  The Elasticsearch Base Document fields are defined in `indices.ts` and the associated Typescript interface is defined in `/types/baseDocument.ts`.
@@ -149,7 +156,7 @@ Includes all Base Document fields as well as:
 * `copyrightRestricted` - Boolean, if true images are restricted.
 * `highlight` - Boolean whether or not object is highlighted.  TODO: Remove, Brooklyn Museum-specific.
 * `section` - Museum-specific gallery section, e.g. "Old Kingdom"
-* `museumLocation` - Museum-specific location within museum
+* `museumLocation` - Museum Location. Museum-specific location within museum
 * `onView` - Whether or not the object is currently on view.
 * `rightsType` - Specifies copyright type, e.g. "Creative Commons-BY"
 * `labels` - Array of gallery labels.  TODO: Define type & add to searchText?

@@ -33,7 +33,7 @@ export const indicesMeta: IndicesMeta = {
       'primaryGeographicalLocation.continent',
       'primaryGeographicalLocation.country',
       'primaryGeographicalLocation.name',
-      'museumLocation',
+      'museumLocation.name',
       'exhibitions',
       'section',
     ],
@@ -48,7 +48,7 @@ export const indicesMeta: IndicesMeta = {
       'primaryGeographicalLocation.continent',
       'primaryGeographicalLocation.country',
       'primaryGeographicalLocation.name',
-      'museumLocation',
+      'museumLocation.name',
       'exhibitions',
       'section',
       // non-agg filters:

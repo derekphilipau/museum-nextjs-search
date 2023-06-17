@@ -30,7 +30,7 @@ export function CollectionObjectDescription({ item }: CollectionObjectDescriptio
         <DescriptionRow name="creditLine" item={item} />
         <DescriptionRow name="exhibitions" item={item} isLink={true} />
         <DescriptionRow name="rightsType" item={item} />
-        <DescriptionRow name="museumLocation" item={item} isLink={true} />
+        <DescriptionRow name="museumLocation.name" value={item.museumLocation?.name} isLink={true} />
       </dl>
     </div>
   );

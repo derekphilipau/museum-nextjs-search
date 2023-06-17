@@ -138,20 +138,20 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
       primaryImageInArray = false;
       cod.image = {
         id: obj.primary_image,
-        url: getLargeOrRestrictedImageUrl(obj.primary_image, obj.copyrightRestricted),
+        url: getLargeOrRestrictedImageUrl(obj.primary_image, cod.copyrightRestricted),
         thumbnailUrl: getSmallOrRestrictedImageUrl(
           obj.primary_image,
-          obj.copyrightRestricted
+          cod.copyrightRestricted
         ),
         rank: 0, // should always be zero
       };
     } else {
       cod.image = {
         id: myImage.id,
-        url: getLargeOrRestrictedImageUrl(myImage.filename, obj.copyrightRestricted),
+        url: getLargeOrRestrictedImageUrl(myImage.filename, cod.copyrightRestricted),
         thumbnailUrl: getSmallOrRestrictedImageUrl(
           myImage.filename,
-          obj.copyrightRestricted
+          cod.copyrightRestricted
         ),
         alt: myImage.alt,
         // histogram: image.histogram,
@@ -176,11 +176,11 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
       id: image.id,
       url: getLargeOrRestrictedImageUrl(
         image.filename,
-        obj.copyrightRestricted
+        cod.copyrightRestricted
       ),
       thumbnailUrl: getSmallOrRestrictedImageUrl(
         image.filename,
-        obj.copyrightRestricted
+        cod.copyrightRestricted
       ),
       alt: image.alt,
       // histogram: image.histogram,
