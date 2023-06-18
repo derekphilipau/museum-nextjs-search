@@ -60,9 +60,10 @@ function checkMatchedArtistTerms(ulanMatches, birthYear, deathYear) {
  */
 async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
   const constituent = term.data;
-  if (!constituent?.name?.length) return;
+  const constituentName = term.value;
+  if (!constituentName.length) return;
 
-  const simplifiedName = simplifyName(constituent.name);
+  const simplifiedName = simplifyName(constituentName);
 
   const preferredTerms = ulanArtists.filter(
     (a) => a.cleanPreferredTerm === simplifiedName
@@ -105,7 +106,7 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
   if (ulanArtist) {
     const alternates: string[] = [];
     if (ulanArtist.nonPreferredTerms?.length > 0) {
-      const cleanArtist = simplifyName(constituent.name);
+      const cleanArtist = simplifyName(constituentName);
       const cleanPreferredTerm = simplifyName(ulanArtist.preferred);
       for (const alt of ulanArtist.nonPreferredTerms) {
         const cleanAlt = simplifyName(alt);
@@ -131,7 +132,7 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
 async function getPrimaryConstituentTerms(): Promise<any[]> {
   const terms: any[] = await searchAll('terms', {
     match: {
-      field: 'primaryConstituent.name',
+      field: 'primaryConstituent',
     },
   });
   return terms;
@@ -156,7 +157,11 @@ export async function updateUlanTerms() {
       c.cleanNonPreferredTerms = [];
   }
   
+  console.log(`ULAN artists: ${ulanArtists.length}`);
+  console.log(`ULAN corporate bodies: ${ulanCorporateBodies.length}`);
+
   const terms = await getPrimaryConstituentTerms();
+  console.log('Found', terms.length, 'terms with primary constituent.')
   const ulanTerms: any[] = [];
   for (const term of terms) {
     const ulanMatch = await getUlanData(
@@ -169,6 +174,7 @@ export async function updateUlanTerms() {
       ulanTerms.push(ulanMatch);
     }
   }
+  console.log(`Found ${ulanTerms.length} ULAN records.`)
   if (!ulanTerms.length) return;
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);

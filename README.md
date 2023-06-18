@@ -294,7 +294,7 @@ ELASTICSEARCH_PROTOCOL=https
 ELASTICSEARCH_PORT=9200
 ELASTICSEARCH_CA_FILE=./secrets/http_ca.crt
 ELASTICSEARCH_API_KEY=DssaSLfdsFKJidsljfakslfjfLIJEWLiMkJPQzNwSzVmQQ==
-ELASTICSEARCH_BULK_LIMIT=500
+ELASTICSEARCH_BULK_LIMIT=1000
 FORMSPREE_FORM_ID=mskbksar
 ```
 
@@ -314,6 +314,28 @@ From the command line, run:
 
 ```
 npx ts-node --compiler-options {\"module\":\"CommonJS\"} ./util/data/import/importDataCommand.ts
+```
+
+This command will:
+1. Load environment variables from `.env.local`
+2. Ask if you want to proceed with the import
+3. Ask if you want to import the collections index (all records)
+4. Ask if you want to import the content index (all records)
+5. Ask if you want to import the archives index (all records)
+6. Ask if you want to update the terms index.  Queries collections index for collections, classifications, and primaryConstituent fields, then adds unique values to the terms index.
+7. Ask if you want to update the ULAN terms index.  Queries collections index for all unique primaryConstituent values, then searches ULAN data files for each name.  If a match is found, ULAN data is added to the term.
+
+```
+Loaded env from /Users/aud/Projects/bkm/museum-nextjs-search/.env.local
+Import Elasticsearch data from JSON files.
+WARNING: Using Elasticsearch Cloud
+Proceeding will overwrite existing Elasticsearch indices & data. Continue? (y/n) y
+Beginning import of Elasticsearch data from JSON files...
+Import collections index from ./data/brooklynMuseum/collections.jsonl.gz? (y/n) n
+Import content index from ./data/brooklynMuseum/content.jsonl.gz? (y/n) n
+Import archives index from ./data/brooklynMuseum/archivesSpaceDCRecords.jsonl.gz? (y/n) n
+Update terms? (y/n) n
+Update ULAN terms? (y/n) y
 ```
 
 The import process will take some time, as it inserts 500 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.

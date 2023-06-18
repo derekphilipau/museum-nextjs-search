@@ -24,7 +24,7 @@ export async function importJsonlFileData(
   transform: (row: any) => any = (row) => row,
   isCreateIndex = true
 ) {
-  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '100');
+  const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
 
