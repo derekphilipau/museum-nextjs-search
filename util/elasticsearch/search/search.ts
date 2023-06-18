@@ -496,3 +496,45 @@ function getColorQuery(colorName: string) {
 
   return query;
 }
+
+export async function searchAll(index: string, query?: T.QueryDslQueryContainer, sourceFilter?: any): Promise<any[]> {
+  const client = getClient();
+  if (client === undefined) return [];
+
+  const results: any[] = [];
+  const responseQueue: any[] = []
+  const esQuery: T.SearchRequest = {
+    index,
+    scroll: '30s',
+    size: 10000,
+  };
+  if (query) {
+    esQuery.query = query;
+  } else {
+    esQuery.query = {
+      match_all: {},
+    };
+  }
+  if (sourceFilter) {
+    esQuery._source = sourceFilter
+  }
+  const response = await client.search(esQuery)
+  responseQueue.push(response)
+
+  while (responseQueue.length) {
+    const body = responseQueue.shift()
+    body.hits.hits.forEach(function (hit) {
+      results.push(hit._source)
+    })
+    if (body.hits.total.value === results.length) {
+      break
+    }
+    responseQueue.push(
+      await client.scroll({
+        scroll_id: body._scroll_id,
+        scroll: '30s'
+      })
+    )
+  }
+  return results;
+}

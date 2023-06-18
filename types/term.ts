@@ -13,4 +13,5 @@ export interface Term {
   alternates?: string[] | null;
   summary?: string | null;
   description?: string | null;
+  data?: any;
 }

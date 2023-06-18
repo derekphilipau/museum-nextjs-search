@@ -9,6 +9,7 @@ import { loadEnvConfig } from '@next/env';
 
 import { importJsonlFileData } from './importDatafile';
 import { updateAllTerms } from './updateTerms';
+//import { updateUlanTerms } from './updateUlanTerms';
 
 const ID_FIELD_NAME = 'id';
 
@@ -25,8 +26,6 @@ async function run() {
 
   const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
   const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
-  const termsDataFile = `./data/${dataset}/terms.jsonl.gz`;
-  const artistTermsDataFile = `./data/${dataset}/artistTerms.jsonl.gz`;
   const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl.gz`;
 
   console.log('Import Elasticsearch data from JSON files.');
@@ -83,6 +82,8 @@ async function run() {
     );
 
   if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
+
+//  if ((await ask(`Update ULAN terms? (y/n) `)) === 'y') await updateUlanTerms();
 
   questionsDone();
 }

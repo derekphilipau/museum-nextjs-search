@@ -11,11 +11,15 @@ import * as fs from 'fs';
 import * as readline from 'node:readline';
 import * as xml2js from 'xml2js';
 
-import {
-  ulanArtistsFile,
-  ulanCorporateBodiesFile,
-  ulanRawFilenames,
-} from '../../../dataFiles';
+const ulanArtistsFile = './data/ULAN/json/ulanArtists.jsonl.gz';
+const ulanCorporateBodiesFile = './data/ULAN/json/ulanCorporateBodies.jsonl.gz';
+const ulanRawFilenames = [
+  './data/ULAN/raw/ulan_xml_0622/ULAN1.xml',
+  './data/ULAN/raw/ulan_xml_0622/ULAN2.xml',
+  './data/ULAN/raw/ulan_xml_0622/ULAN3.xml',
+  './data/ULAN/raw/ulan_xml_0622/ULAN4.xml',
+  './data/ULAN/raw/ulan_xml_0622/ULAN5.xml',
+];
 
 const parser = new xml2js.Parser();
 

@@ -111,7 +111,7 @@ export const terms: T.IndicesIndexSettings = {
       alternates: S.unaggregatedStandardAnalyzerTextField,
       summary: S.textField,
       description: S.textField,
-      data: S.objectField,
+      data: S.disabledObjectField,
     },
   },
 };
