@@ -12,17 +12,17 @@ export function SimilarCollectionObjectCard({
 }) {
   if (!item) return null;
 
-  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
   const href = getObjectUrlWithSlug(item.id, item.title);
 
   return (
     <Link href={href}>
       <div className="py-4">
-        {item.imageThumbnailUrl && (
+        {item.image?.thumbnailUrl && (
           <div className="flex items-center justify-center bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-900 dark:hover:bg-neutral-800">
             <figure>
               <Image
-                src={item.imageThumbnailUrl}
+                src={item.image?.thumbnailUrl}
                 className="h-48 object-contain"
                 alt=""
                 width={400}
@@ -37,7 +37,7 @@ export function SimilarCollectionObjectCard({
             {item.title}
           </h4>
           <h5 className="text-sm text-neutral-900 dark:text-white">
-            {primaryConstituent}
+            {primaryConstituentName}
           </h5>
           <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
             {item.date}

@@ -41,7 +41,7 @@ export function getCaption(
 ): string {
   if (!item) return '';
   let caption = '';
-  caption += item?.primaryConstituent ? `${item.primaryConstituent}. ` : '';
+  caption += item?.primaryConstituent?.name ? `${item.primaryConstituent.name}. ` : '';
   caption += item?.title ? `${item.title}, ` : '';
   caption += item?.date ? `${item.date}. ` : '';
   caption += item?.medium ? `${item.medium}, ` : '';
@@ -62,6 +62,7 @@ export function getCaption(
 export function getBooleanValue(x: any) {
   if (typeof x === 'boolean') return x;
   if (typeof x === 'string') return x === 'true';
+  if (typeof x === 'number') return x === 1;
   return false;
 }
 

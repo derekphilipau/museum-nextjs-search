@@ -16,7 +16,7 @@ export function MuseumMapDialog({ item }: { item: CollectionObjectDocument }) {
 
   if (
     !item?.id ||
-    !item?.museumLocation ||
+    !item?.museumLocation?.name ||
     !item?.onView
   )
     return null;

@@ -5,25 +5,29 @@
  */
 
 import { abort, ask, questionsDone } from '@/util/command';
-import { importJsonFileData } from '@/util/elasticsearch/import';
 import { loadEnvConfig } from '@next/env';
 
-import {
-  archivesDataFile,
-  artistTermsDataFile,
-  collectionsDataFile,
-  contentDataFile,
-  termsDataFile,
-} from '../dataFiles';
-import { transformable as collectionsTransformable } from './transform/collections/transformBrooklynMuseumCollectionObject';
-import { transformable as contentTransformable } from './transform/content/transformBrooklynMuseumContent';
-import { transformable as archiveTransformable } from './transform/archives/transformBrooklynMuseumArchives';
+import { importJsonlFileData } from './importDatafile';
+import { updateAllTerms } from './updateTerms';
+import { updateUlanTerms } from './updateUlanTerms';
 
-const idField = 'id';
+const ID_FIELD_NAME = 'id';
 
 loadEnvConfig(process.cwd());
 
 async function run() {
+  const dataset = process.env.DATASET || 'brooklynMuseum';
+  let ctm = await import(`./transform/${dataset}/transformCollectionObject`);
+  const collectionsTransformable = ctm.transformable;
+  ctm = await import(`./transform/${dataset}/transformContent`);
+  const contentTransformable = ctm.transformable;
+  ctm = await import(`./transform/${dataset}/transformArchive`);
+  const archiveTransformable = ctm.transformable;
+
+  const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
+  const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
+  const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl.gz`;
+
   console.log('Import Elasticsearch data from JSON files.');
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true')
     console.log('WARNING: Using Elasticsearch Cloud');
@@ -46,9 +50,9 @@ async function run() {
       `Import collections index from ${collectionsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'collections',
-      idField,
+      ID_FIELD_NAME,
       collectionsDataFile,
       collectionsTransformable.transform,
       true
@@ -57,37 +61,29 @@ async function run() {
   if (
     (await ask(`Import content index from ${contentDataFile}? (y/n) `)) === 'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'content',
-      idField,
+      ID_FIELD_NAME,
       contentDataFile,
       contentTransformable.transform,
       true
     );
 
-  /*
-
-  if ((await ask(`Import terms index from ${termsDataFile}? (y/n) `)) === 'y')
-    await importJsonFileData('terms', termsDataFile, idField);
-
-  if (
-    (await ask(
-      `Import artist terms index from ${artistTermsDataFile}? (y/n) `
-    )) === 'y'
-  )
-    await importJsonFileData('terms', artistTermsDataFile, idField, false);
-      */
   if (
     (await ask(`Import archives index from ${archivesDataFile}? (y/n) `)) ===
     'y'
   )
-    await importJsonFileData(
+    await importJsonlFileData(
       'archives',
-      idField,
+      ID_FIELD_NAME,
       archivesDataFile,
       archiveTransformable.transform,
       true
     );
+
+  if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
+
+  if ((await ask(`Update ULAN terms? (y/n) `)) === 'y') await updateUlanTerms();
 
   questionsDone();
 }

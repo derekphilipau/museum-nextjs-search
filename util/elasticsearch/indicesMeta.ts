@@ -24,31 +24,31 @@ interface IndicesMeta {
 export const indicesMeta: IndicesMeta = {
   collections: {
     aggs: [
-      'primaryConstituent',
+      'primaryConstituent.name',
       'classification',
       'medium',
       'collections',
       'period',
       'dynasty',
-      'primaryGeographicalLocationContinent',
-      'primaryGeographicalLocationCountry',
-      'primaryGeographicalLocation',
-      'museumLocation',
+      'primaryGeographicalLocation.continent',
+      'primaryGeographicalLocation.country',
+      'primaryGeographicalLocation.name',
+      'museumLocation.name',
       'exhibitions',
       'section',
     ],
     filters: [
       // not all aggs need to be filters
-      'primaryConstituent',
+      'primaryConstituent.name',
       'classification',
       'medium',
       'collections',
       'period',
       'dynasty',
-      'primaryGeographicalLocationContinent',
-      'primaryGeographicalLocationCountry',
-      'primaryGeographicalLocation',
-      'museumLocation',
+      'primaryGeographicalLocation.continent',
+      'primaryGeographicalLocation.country',
+      'primaryGeographicalLocation.name',
+      'museumLocation.name',
       'exhibitions',
       'section',
       // non-agg filters:
@@ -62,7 +62,7 @@ export const indicesMeta: IndicesMeta = {
     filters: [],
   },
   archives: {
-    aggs: ['primaryConstituent'],
-    filters: ['primaryConstituent'],
+    aggs: ['primaryConstituent.name'],
+    filters: ['primaryConstituent.name'],
   },
 };

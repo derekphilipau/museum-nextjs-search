@@ -29,7 +29,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
   if (!collectionObject) return {};
 
   const caption = encode(getCaption(collectionObject));
-  const images = [collectionObject?.imageThumbnailUrl || ''];
+  const images = [collectionObject?.image?.thumbnailUrl || ''];
 
   return {
     title: collectionObject.title,
@@ -72,11 +72,11 @@ export default async function Page({ params }) {
             {collectionObject?.date}
           </div>
           <h2 className="text-lg md:text-xl">
-            {collectionObject?.primaryConstituent || 'Maker Unknown'}
+            {collectionObject?.primaryConstituent?.name || 'Maker Unknown'}
           </h2>
-          {collectionObject?.primaryConstituentDates && (
+          {collectionObject?.primaryConstituent?.dates && (
             <div className="mb-4 text-sm text-neutral-700 dark:text-neutral-400">
-              {collectionObject?.primaryConstituentDates}
+              {collectionObject?.primaryConstituent?.dates}
             </div>
           )}
           <h3 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">

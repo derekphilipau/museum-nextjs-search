@@ -2,10 +2,8 @@ import { Key } from 'react';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
-import type {
-  CollectionObjectDocument,
-  CollectionObjectGeographicalLocation,
-} from '@/types/collectionObjectDocument';
+import { type DocumentGeographicalLocation } from '@/types/baseDocument';
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 
 interface DescriptionRowProps {
   item?: CollectionObjectDocument;
@@ -29,12 +27,12 @@ export function GeographicalDescriptionRow({ item }: DescriptionRowProps) {
       </dt>
       <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
         {val.map(
-          (geoLoc: CollectionObjectGeographicalLocation, i: Key) =>
+          (geoLoc: DocumentGeographicalLocation, i: Key) =>
             geoLoc && (
               <span key={i}>
                 {geoLoc.type}:{' '}
                 <Link
-                  href={`${searchUrl}primaryGeographicalLocation=${geoLoc.name}`}
+                  href={`${searchUrl}primaryGeographicalLocation.name=${geoLoc.name}`}
                   className="underline"
                 >
                   {`${geoLoc.name}${val && i !== val.length - 1 ? ',  ' : ''}`}

@@ -148,9 +148,9 @@ const galleries = [
 
 export function MuseumMap({item}: { item: CollectionObjectDocument }) {
 
-    if (!item?.id || !item?.museumLocation) return null;
+    if (!item?.id || !item?.museumLocation?.name) return null;
 
-    const gallery = galleries.find(gallery => gallery.name === item.museumLocation);
+    const gallery = galleries.find(gallery => gallery.name === item.museumLocation?.name);
 
     if (!gallery) return null;
 

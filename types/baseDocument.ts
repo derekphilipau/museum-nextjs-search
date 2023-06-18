@@ -1,17 +1,69 @@
+
+
+export interface DocumentConstituent {
+  id?: string;
+  name: string;
+  prefix: string;
+  suffix: string;
+  dates?: string;
+  birthYear?: number;
+  deathYear?: number;
+  nationality?: string[];
+  gender?: string;
+  role?: string;
+  rank?: number;
+  source?: string;
+  sourceId?: string;
+  wikiQid?: string;
+  ulanId?: string;
+}
+
+export interface DocumentGeographicalLocation {
+  id?: string;
+  name: string;
+  continent?: string;
+  country?: string;
+  type?: string;
+}
+
+export interface DocumentMuseumLocation {
+  id?: string;
+  name: string;
+  isPublic?: boolean;
+  isFloor?: boolean;
+  parentId?: string;
+}
+
+export interface DocumentImageHslColor {
+  h: number;
+  s: number;
+  l: number;
+}
+
+export interface DocumentImage {
+  id?: string;
+  url?: string;
+  thumbnailUrl?: string;
+  alt?: string;
+  dominantColorsHsl?: DocumentImageHslColor[][];
+  histogram?: number[];
+  date?: string;
+  view?: string;
+  rank?: number;
+}
+
 export interface BaseDocument {
   type: string;
   source?: string;
   url?: string;
-  id: number;
+  id: string;
   title?: string;
   description?: string;
   searchText?: string;
   keywords?: string;
   boostedKeywords?: string;
-  constituents?: string[];
-  imageUrl?: string;
-  imageThumbnailUrl?: string;
-  imageAlt?: string;
+  primaryConstituent?: DocumentConstituent;
+  image?: DocumentImage;
   date?: string;
   startDate?: string;
   endDate?: string;

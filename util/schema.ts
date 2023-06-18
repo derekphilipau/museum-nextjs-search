@@ -32,14 +32,14 @@ export function getSchemaVisualArtwork(
     '@type': 'VisualArtwork',
   };
   if (item.title) schema.name = item.title;
-  if (item.imageThumbnailUrl)
-    schema.image = item.imageThumbnailUrl;
+  if (item.image?.thumbnailUrl)
+    schema.image = item.image?.thumbnailUrl;
   if (item.description) schema.abstract = item.description;
-  if (item.primaryConstituent) {
+  if (item.primaryConstituent?.name) {
     schema.creator = [
       {
         '@type': 'Person',
-        name: item.primaryConstituent,
+        name: item.primaryConstituent.name,
       },
     ];
   }

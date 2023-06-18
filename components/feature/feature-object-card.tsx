@@ -11,7 +11,7 @@ import {
 export function FeatureObjectCard({ tourObject }: { tourObject: any }) {
   if (!tourObject?.id) return null;
 
-  const primaryConstituent = tourObject.primaryConstituent || 'Maker Unknown';
+  const primaryConstituentName = tourObject.primaryConstituent?.name || 'Maker Unknown';
   const href = getObjectUrlWithSlug(tourObject.id, tourObject.title);
 
   return (
@@ -20,7 +20,7 @@ export function FeatureObjectCard({ tourObject }: { tourObject: any }) {
         <HoverCardTrigger>
           <Link href={href}>
             <Image
-              src={tourObject.imageThumbnailUrl}
+              src={tourObject.image?.thumbnailUrl}
               className="object-contain"
               alt=""
               width={400}
@@ -34,7 +34,7 @@ export function FeatureObjectCard({ tourObject }: { tourObject: any }) {
               {tourObject.title}
             </h4>
             <h5 className="text-sm text-neutral-900 dark:text-white">
-              {primaryConstituent}, {tourObject.date}
+              {primaryConstituentName}, {tourObject.date}
             </h5>
           </div>
         </HoverCardContent>

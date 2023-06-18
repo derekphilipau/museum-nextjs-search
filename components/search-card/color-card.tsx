@@ -16,14 +16,14 @@ function getDetailsClass(layout) {
 }
 
 function getHsl(item) {
-  if (!(item.dominantColorsHsl?.length > 0)) return 'white';
-  const hsl = `hsl(${item.dominantColorsHsl[0].h}, ${item.dominantColorsHsl[0].s}%, ${item.dominantColorsHsl[0].l}%)`;
+  if (!(item.image?.dominantColorsHsl?.length > 0)) return 'white';
+  const hsl = `hsl(${item.image?.dominantColorsHsl[0].h}, ${item.image?.dominantColorsHsl[0].s}%, ${item.image?.dominantColorsHsl[0].l}%)`;
   return hsl;
 }
 
 function getFontColor(item) {
-  if (!(item.dominantColorsHsl?.length > 0)) return 'black';
-  if (item.dominantColorsHsl[0].l > 50) return 'black';
+  if (!(item.image?.dominantColorsHsl?.length > 0)) return 'black';
+  if (item.image?.dominantColorsHsl[0].l > 50) return 'black';
   return 'white';
 }
 
@@ -31,7 +31,7 @@ export function ColorCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 
-  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
 
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -44,7 +44,7 @@ export function ColorCard({ item, layout, showType }) {
               {dict['index.collections.itemTitle']}
             </h4>
           )}
-          {item.dominantColorsHsl && (
+          {item.image?.dominantColorsHsl && (
             <div
               className="flex aspect-square items-center justify-center p-10 text-center text-2xl"
               style={{
@@ -66,7 +66,7 @@ export function ColorCard({ item, layout, showType }) {
           {layout !== 'list' && (
             <h4 className="text-sm">
               {item.date ? `${item.date},` : ''}
-              {primaryConstituent ? ` ${primaryConstituent}` : ''}
+              {primaryConstituentName}
             </h4>
           )}
           {layout === 'list' && (

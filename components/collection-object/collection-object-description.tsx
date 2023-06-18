@@ -11,12 +11,12 @@ interface CollectionObjectDescriptionProps {
 export function CollectionObjectDescription({ item }: CollectionObjectDescriptionProps) {
   if (!item?.id) return null;
 
-  const maker = item.primaryConstituent || 'Unknown';
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
 
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
-        <DescriptionRow name="primaryConstituent" value={maker} isLink={true} />
+        <DescriptionRow name="primaryConstituent.name" value={primaryConstituentName} isLink={true} />
         <DescriptionRow name="medium" item={item} isLink={true} />
         <GeographicalDescriptionRow item={item} />
         <DescriptionRow name="date" item={item} />
@@ -30,7 +30,7 @@ export function CollectionObjectDescription({ item }: CollectionObjectDescriptio
         <DescriptionRow name="creditLine" item={item} />
         <DescriptionRow name="exhibitions" item={item} isLink={true} />
         <DescriptionRow name="rightsType" item={item} />
-        <DescriptionRow name="museumLocation" item={item} isLink={true} />
+        <DescriptionRow name="museumLocation.name" value={item.museumLocation?.name} isLink={true} />
       </dl>
     </div>
   );
