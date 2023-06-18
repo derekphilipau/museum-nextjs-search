@@ -6,15 +6,21 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
-## Overview
+## Introduction
 
 A typical approach for building a collections website is to periodically sync data from a backend collections management system (sometimes augmented with data from an internal CMS) into a relational database which is queried by a frontend website.
 
 This project takes a different approach, using Elasticsearch as the primary data store and Next.js as the frontend.  Note that the collections data is read-only, the actual datastore is in the backend system.  Using the last exported files, the Elasticsearch indices can be rebuilt within a handful of minutes, even with collections of 200,000 documents.
 
-TODO: I originally intended to implement the "Cloud Function Periodic Sync" using Vercel Edge Functions, but that environment is too limiting, in particular the lack of support for native Node.js API's.  In the future I will implement this using AWS Lambda or Google Cloud Functions.  For the time being, Elasticsearch indices are updated manually via command line scripts.
+TODO: Implement the "Cloud Function Periodic Sync" using AWS Lambda or Google Cloud Functions.  For the time being, Elasticsearch indices are updated manually via command line scripts.
+
+## Overview
 
 ![System Design](./doc/img/CollectionsSystem.png)
+
+Rebuilding the indices each time is a simplistic approach that has some advantages:  it only takes a few minutes for a typical collection of 200,000 documents, and by using Elasticsearch indices, there is almost no downtime for the website.
+
+![Loading data into timestamped index with index alias](./doc/img/IndexAliases.png)
 
 ## Datasets
 
