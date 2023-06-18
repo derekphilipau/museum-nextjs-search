@@ -240,9 +240,13 @@ async function getFilterTerm(
   if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
+      console.log('check filter', filter)
       if (params?.[filter] && filter === 'primaryConstituent.name') {
+        console.log('has filter')
         // TODO: Only returns primaryConstituent.name filter term
-        const response = await getTerm(filter, params?.[filter], client);
+        // TODO: term fix naming conventions
+        const response = await getTerm('primaryConstituent', params?.[filter], client);
+        console.log('gott term', response?.data)
         return response?.data as Term;
       }
     }

@@ -5,12 +5,12 @@ import slugify from 'slugify';
 
 import { type Term } from '@/types/term';
 
-const MAX_SIZE = 50000;
-
 export async function updateAllTerms() {
 
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
+  // Re-create terms index, effectively deleting the old one
+  // TODO: Only needed when migrating from an old version of the index
   await createIndex(client, 'terms', true);
 
   await updateTerms('collections', 'collections');
@@ -18,21 +18,34 @@ export async function updateAllTerms() {
   await updateTerms('collections', 'primaryConstituent', 'id', 'name');
 }
 
+/**
+ * This function performs the core task of getting all documents from the Elasticsearch index
+ * and then process the specific field in each document to create new terms.
+ * 
+ * @param index The Elasticsearch index to search
+ * @param field The field in the Elasticsearch index to process
+ * @param fieldUniqueId The unique id field in the field object (if it's an object)
+ * @param valueFieldProperty The property in the field object to use as the value
+ */
 async function updateTerms(
   index: string,
   field: string,
   fieldUniqueId?: string,
   valueFieldProperty?: string
 ) {
-  const collectionObjects: any[] = await searchAll(
+  // Search all documents with the specific field:
+  const docs: any[] = await searchAll(
     index,
     { exists: { field } },
     [field]
   );
-  const results: any[] = collectionObjects.map((o: any) => o[field]);
+  // Map all results into a new array that only contains the specific field:
+  const results: any[] = docs.map((o: any) => o[field]);
+
   let uniqueResults: any[] = [];
   for (const result of results) {
     if (Array.isArray(result)) {
+      // If the result is an array, add all its elements
       uniqueResults.push(...result);
     } else {
       uniqueResults.push(result);
@@ -54,6 +67,7 @@ async function updateTerms(
     uniqueResults = [...new Set(uniqueResults)];
   }
 
+  // Map all unique results to a new array of terms
   const terms: Term[] = uniqueResults.map((c: any) => ({
     id: `${index}-${field}-${
       c?.id || slugify(valueFieldProperty ? c[valueFieldProperty] : c)
@@ -75,6 +89,8 @@ async function updateTerms(
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
 
+  // Delete old documents from the index
   await deleteDocuments(client, index, field);
+  // Bulk update the terms index with new terms
   await bulk(client, 'terms', terms, 'id', 'update');
 }

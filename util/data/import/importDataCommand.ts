@@ -9,7 +9,7 @@ import { loadEnvConfig } from '@next/env';
 
 import { importJsonlFileData } from './importDatafile';
 import { updateAllTerms } from './updateTerms';
-//import { updateUlanTerms } from './updateUlanTerms';
+import { updateUlanTerms } from './updateUlanTerms';
 
 const ID_FIELD_NAME = 'id';
 
@@ -83,7 +83,7 @@ async function run() {
 
   if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
 
-//  if ((await ask(`Update ULAN terms? (y/n) `)) === 'y') await updateUlanTerms();
+  if ((await ask(`Update ULAN terms? (y/n) `)) === 'y') await updateUlanTerms();
 
   questionsDone();
 }
