@@ -6,7 +6,7 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
-## Introduction
+## Overview
 
 A typical approach for building a collections website is to periodically sync data from a backend collections management system (sometimes augmented with data from an internal CMS) into a relational database which is queried by a frontend website.
 
@@ -14,11 +14,11 @@ This project takes a different approach, using Elasticsearch as the primary data
 
 TODO: Implement the "Cloud Function Periodic Sync" using AWS Lambda or Google Cloud Functions.  For the time being, Elasticsearch indices are updated manually via command line scripts.
 
-## Overview
-
 ![System Design](./doc/img/CollectionsSystem.png)
 
-Rebuilding the indices each time is a simplistic approach that has some advantages:  it only takes a few minutes for a typical collection of 200,000 documents, and by using Elasticsearch indices, there is almost no downtime for the website.
+### Importing data
+
+This project completely rebuilds the indices each sync, which is a simplistic approach that has some advantages:  it only takes a few minutes for a typical collection of 200,000 documents, indices can easily be completely restored in casae of an issue, and by using Elasticsearch indices there is almost no downtime.
 
 ![Loading data into timestamped index with index alias](./doc/img/IndexAliases.png)
 
@@ -189,6 +189,20 @@ Archives documents represent archival collections.  The fields are the same as B
 * `rights` - (`dc:rights`) e.g. "Collection is open for research; permission of archivist required..."
 * `relation` - (`dc:relation`) e.g. "Office of the Director records, DIR"
 
+#### Terms Document
+
+Terms documents represent terms from a controlled vocabulary.  These are queried for "did you mean?" searches.  The fields are the same as Base Document with the addition of:
+
+* `sourceId`: The ID of the term in the source vocabulary.
+* `sourceType`: The type of the term within the source vocabulary.
+* `index`: The index the term belongs to, e.g. "collections".
+* `field`: The field the term belongs to, e.g. "classification", "primaryConstituent.name"
+* `value`: The value of the term, e.g. "Painting", "Pablo Picasso", etc.
+* `preferred`: The preferred term, e.g. "Pablo Picasso"
+* `alternates`: An array of alternate terms, e.g. ["Picasso, Pablo", "Picasso", etc.]
+* `summary`: A summary of the term.  Deprecated, use data fields instead.
+* `description`: A description of the term.  Deprecated, use data fields instead.
+* `data`: The raw data of the term, e.g. the JSON from the Getty ULAN.
 
 ### Elasticsearch Queries
 
@@ -344,7 +358,7 @@ Update terms? (y/n) n
 Update ULAN terms? (y/n) y
 ```
 
-The import process will take some time, as it inserts 500 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
+The import process will take some time, as it inserts 1000 documents at a time using Elasticsearch bulk and then rests for a couple seconds.  There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
 
 ## License
 
