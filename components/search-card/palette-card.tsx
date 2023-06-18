@@ -32,7 +32,7 @@ export function PaletteCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 
-  const primaryConstituent = item.primaryConstituent || 'Maker Unknown';
+  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
 
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -45,9 +45,9 @@ export function PaletteCard({ item, layout, showType }) {
               {dict['index.collections.itemTitle']}
             </h4>
           )}
-          {item.dominantColorsHsl && (
+          {item.image?.dominantColorsHsl && (
             <div className="relative aspect-square items-center justify-center">
-              {item.dominantColorsHsl.map(
+              {item.image?.dominantColorsHsl.map(
                 (color: any, i: Key) =>
                   color && (
                     <div
@@ -75,7 +75,7 @@ export function PaletteCard({ item, layout, showType }) {
           {layout !== 'list' && (
             <h4 className="text-sm">
               {item.date ? `${item.date},` : ''}
-              {primaryConstituent ? ` ${primaryConstituent}` : ''}
+              {primaryConstituentName}
             </h4>
           )}
           {layout === 'list' && (

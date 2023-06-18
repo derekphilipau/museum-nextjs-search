@@ -57,7 +57,7 @@ export const analysis: T.IndicesIndexSettingsAnalysis = {
 export const keywordField: T.MappingProperty = { type: 'keyword' };
 export const textField: T.MappingProperty = { type: 'text' };
 export const objectField: T.MappingProperty = { type: 'object' };
-export const disabledOjectField: T.MappingProperty = {
+export const disabledObjectField: T.MappingProperty = {
   type: 'object',
   enabled: false,
 };
@@ -128,5 +128,59 @@ export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
       type: 'search_as_you_type',
       analyzer: 'suggestAnalyzer',
     },
+  },
+};
+
+export const constituentObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: keywordField,
+    prefix: keywordField,
+    suffix: keywordField,
+    dates: textField,
+    birthYear: integerField,
+    deathYear: integerField,
+    nationality: keywordField,
+    gender: keywordField,
+    role: keywordField,
+    rank: integerField,
+    source: keywordField,
+    sourceId: keywordField,
+    wikiQid: keywordField,
+    ulanId: keywordField,
+  },
+};
+
+export const geographicalLocationObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: searchableAggregatedKeywordAnalyzerField,
+    continent: searchableAggregatedKeywordAnalyzerField,
+    country: searchableAggregatedKeywordAnalyzerField,
+    type: keywordField,
+  },
+};
+
+export const museumLocationObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    name: searchableAggregatedKeywordAnalyzerField,
+    isPublic: booleanField,
+    isFloor: booleanField,
+    parentId: keywordField,
+  },
+};
+
+export const imageObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    url: keywordField,
+    thumbnailUrl: keywordField,
+    alt: textField,
+    dominantColorsHsl: nestedField,
+    histogram: denseVectorHistogramField,
+    date: textField,
+    view: keywordField,
+    rank: integerField,
   },
 };

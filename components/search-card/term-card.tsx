@@ -7,7 +7,7 @@ export function TermCard({ term }: { term: Term }) {
   let name = '';
   if (term.field === 'primaryConstituent') {
     name = 'Artist';
-    href = `/search/collections?primaryConstituent=${term.value}`;
+    href = `/search/collections?primaryConstituent.name=${term.value}`;
   } else if (term.field === 'classification') {
     name = 'Classification';
     href = `/search/collections?classification=${term.value}`;
@@ -24,6 +24,11 @@ export function TermCard({ term }: { term: Term }) {
         {term?.summary && (
           <span className="text-sm text-neutral-700 dark:text-neutral-400">
             {term.summary}
+          </span>
+        )}
+        {term?.field === 'primaryConstituent' && (
+          <span className="text-sm text-neutral-700 dark:text-neutral-400">
+            {term.data?.dates}
           </span>
         )}
       </div>

@@ -41,9 +41,10 @@ secrets/http_ca.crt
 elastic.md
 
 # data files
+util/data/import/temp/*
 data/BkM/json/collections.jsonl
 data/BkM/json/archivesSpaceDCRecords.jsonl
-data/BkM/raw/20221221_102750_object.jsonl
+data/BkM/raw/*
 data/ULAN/json/ulanArtists.jsonl
 data/ULAN/json/ulanCorporateBodies.jsonl
 data/ULAN/raw/*

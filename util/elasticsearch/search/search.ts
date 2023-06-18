@@ -53,7 +53,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent^4',
+            'primaryConstituent.name^4',
             'title^2',
             'keywords^2',
             'description',
@@ -92,6 +92,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;
+  console.log(res)
   return res;
 }
 
@@ -121,7 +122,7 @@ export async function searchCollections(
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'constituents^4', // TODO
+            'constituents.name^4', // TODO
             'title^2',
             'keywords^2',
             'description',
@@ -239,9 +240,13 @@ async function getFilterTerm(
   if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
-      if (params?.[filter] && filter === 'primaryConstituent') {
-        // TODO: Only returns primaryConstituent filter term
-        const response = await getTerm(filter, params?.[filter], client);
+      console.log('check filter', filter)
+      if (params?.[filter] && filter === 'primaryConstituent.name') {
+        console.log('has filter')
+        // TODO: Only returns primaryConstituent.name filter term
+        // TODO: term fix naming conventions
+        const response = await getTerm('primaryConstituent', params?.[filter], client);
+        console.log('gott term', response?.data)
         return response?.data as Term;
       }
     }
@@ -290,7 +295,7 @@ function addQueryBoolFilterTerms(esQuery: any, indexName: any, params: any) {
       if (filter === 'onView' && params?.[filter] === 'true')
         addQueryBoolFilterTerm(esQuery, 'onView', true);
       else if (filter === 'hasPhoto' && params?.[filter] === 'true')
-        addQueryBoolFilterExists(esQuery, 'image');
+        addQueryBoolFilterExists(esQuery, 'image.url');
       else if (filter === 'isUnrestricted' && params?.[filter] === 'true')
         addQueryBoolFilterTerm(esQuery, 'copyrightRestricted', false);
       else addQueryBoolFilterTerm(esQuery, filter, params?.[filter]);
@@ -494,4 +499,46 @@ function getColorQuery(colorName: string) {
   };
 
   return query;
+}
+
+export async function searchAll(index: string, query?: T.QueryDslQueryContainer, sourceFilter?: any): Promise<any[]> {
+  const client = getClient();
+  if (client === undefined) return [];
+
+  const results: any[] = [];
+  const responseQueue: any[] = []
+  const esQuery: T.SearchRequest = {
+    index,
+    scroll: '30s',
+    size: 10000,
+  };
+  if (query) {
+    esQuery.query = query;
+  } else {
+    esQuery.query = {
+      match_all: {},
+    };
+  }
+  if (sourceFilter) {
+    esQuery._source = sourceFilter
+  }
+  const response = await client.search(esQuery)
+  responseQueue.push(response)
+
+  while (responseQueue.length) {
+    const body = responseQueue.shift()
+    body.hits.hits.forEach(function (hit) {
+      results.push(hit._source)
+    })
+    if (body.hits.total.value === results.length) {
+      break
+    }
+    responseQueue.push(
+      await client.scroll({
+        scroll_id: body._scroll_id,
+        scroll: '30s'
+      })
+    )
+  }
+  return results;
 }

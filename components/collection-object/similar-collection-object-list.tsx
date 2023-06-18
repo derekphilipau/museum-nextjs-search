@@ -22,7 +22,7 @@ export function SimilarCollectionObjectList({ title, similar }: SimilarObjectsPr
   if (!similar || similar.length === 0) return null;
 
   return (
-    <div className="bg-neutral-100 dark:bg-neutral-800">
+    <div className="bg-neutral-100 dark:bg-black">
       <section className="container pt-6 pb-8 md:py-8">
         <h3 className="mb-6 text-xl font-bold leading-tight tracking-tighter md:text-2xl lg:text-3xl">
           {title}

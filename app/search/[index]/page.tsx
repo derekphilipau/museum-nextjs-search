@@ -1,4 +1,5 @@
 import { Key } from 'react';
+import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { search } from '@/util/elasticsearch/search/search';
@@ -8,11 +9,13 @@ import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BaseDocument } from '@/types/baseDocument';
 import type { Term } from '@/types/term';
+import { CollectionObjectCard } from '@/components/collection-object/collection-object-card';
 import { ArchiveCard } from '@/components/search-card/archive-card';
 import { ColorCard } from '@/components/search-card/color-card';
 import { ContentCard } from '@/components/search-card/content-card';
-import { CollectionObjectCard } from '@/components/collection-object/collection-object-card';
 import { PaletteCard } from '@/components/search-card/palette-card';
+import { SwatchCard } from '@/components/search-card/swatch-card';
+import { TermCard } from '@/components/search-card/term-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -20,8 +23,6 @@ import { SearchFilters } from '@/components/search/search-filters';
 import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
 import { SearchQueryInput } from '@/components/search/search-query-input';
-import { SwatchCard } from '@/components/search-card/swatch-card';
-import { TermCard } from '@/components/search-card/term-card';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
@@ -60,6 +61,7 @@ export default async function Page({ params, searchParams }) {
   const items: BaseDocument[] = response?.data || [];
   const terms: Term[] = response?.terms || [];
   const filters: Term[] = response?.filters || [];
+  console.log('filters', filters);
   const apiError = response?.error || '';
   const options: AggOptions = response?.options || {};
   const count = response?.metadata?.count || 0;
@@ -166,16 +168,29 @@ export default async function Page({ params, searchParams }) {
                 term?.field === 'primaryConstituent' && (
                   <div className="mb-4">
                     <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-                      {dict[`index.collections.agg.${term.field}`]}
+                      {dict[`index.collections.agg.primaryConstituent.name`]}
                     </h4>
                     {term.value && (
-                      <h4 className="mb-2 text-2xl">{term.value}</h4>
+                      <h4 className="text-xl md:text-2xl">{term.value}</h4>
                     )}
-                    {term.summary && (
-                      <p className="mb-2 text-base">{term.summary}</p>
+                    {term.data?.ulan?.biography && (
+                      <p className="mb-4 text-neutral-700 dark:text-neutral-400">
+                        {term.data.ulan?.biography}
+                      </p>
                     )}
-                    {term.description && (
-                      <p className="text-sm">{term.description}</p>
+                    {term.data?.ulan?.descriptiveNotes && (
+                      <p className="">{term.data.ulan?.descriptiveNotes}</p>
+                    )}
+                    {term.data?.ulan?.id && (
+                      <p className="mt-2 mb-4">
+                        <Link
+                          href={`https://www.getty.edu/vow/ULANFullDisplay?find=${term.data.ulan?.id}&role=&nation=&subjectid=${term.data.ulan?.id}`}
+                          target="_blank"
+                          className="underline"
+                        >
+                          View Getty ULAN Record
+                        </Link>
+                      </p>
                     )}
                   </div>
                 )
@@ -258,10 +273,10 @@ export default async function Page({ params, searchParams }) {
                           showType={index === 'all'}
                         />
                       )}
-                      {item.type === 'dc_object' && (
+                      {item.type === 'archive' && (
                         <ArchiveCard item={item} showType={index === 'all'} />
                       )}
-                      {item.type === 'page' && (
+                      {item.type === 'content' && (
                         <ContentCard
                           item={item}
                           layout={layout}
@@ -272,9 +287,7 @@ export default async function Page({ params, searchParams }) {
                   )
               )}
             {!(items?.length > 0) && (
-              <h3 className="my-10 mb-4 text-lg md:text-xl">
-                {errorMessage}
-              </h3>
+              <h3 className="my-10 mb-4 text-lg md:text-xl">{errorMessage}</h3>
             )}
           </div>
           <SearchPagination
