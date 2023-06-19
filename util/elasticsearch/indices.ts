@@ -106,7 +106,7 @@ export const terms: T.IndicesIndexSettings = {
       sourceType: S.keywordField,
       index: S.keywordField,
       field: S.keywordField,
-      value: S.unaggregatedStandardAnalyzerTextField,
+      value: S.suggestSearchableAggregatedKeywordAnalyzerField,
       preferred: S.unaggregatedStandardAnalyzerTextField,
       alternates: S.unaggregatedStandardAnalyzerTextField,
       summary: S.textField,

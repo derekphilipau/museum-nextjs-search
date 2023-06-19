@@ -19,6 +19,7 @@ import {
   Paintbrush2,
   Palette,
   Pipette,
+  Search,
   SlidersHorizontal,
   SunMedium,
   Twitter,
@@ -50,4 +51,5 @@ export const Icons = {
   paintbrush2: Paintbrush2,
   circleSlashed: CircleSlashed,
   download: Download,
+  search: Search,
 };

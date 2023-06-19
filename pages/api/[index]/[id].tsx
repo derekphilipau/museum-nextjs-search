@@ -7,7 +7,6 @@ export default async function handler(
 ) {
   try {
     const { index, id } = req.query;
-    console.log('getting... ' + id);
     if (!id || Array.isArray(id))
       res.status(500).json({ error: 'Id not provided' });
     else if (!index || Array.isArray(index))

@@ -134,7 +134,7 @@ export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
 export const constituentObjectField: T.MappingProperty = {
   properties: {
     id: keywordField,
-    name: keywordField,
+    name: searchableAggregatedKeywordAnalyzerField,
     prefix: keywordField,
     suffix: keywordField,
     dates: textField,
