@@ -84,7 +84,6 @@ async function updateTerms(
     description: null,
     data: typeof c === 'object' ? c : null,
   }));
-  console.log(terms);
 
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);

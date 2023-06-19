@@ -53,7 +53,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent.name^4',
+            'primaryConstituent.name.search^4',
             'title^2',
             'keywords^2',
             'description',
@@ -92,7 +92,6 @@ export async function search(params: any): Promise<ApiResponseSearch> {
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;
-  console.log(res)
   return res;
 }
 
@@ -122,12 +121,13 @@ export async function searchCollections(
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'constituents.name^4', // TODO
-            'title^2',
-            'keywords^2',
+            'primaryConstituent.name^6',
+            'title^4',
+            'keywords^4',
             'description',
             'searchText',
             'accessionNumber',
+            'constituents.name.search',
           ],
         },
       },
@@ -161,7 +161,6 @@ export async function searchCollections(
   const client = getClient();
   if (client === undefined) return {};
   const response: T.SearchTemplateResponse = await client.search(esQuery);
-
   const options = getResponseOptions(response);
   const metadata = getResponseMetadata(response, size);
   const data = response.hits.hits.map(
@@ -240,13 +239,10 @@ async function getFilterTerm(
   if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
-      console.log('check filter', filter)
       if (params?.[filter] && filter === 'primaryConstituent.name') {
-        console.log('has filter')
         // TODO: Only returns primaryConstituent.name filter term
         // TODO: term fix naming conventions
         const response = await getTerm('primaryConstituent', params?.[filter], client);
-        console.log('gott term', response?.data)
         return response?.data as Term;
       }
     }
@@ -260,7 +256,6 @@ async function getFilterTerm(
  * @param params The search params
  */
 function addQueryBoolDateRange(esQuery: any, params: any) {
-  console.log(params?.startDate, params?.endDate);
   const ranges: T.QueryDslQueryContainer[] = [];
   if (params?.startDate) {
     ranges.push({

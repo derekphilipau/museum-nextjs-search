@@ -16,7 +16,6 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   const dict = getDictionary();
 
   function buttonClick() {
-    console.log('remove filter: ' + name + ' value: ' + value);
     const updatedParams = new URLSearchParams(params);
     updatedParams.delete(name);
     updatedParams.delete('p');
@@ -24,24 +23,26 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   }
 
   return (
-    <span className="inline-flex items-center rounded-full bg-neutral-100 py-1 pl-2.5 pr-1 text-sm font-medium text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
-      {value}
-      <button
-        type="button"
-        className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-500 focus:bg-neutral-500 focus:text-white focus:outline-none"
-        onClick={() => buttonClick()}
-        aria-label={dict['button.removeFilter']}
-      >
-        <span className="sr-only">Remove filter option</span>
+    <button
+      type="button"
+      className="flex items-center gap-x-2 rounded-full bg-neutral-100 py-1.5 px-3 font-medium text-neutral-700 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"
+      onClick={() => buttonClick()}
+      aria-label={dict['button.removeFilter']}
+    >
+      <div>
+        {value}
+      </div>
+      <div>
         <svg
-          className="h-2 w-2"
+          className="h-3 w-3"
           stroke="currentColor"
           fill="none"
           viewBox="0 0 8 8"
         >
-          <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+          <path strokeLinecap="round" strokeWidth="2" d="M1 1l6 6m0-6L1 7" />
         </svg>
-      </button>
-    </span>
+        <span className="sr-only">Remove filter option</span>
+      </div>
+    </button>
   );
 }
