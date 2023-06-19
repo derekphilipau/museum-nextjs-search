@@ -21,7 +21,6 @@ export function SearchIndexButton({
 
   function buttonClick() {
     if (index !== name) {
-      console.log('go to index: ' + name);
       const newParams = new URLSearchParams();
       if (name === 'collections') newParams.set('hasPhoto', 'true');
       if (params?.q) newParams.set('q', params.q);

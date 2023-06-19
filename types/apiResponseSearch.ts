@@ -19,3 +19,11 @@ export interface ApiResponseSearch {
   apiError?: string;
   error?: any;
 }
+
+export interface ApiResponseSuggest {
+  query?: T.SearchRequest;
+  data?: Term[];
+  metadata?: ApiResponseSearchMetadata;
+  apiError?: string;
+  error?: any;
+}

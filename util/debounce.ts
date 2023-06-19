@@ -7,7 +7,7 @@ interface myCallbackType {
   (myArgument?: string): void;
 }
 
-export const useDebounce = (callback: myCallbackType) => {
+export const useDebounce = (callback: myCallbackType, ms: number = 600) => {
   const ref = useRef<myCallbackType | undefined>();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export const useDebounce = (callback: myCallbackType) => {
     const func = () => {
       ref.current?.();
     };
-    return debounce(func, 600);
+    return debounce(func, ms);
   }, []);
 
   return debouncedCallback;

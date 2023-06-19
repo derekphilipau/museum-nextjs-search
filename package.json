@@ -43,6 +43,7 @@
     "@radix-ui/react-tooltip": "^1.0.6",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
+    "cmdk": "^0.2.0",
     "color-convert": "^2.0.1",
     "embla-carousel-react": "^8.0.0-rc07",
     "get-pixels": "^3.3.3",

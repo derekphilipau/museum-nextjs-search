@@ -5,7 +5,7 @@ import { getDictionary } from '@/dictionaries/dictionaries';
 
 import CollectionObjectContactForm from '@/components/collection-object-contact-form/collection-object-contact-form';
 import { Button } from '@/components/ui/button';
-import { Icons } from '../icons';
+import { Icons } from '@/components/icons';
 
 export function LanguageDisclaimer({ item, formId }) {
   const dict = getDictionary();

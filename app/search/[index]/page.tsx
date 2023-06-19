@@ -22,7 +22,7 @@ import { SearchFilterTag } from '@/components/search/search-filter-tag';
 import { SearchFilters } from '@/components/search/search-filters';
 import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
-import { SearchQueryInput } from '@/components/search/search-query-input';
+import { SearchAsYouTypeInput } from '@/components/search/search-as-you-type-input';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
@@ -61,7 +61,6 @@ export default async function Page({ params, searchParams }) {
   const items: BaseDocument[] = response?.data || [];
   const terms: Term[] = response?.terms || [];
   const filters: Term[] = response?.filters || [];
-  console.log('filters', filters);
   const apiError = response?.error || '';
   const options: AggOptions = response?.options || {};
   const count = response?.metadata?.count || 0;
@@ -97,7 +96,7 @@ export default async function Page({ params, searchParams }) {
       </div>
       <div className="flex flex-wrap gap-x-6 gap-y-4">
         <div className="grow">
-          <SearchQueryInput params={searchParams} />
+          <SearchAsYouTypeInput params={searchParams} />
         </div>
         {index === 'collections' && (
           <div className="flex flex-wrap gap-x-4 gap-y-2">
