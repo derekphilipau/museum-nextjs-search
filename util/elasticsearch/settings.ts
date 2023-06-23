@@ -105,21 +105,6 @@ export const searchableAggregatedSimpleKeywordAnalyzerField: T.MappingProperty =
     },
   };
 
-export const suggestSearchableAggregatedKeywordAnalyzerField: T.MappingProperty =
-  {
-    type: 'keyword',
-    fields: {
-      search: {
-        type: 'text',
-        analyzer: 'aggregatedKeywordAnalyzer',
-      },
-      suggest: {
-        type: 'search_as_you_type',
-        analyzer: 'suggestAnalyzer',
-      },
-    },
-  };
-
 export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
   type: 'keyword',
   fields: {
