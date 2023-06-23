@@ -121,9 +121,12 @@ export const suggestSearchableAggregatedKeywordAnalyzerField: T.MappingProperty 
   };
 
 export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
-  type: 'text',
-  analyzer: 'unaggregatedStandardAnalyzer',
+  type: 'keyword',
   fields: {
+    search: {
+      type: 'text',
+      analyzer: 'unaggregatedStandardAnalyzer',
+    },
     suggest: {
       type: 'search_as_you_type',
       analyzer: 'suggestAnalyzer',

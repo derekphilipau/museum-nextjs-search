@@ -30,7 +30,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
     return searchCollections(params);
   }
 
-  let { index, p, size, q } = params;
+  let { index, p, size, q, sf, so } = params;
 
   // Defaults for params:
   index = index !== 'all' ? index : ['collections', 'content', 'archives'];
@@ -54,7 +54,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           fields: [
             'boostedKeywords^20',
             'primaryConstituent.name.search^4',
-            'title^2',
+            'title.search^2',
             'keywords^2',
             'description',
             'searchText',
@@ -68,7 +68,6 @@ export async function search(params: any): Promise<ApiResponseSearch> {
         match_all: {},
       },
     ];
-    if (index !== 'content') esQuery.sort = [{ startDate: 'desc' }];
   }
 
   if (index === 'all') {
@@ -81,6 +80,12 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 
   addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
+
+  if (sf && so) {
+    esQuery.sort = [{ [sf]: so }];
+  } else {
+    esQuery.sort = [{ startDate: 'desc' }];
+  }
 
   const client = getClient();
   if (client === undefined) return {};
@@ -98,7 +103,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 export async function searchCollections(
   params: any
 ): Promise<ApiResponseSearch> {
-  let { index, p, size, q, color } = params;
+  let { index, p, size, q, color, sf, so } = params;
 
   // Defaults for missing params:
   index = 'collections';
@@ -122,7 +127,7 @@ export async function searchCollections(
           fields: [
             'boostedKeywords^20',
             'primaryConstituent.name^6',
-            'title^4',
+            'title.search^4',
             'keywords^4',
             'description',
             'searchText',
@@ -138,7 +143,6 @@ export async function searchCollections(
         match_all: {},
       },
     ];
-    esQuery.sort = [{ startDate: 'desc' }];
   }
 
   if (color) {
@@ -152,6 +156,10 @@ export async function searchCollections(
       }
       esQuery.sort = ['_score'];
     }
+  } else if (sf && so) {
+    esQuery.sort = [{ [sf]: so }];
+  } else {
+    esQuery.sort = [{ startDate: 'desc' }];
   }
 
   addQueryBoolDateRange(esQuery, params);
@@ -242,7 +250,11 @@ async function getFilterTerm(
       if (params?.[filter] && filter === 'primaryConstituent.name') {
         // TODO: Only returns primaryConstituent.name filter term
         // TODO: term fix naming conventions
-        const response = await getTerm('primaryConstituent', params?.[filter], client);
+        const response = await getTerm(
+          'primaryConstituent',
+          params?.[filter],
+          client
+        );
         return response?.data as Term;
       }
     }
@@ -496,12 +508,16 @@ function getColorQuery(colorName: string) {
   return query;
 }
 
-export async function searchAll(index: string, query?: T.QueryDslQueryContainer, sourceFilter?: any): Promise<any[]> {
+export async function searchAll(
+  index: string,
+  query?: T.QueryDslQueryContainer,
+  sourceFilter?: any
+): Promise<any[]> {
   const client = getClient();
   if (client === undefined) return [];
 
   const results: any[] = [];
-  const responseQueue: any[] = []
+  const responseQueue: any[] = [];
   const esQuery: T.SearchRequest = {
     index,
     scroll: '30s',
@@ -515,25 +531,25 @@ export async function searchAll(index: string, query?: T.QueryDslQueryContainer,
     };
   }
   if (sourceFilter) {
-    esQuery._source = sourceFilter
+    esQuery._source = sourceFilter;
   }
-  const response = await client.search(esQuery)
-  responseQueue.push(response)
+  const response = await client.search(esQuery);
+  responseQueue.push(response);
 
   while (responseQueue.length) {
-    const body = responseQueue.shift()
+    const body = responseQueue.shift();
     body.hits.hits.forEach(function (hit) {
-      results.push(hit._source)
-    })
+      results.push(hit._source);
+    });
     if (body.hits.total.value === results.length) {
-      break
+      break;
     }
     responseQueue.push(
       await client.scroll({
         scroll_id: body._scroll_id,
-        scroll: '30s'
+        scroll: '30s',
       })
-    )
+    );
   }
   return results;
 }

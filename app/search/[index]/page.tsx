@@ -17,12 +17,12 @@ import { PaletteCard } from '@/components/search-card/palette-card';
 import { SwatchCard } from '@/components/search-card/swatch-card';
 import { TermCard } from '@/components/search-card/term-card';
 import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
+import { SearchAsYouTypeInput } from '@/components/search/search-as-you-type-input';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
 import { SearchFilters } from '@/components/search/search-filters';
 import { SearchIndexButton } from '@/components/search/search-index-button';
 import { SearchPagination } from '@/components/search/search-pagination';
-import { SearchAsYouTypeInput } from '@/components/search/search-as-you-type-input';
 
 function getLayoutGridClass(layout: string) {
   if (layout === 'grid')
@@ -43,6 +43,8 @@ export default async function Page({ params, searchParams }) {
   const onView = getBooleanValue(searchParams?.onView);
   const layout = searchParams?.layout || 'grid';
   const cardType = searchParams?.card || '';
+  const sortField = searchParams?.sf || '';
+  const sortOrder = searchParams?.so || '';
 
   const isShowFilters = getBooleanValue(searchParams?.f);
 
@@ -202,6 +204,8 @@ export default async function Page({ params, searchParams }) {
             p={p}
             size={size}
             totalPages={totalPages}
+            sortField={sortField}
+            sortOrder={sortOrder}
             isShowFilters={isShowFilters}
             layout={layout}
             card={cardType}
@@ -296,6 +300,8 @@ export default async function Page({ params, searchParams }) {
             p={p}
             size={size}
             totalPages={totalPages}
+            sortField={sortField}
+            sortOrder={sortOrder}
             isShowFilters={isShowFilters}
             layout={layout}
             card={cardType}
