@@ -6,5 +6,5 @@ export interface ApiResponseDocument {
   query?: any;
   data?: BaseDocument | CollectionObjectDocument | Term;
   similar?: CollectionObjectDocument[];
-  similarImageHistogram?: CollectionObjectDocument[];
+  similarDominantColors?: CollectionObjectDocument[];
 }

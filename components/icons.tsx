@@ -1,4 +1,8 @@
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -52,4 +56,8 @@ export const Icons = {
   circleSlashed: CircleSlashed,
   download: Download,
   search: Search,
+  arrowUpDown: ArrowUpDown,
+  arrowUp: ArrowUp,
+  arrowDown: ArrowDown,
+  check: Check,
 };

@@ -30,7 +30,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
     return searchCollections(params);
   }
 
-  let { index, p, size, q } = params;
+  let { index, p, size, q, sf, so } = params;
 
   // Defaults for params:
   index = index !== 'all' ? index : ['collections', 'content', 'archives'];
@@ -54,7 +54,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           fields: [
             'boostedKeywords^20',
             'primaryConstituent.name.search^4',
-            'title^2',
+            'title.search^2',
             'keywords^2',
             'description',
             'searchText',
@@ -68,7 +68,6 @@ export async function search(params: any): Promise<ApiResponseSearch> {
         match_all: {},
       },
     ];
-    if (index !== 'content') esQuery.sort = [{ startDate: 'desc' }];
   }
 
   if (index === 'all') {
@@ -81,6 +80,12 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 
   addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
+
+  if (sf && so) {
+    esQuery.sort = [{ [sf]: so }];
+  } else {
+    esQuery.sort = [{ startDate: 'desc' }];
+  }
 
   const client = getClient();
   if (client === undefined) return {};
@@ -98,7 +103,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 export async function searchCollections(
   params: any
 ): Promise<ApiResponseSearch> {
-  let { index, p, size, q, color } = params;
+  let { index, p, size, q, color, sf, so } = params;
 
   // Defaults for missing params:
   index = 'collections';
@@ -122,7 +127,7 @@ export async function searchCollections(
           fields: [
             'boostedKeywords^20',
             'primaryConstituent.name^6',
-            'title^4',
+            'title.search^4',
             'keywords^4',
             'description',
             'searchText',
@@ -138,20 +143,14 @@ export async function searchCollections(
         match_all: {},
       },
     ];
-    esQuery.sort = [{ startDate: 'desc' }];
   }
 
   if (color) {
-    const colorQuery = getColorQuery(color);
-    if (colorQuery) {
-      if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
-        esQuery.query.bool.must = [];
-      }
-      if (Array.isArray(esQuery?.query?.bool?.must)) {
-        esQuery.query?.bool?.must.push(colorQuery);
-      }
-      esQuery.sort = ['_score'];
-    }
+    addColorQuery(esQuery, color);
+  } else if (sf && so) {
+    esQuery.sort = [{ [sf]: so }];
+  } else {
+    esQuery.sort = [{ startDate: 'desc' }];
   }
 
   addQueryBoolDateRange(esQuery, params);
@@ -242,7 +241,11 @@ async function getFilterTerm(
       if (params?.[filter] && filter === 'primaryConstituent.name') {
         // TODO: Only returns primaryConstituent.name filter term
         // TODO: term fix naming conventions
-        const response = await getTerm('primaryConstituent', params?.[filter], client);
+        const response = await getTerm(
+          'primaryConstituent',
+          params?.[filter],
+          client
+        );
         return response?.data as Term;
       }
     }
@@ -387,94 +390,64 @@ function addQueryAggs(esQuery: any, indexName: string | string[] | undefined) {
   }
 }
 
-function getColorQuery(colorName: string) {
-  // colors object with properties for each color
+function addColorQuery(esQuery: any, colorName: string) {
+  // Lab colors object with properties for each color
   const colors = {
-    red: { h: 0, s: 100, l: 50 },
-    orange: { h: 30, s: 100, l: 50 },
-    yellow: { h: 60, s: 100, l: 50 },
-    green: { h: 120, s: 100, l: 50 },
-    cyan: { h: 180, s: 100, l: 50 },
-    blue: { h: 240, s: 100, l: 50 },
-    purple: { h: 270, s: 100, l: 50 },
-    black: { h: 0, s: 0, l: 0 },
-    white: { h: 0, s: 0, l: 100 },
+    red: { l: 53, a: 80, b: 67 },
+    orange: { l: 74, a: 23, b: 78 },
+    yellow: { l: 97, a: -21, b: 94 },
+    green: { l: 87, a: -86, b: 83 },
+    cyan: { l: 91, a: -48, b: -14 },
+    blue: { l: 32, a: 79, b: -107 },
+    purple: { l: 60, a: 98, b: -60 },
+    black: { l: 0, a: 0, b: 0 },
+    white: { l: 100, a: -0.005, b: -0.01 },
   };
 
   const color = colors?.[colorName];
   if (!color) return;
 
-  const sRange: any = {};
-  if (colorName !== 'black' && colorName !== 'white') {
-    // s is 360 degree value, so we need to account for the wrap around
-    const gte = color.s - 20 < 0 ? 360 + color.s - 20 : color.s - 20;
-    const lte = color.s + 20 > 360 ? color.s + 20 - 360 : color.s + 20;
-    sRange.gte = gte;
-    sRange.lte = lte;
-  }
-
-  const lRange: any = {};
-  if (colorName === 'black') {
-    lRange.lte = 30;
-  } else if (colorName === 'white') {
-    lRange.gte = 80;
-  } else {
-    const gte = color.s - 20 < 0 ? 0 : color.s - 20;
-    const lte = color.s + 20 > 100 ? 100 : color.s + 20;
-    lRange.gte = gte;
-    lRange.lte = lte;
-  }
-
-  const query: T.QueryDslQueryContainer = {
+  const colorQuery: T.QueryDslQueryContainer = {
     function_score: {
       query: {
         nested: {
-          path: 'dominantColorsHsl',
+          path: 'image.dominantColors',
           query: {
             function_score: {
               score_mode: 'multiply',
               functions: [
                 {
-                  filter: {
-                    range: {
-                      'dominantColorsHsl.s': sRange,
-                    },
-                  },
-                  weight: 1,
-                },
-                {
-                  filter: {
-                    range: {
-                      'dominantColorsHsl.l': lRange,
-                    },
-                  },
-                  weight: 1,
-                },
-                {
                   exp: {
-                    'dominantColorsHsl.h': {
-                      origin: color.h,
-                      offset: 2,
-                      scale: 4,
-                    },
-                  },
-                },
-                {
-                  exp: {
-                    'dominantColorsHsl.s': {
-                      origin: color.s,
-                      offset: 4,
-                      scale: 8,
-                    },
-                  },
-                },
-                {
-                  exp: {
-                    'dominantColorsHsl.l': {
+                    'image.dominantColors.l': {
                       origin: color.l,
-                      offset: 4,
-                      scale: 8,
+                      offset: 10,
+                      scale: 20,
                     },
+                  },
+                },
+                {
+                  exp: {
+                    'image.dominantColors.a': {
+                      origin: color.a,
+                      offset: 5,
+                      scale: 10,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'image.dominantColors.b': {
+                      origin: color.b,
+                      offset: 5,
+                      scale: 10,
+                    },
+                  },
+                },
+                {
+                  field_value_factor: {
+                    field: 'image.dominantColors.percent',
+                    modifier: 'log1p',
+                    factor: 5,
                   },
                 },
               ],
@@ -493,15 +466,31 @@ function getColorQuery(colorName: string) {
     },
   };
 
-  return query;
+  if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+    esQuery.query.bool.must = [];
+  }
+
+  if (colorQuery) {
+    if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+      esQuery.query.bool.must = [];
+    }
+    if (Array.isArray(esQuery?.query?.bool?.must)) {
+      esQuery.query?.bool?.must.push(colorQuery);
+    }
+    esQuery.sort = ['_score'];
+  }
 }
 
-export async function searchAll(index: string, query?: T.QueryDslQueryContainer, sourceFilter?: any): Promise<any[]> {
+export async function searchAll(
+  index: string,
+  query?: T.QueryDslQueryContainer,
+  sourceFilter?: any
+): Promise<any[]> {
   const client = getClient();
   if (client === undefined) return [];
 
   const results: any[] = [];
-  const responseQueue: any[] = []
+  const responseQueue: any[] = [];
   const esQuery: T.SearchRequest = {
     index,
     scroll: '30s',
@@ -515,25 +504,206 @@ export async function searchAll(index: string, query?: T.QueryDslQueryContainer,
     };
   }
   if (sourceFilter) {
-    esQuery._source = sourceFilter
+    esQuery._source = sourceFilter;
   }
-  const response = await client.search(esQuery)
-  responseQueue.push(response)
+  const response = await client.search(esQuery);
+  responseQueue.push(response);
 
   while (responseQueue.length) {
-    const body = responseQueue.shift()
+    const body = responseQueue.shift();
     body.hits.hits.forEach(function (hit) {
-      results.push(hit._source)
-    })
+      results.push(hit._source);
+    });
     if (body.hits.total.value === results.length) {
-      break
+      break;
     }
     responseQueue.push(
       await client.scroll({
         scroll_id: body._scroll_id,
-        scroll: '30s'
+        scroll: '30s',
       })
-    )
+    );
   }
   return results;
 }
+
+/*
+OLD function for use with HSV colors.  Switched to Lab due
+to difficulty dealing with HSV hue wrapping around 360 degrees.
+*/
+/*
+function addColorQuery(esQuery: any, colorName: string) {
+  // colors object with properties for each color
+  const colors = {
+    red: { h: 0, s: 100, v: 100 },
+    orange: { h: 30, s: 100, v: 100 },
+    yellow: { h: 60, s: 100, v: 100 },
+    green: { h: 120, s: 100, v: 100 },
+    cyan: { h: 180, s: 100, v: 100 },
+    blue: { h: 240, s: 100, v: 100 },
+    purple: { h: 270, s: 100, v: 100 },
+    black: { h: 0, s: 0, v: 0 },
+    white: { h: 0, s: 0, v: 100 },
+  };
+
+  const color = colors?.[colorName];
+  if (!color) return;
+
+  const hRange: any = {};
+  if (colorName !== 'black' && colorName !== 'white') {
+    // h is 360 degree value, so we need to account for the wrap around
+    const gte = color.h - 20 < 0 ? 360 + color.h - 20 : color.h - 20;
+    const lte = color.h + 20 > 360 ? color.h + 20 - 360 : color.h + 20;
+    hRange.gte = gte;
+    hRange.lte = lte;
+  }
+
+  const sRange: any = {};
+  if (colorName === 'black') {
+    // Black can have any saturation
+  } else if (colorName === 'white') {
+    sRange.lte = 20; // White has low saturation
+  } else {
+    sRange.gte = 20; // Colors should have some saturation
+  }
+
+  const vRange: any = {};
+  if (colorName === 'black') {
+    vRange.lte = 20; // black has low value
+    vRange.gte = 0;
+  } else if (colorName === 'white') {
+    vRange.gte = 80; // white has high value
+    vRange.lte = 100;
+  } else {
+    vRange.gte = 20; // colors should have some value
+    vRange.lte = 100;
+  }
+
+  const colorQuery: T.QueryDslQueryContainer = {
+    function_score: {
+      query: {
+        nested: {
+          path: 'image.dominantColors',
+          query: {
+            function_score: {
+              score_mode: 'multiply',
+              functions: [
+                {
+                  filter: {
+                    range: {
+                      'image.dominantColors.h': hRange,
+                    },
+                  },
+                  weight: 3,
+                },
+                {
+                  filter: {
+                    range: {
+                      'image.dominantColors.s': sRange,
+                    },
+                  },
+                  weight: 1,
+                },
+                {
+                  filter: {
+                    range: {
+                      'image.dominantColors.v': vRange,
+                    },
+                  },
+                  weight: 1,
+                },
+                {
+                  script_score: {
+                    script: {
+                      source:
+                        "double h_diff = Math.min(Math.abs(params.origin - doc['image.dominantColors.h'].value), 360 - Math.abs(params.origin - doc['image.dominantColors.h'].value)); return Math.exp(-(h_diff - params.offset) / params.scale)",
+                      params: {
+                        origin: 240,
+                        offset: 2,
+                        scale: 20,
+                      },
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'image.dominantColors.h': {
+                      origin: color.h,
+                      offset: 2,
+                      scale: 4,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'image.dominantColors.s': {
+                      origin: color.s,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+                {
+                  exp: {
+                    'image.dominantColors.v': {
+                      origin: color.v,
+                      offset: 4,
+                      scale: 8,
+                    },
+                  },
+                },
+                {
+                  field_value_factor: {
+                    field: 'image.dominantColors.percent',
+                    modifier: 'log1p',
+                    factor: 1,
+                  },
+                },
+              ],
+            },
+          },
+          score_mode: 'sum',
+        },
+      },
+      functions: [
+        {
+          script_score: {
+            script: '_score',
+          },
+        },
+      ],
+    },
+  };
+
+  if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+    esQuery.query.bool.must = [];
+  }
+
+  if (colorName !== 'black' && colorName !== 'white') {
+    // make sure we get bright color matches
+    esQuery.query.bool.must.push({
+      nested: {
+        path: 'image.dominantColors',
+        query: {
+          bool: {
+            must: [
+              { range: { ['image.dominantColors.s']: { gte: 15 } } },
+              { range: { ['image.dominantColors.v']: { gte: 15 } } },
+            ],
+          },
+        },
+      },
+    });
+  }
+
+  if (colorQuery) {
+    if (!esQuery.query?.bool?.must && esQuery?.query?.bool) {
+      esQuery.query.bool.must = [];
+    }
+    if (Array.isArray(esQuery?.query?.bool?.must)) {
+      esQuery.query?.bool?.must.push(colorQuery);
+    }
+    esQuery.sort = ['_score'];
+  }
+}
+*/

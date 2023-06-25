@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { getDictionary } from '@/dictionaries/dictionaries';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
+import { DominantColors } from '@/components/color/dominant-colors';
 import { DescriptionRow } from './description-row';
 import { GeographicalDescriptionRow } from './geographical-description-row';
 
@@ -8,15 +10,23 @@ interface CollectionObjectDescriptionProps {
   item: CollectionObjectDocument;
 }
 
-export function CollectionObjectDescription({ item }: CollectionObjectDescriptionProps) {
+export function CollectionObjectDescription({
+  item,
+}: CollectionObjectDescriptionProps) {
   if (!item?.id) return null;
+  const dict = getDictionary();
 
-  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
+  const primaryConstituentName =
+    item.primaryConstituent?.name || 'Maker Unknown';
 
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
-        <DescriptionRow name="primaryConstituent.name" value={primaryConstituentName} isLink={true} />
+        <DescriptionRow
+          name="primaryConstituent.name"
+          value={primaryConstituentName}
+          isLink={true}
+        />
         <DescriptionRow name="medium" item={item} isLink={true} />
         <GeographicalDescriptionRow item={item} />
         <DescriptionRow name="date" item={item} />
@@ -30,7 +40,19 @@ export function CollectionObjectDescription({ item }: CollectionObjectDescriptio
         <DescriptionRow name="creditLine" item={item} />
         <DescriptionRow name="exhibitions" item={item} isLink={true} />
         <DescriptionRow name="rightsType" item={item} />
-        <DescriptionRow name="museumLocation.name" value={item.museumLocation?.name} isLink={true} />
+        <DescriptionRow
+          name="museumLocation.name"
+          value={item.museumLocation?.name}
+          isLink={true}
+        />
+        <div className="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-2">
+          <dt className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+            {dict['artwork.field.dominantColors']}
+          </dt>
+          <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
+            <DominantColors item={item} height={40} />
+          </dd>
+        </div>
       </dl>
     </div>
   );

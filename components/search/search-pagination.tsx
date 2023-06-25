@@ -6,6 +6,15 @@ import { getDictionary } from '@/dictionaries/dictionaries';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -26,6 +35,8 @@ interface SearchPaginationProps {
   p: number;
   size: string;
   totalPages: number;
+  sortField: string;
+  sortOrder: string;
   isShowFilters: boolean;
   layout: string;
   card: string;
@@ -39,6 +50,8 @@ export function SearchPagination({
   p,
   size,
   totalPages,
+  sortField,
+  sortOrder,
   isShowFilters,
   layout,
   card,
@@ -67,6 +80,20 @@ export function SearchPagination({
     window.scroll(0, 0);
   }
 
+  function sortBy(field: string, order: string = 'asc') {
+    const updatedParams = new URLSearchParams(params);
+    if (!field || (field === sortField && order === sortOrder)) {
+      updatedParams.delete('sf');
+      updatedParams.delete('so');
+    } else {
+      updatedParams.set('sf', field);
+      updatedParams.set('so', order);
+    }
+    updatedParams.delete('p');
+    router.push(`${pathname}?${updatedParams}`);
+    window.scroll(0, 0);
+  }
+
   function clickShowFilters() {
     const updatedParams = new URLSearchParams(params);
     updatedParams.set('f', 'true');
@@ -88,6 +115,37 @@ export function SearchPagination({
     if (isDelete) updatedParams.delete(name);
     else updatedParams.set(name, value);
     router.push(`${pathname}?${updatedParams}`);
+  }
+
+  function sortDropdownMenuItem(
+    fieldName: string,
+    order: string,
+    dictKey: string
+  ) {
+    const label = dict[`search.sort.${fieldName}.${order}`];
+    let mySortField = sortField;
+    let mySortOrder = sortOrder;
+    if (!sortField && !sortOrder) {
+      mySortField = 'startDate'; // Default order
+      mySortOrder = 'desc';
+    }
+
+    return (
+      <DropdownMenuItem
+        onClick={() => sortBy(fieldName, order)}
+        disabled={mySortField === fieldName && mySortOrder === order}
+      >
+        {order === 'asc' ? (
+          <Icons.arrowDown className="mr-2 h-5 w-5" />
+        ) : (
+          <Icons.arrowUp className="mr-2 h-5 w-5" />
+        )}
+        <span>{label}</span>
+        {fieldName === mySortField && mySortOrder === order && (
+          <Icons.check className="ml-2 h-5 w-5" />
+        )}
+      </DropdownMenuItem>
+    );
   }
 
   return (
@@ -151,6 +209,57 @@ export function SearchPagination({
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+            </div>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={dict['search.cardSwatch']}
+                  >
+                    <Icons.arrowUpDown className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>
+                    {dict['search.sort.label']}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    {sortDropdownMenuItem(
+                      'startDate',
+                      'asc',
+                      'artwork.field.date'
+                    )}
+                    {sortDropdownMenuItem(
+                      'startDate',
+                      'desc',
+                      'artwork.field.date'
+                    )}
+                    {sortDropdownMenuItem(
+                      'title',
+                      'asc',
+                      'baseDocument.field.title'
+                    )}
+                    {sortDropdownMenuItem(
+                      'title',
+                      'desc',
+                      'baseDocument.field.title'
+                    )}
+                    {sortDropdownMenuItem(
+                      'primaryConstituent.name',
+                      'asc',
+                      'artwork.field.primaryConstituent.name'
+                    )}
+                    {sortDropdownMenuItem(
+                      'primaryConstituent.name',
+                      'desc',
+                      'artwork.field.primaryConstituent.name'
+                    )}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             {showExperimental && (
               <>

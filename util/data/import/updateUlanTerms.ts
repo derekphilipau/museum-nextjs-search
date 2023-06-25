@@ -50,13 +50,12 @@ function checkMatchedArtistTerms(ulanMatches, birthYear, deathYear) {
   return null;
 }
 
-
 /**
- * 
- * @param term 
- * @param ulanArtists 
- * @param ulanCorporateBodies 
- * @returns 
+ *
+ * @param term
+ * @param ulanArtists
+ * @param ulanCorporateBodies
+ * @returns
  */
 async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
   const constituent = term.data;
@@ -75,7 +74,9 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
   );
   if (!ulanArtist) {
     const alternateTerms = ulanArtists.filter(
-      (a) => a.cleanNonPreferredTerms?.length > 0 && a.cleanNonPreferredTerms.includes(simplifiedName)
+      (a) =>
+        a.cleanNonPreferredTerms?.length > 0 &&
+        a.cleanNonPreferredTerms.includes(simplifiedName)
     );
     ulanArtist = checkMatchedArtistTerms(
       alternateTerms,
@@ -94,7 +95,9 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
     );
     if (!ulanArtist) {
       const alternateCorporateTerms = ulanCorporateBodies.filter(
-        (a) => a.cleanNonPreferredTerms?.length > 0 && a.cleanNonPreferredTerms.includes(simplifiedName)
+        (a) =>
+          a.cleanNonPreferredTerms?.length > 0 &&
+          a.cleanNonPreferredTerms.includes(simplifiedName)
       );
       ulanArtist = checkMatchedArtistTerms(
         alternateCorporateTerms,
@@ -107,10 +110,13 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
     const alternates: string[] = [];
     if (ulanArtist.nonPreferredTerms?.length > 0) {
       const cleanArtist = simplifyName(constituentName);
-      const cleanPreferredTerm = simplifyName(ulanArtist.preferred);
+      const cleanPreferredTerm = simplifyName(ulanArtist.preferredTerm);
       for (const alt of ulanArtist.nonPreferredTerms) {
         const cleanAlt = simplifyName(alt);
-        if (cleanArtist.includes(cleanAlt) || cleanPreferredTerm.includes(cleanAlt))
+        if (
+          cleanArtist.includes(cleanAlt) ||
+          cleanPreferredTerm.includes(cleanAlt)
+        )
           continue;
         alternates.push(cleanAlt);
       }
@@ -124,7 +130,7 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
       descriptiveNotes: ulanArtist.descriptiveNotes,
       biography: ulanArtist.biography,
       sex: ulanArtist.sex,
-    }
+    };
     return term;
   }
 }
@@ -145,36 +151,34 @@ export async function updateUlanTerms() {
   for (const c of ulanArtists) {
     c.cleanPreferredTerm = simplifyName(c.preferredTerm);
     if (c.nonPreferredTerms?.length > 0)
-      c.cleanNonPreferredTerms = c.nonPreferredTerms.map((n) => simplifyName(n));
-    else
-      c.cleanNonPreferredTerms = [];
+      c.cleanNonPreferredTerms = c.nonPreferredTerms.map((n) =>
+        simplifyName(n)
+      );
+    else c.cleanNonPreferredTerms = [];
   }
   for (const c of ulanCorporateBodies) {
     c.cleanPreferredTerm = simplifyName(c.preferredTerm);
     if (c.nonPreferredTerms?.length > 0)
-      c.cleanNonPreferredTerms = c.nonPreferredTerms.map((n) => simplifyName(n));
-    else
-      c.cleanNonPreferredTerms = [];
+      c.cleanNonPreferredTerms = c.nonPreferredTerms.map((n) =>
+        simplifyName(n)
+      );
+    else c.cleanNonPreferredTerms = [];
   }
-  
+
   console.log(`ULAN artists: ${ulanArtists.length}`);
   console.log(`ULAN corporate bodies: ${ulanCorporateBodies.length}`);
 
   const terms = await getPrimaryConstituentTerms();
-  console.log('Found', terms.length, 'terms with primary constituent.')
+  console.log('Found', terms.length, 'terms with primary constituent.');
   const ulanTerms: any[] = [];
   for (const term of terms) {
-    const ulanMatch = await getUlanData(
-      term,
-      ulanArtists,
-      ulanCorporateBodies
-    );
+    const ulanMatch = await getUlanData(term, ulanArtists, ulanCorporateBodies);
     if (ulanMatch) {
       // Great, found a single matching record for ULAN preferred term.
       ulanTerms.push(ulanMatch);
     }
   }
-  console.log(`Found ${ulanTerms.length} ULAN records.`)
+  console.log(`Found ${ulanTerms.length} ULAN records.`);
   if (!ulanTerms.length) return;
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);

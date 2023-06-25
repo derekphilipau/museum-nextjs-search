@@ -1,5 +1,3 @@
-
-
 export interface DocumentConstituent {
   id?: string;
   name: string;
@@ -34,10 +32,12 @@ export interface DocumentMuseumLocation {
   parentId?: string;
 }
 
-export interface DocumentImageHslColor {
-  h: number;
-  s: number;
+export interface DocumentImageDominantColor {
   l: number;
+  a: number;
+  b: number;
+  hex: string;
+  percent: number;
 }
 
 export interface DocumentImage {
@@ -45,8 +45,7 @@ export interface DocumentImage {
   url?: string;
   thumbnailUrl?: string;
   alt?: string;
-  dominantColorsHsl?: DocumentImageHslColor[][];
-  histogram?: number[];
+  dominantColors?: DocumentImageDominantColor[];
   date?: string;
   view?: string;
   rank?: number;

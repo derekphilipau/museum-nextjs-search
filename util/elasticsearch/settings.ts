@@ -62,22 +62,10 @@ export const disabledObjectField: T.MappingProperty = {
   enabled: false,
 };
 export const booleanField: T.MappingProperty = { type: 'boolean' };
+export const shortField: T.MappingProperty = { type: 'short' };
 export const integerField: T.MappingProperty = { type: 'integer' };
 export const dateField: T.MappingProperty = { type: 'date' };
 export const nestedField: T.MappingProperty = { type: 'nested' };
-export const denseVectorHistogramField: T.MappingProperty = {
-  type: 'dense_vector',
-  dims: 96,
-  index: true,
-  similarity: 'cosine',
-};
-export const colorField: T.MappingProperty = {
-  properties: {
-    h: { type: 'float' },
-    s: { type: 'float' },
-    v: { type: 'float' },
-  },
-};
 
 export const unaggregatedStandardAnalyzerTextField: T.MappingProperty = {
   type: 'text',
@@ -105,25 +93,13 @@ export const searchableAggregatedSimpleKeywordAnalyzerField: T.MappingProperty =
     },
   };
 
-export const suggestSearchableAggregatedKeywordAnalyzerField: T.MappingProperty =
-  {
-    type: 'keyword',
-    fields: {
-      search: {
-        type: 'text',
-        analyzer: 'aggregatedKeywordAnalyzer',
-      },
-      suggest: {
-        type: 'search_as_you_type',
-        analyzer: 'suggestAnalyzer',
-      },
-    },
-  };
-
 export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
-  type: 'text',
-  analyzer: 'unaggregatedStandardAnalyzer',
+  type: 'keyword',
   fields: {
+    search: {
+      type: 'text',
+      analyzer: 'unaggregatedStandardAnalyzer',
+    },
     suggest: {
       type: 'search_as_you_type',
       analyzer: 'suggestAnalyzer',
@@ -177,8 +153,16 @@ export const imageObjectField: T.MappingProperty = {
     url: keywordField,
     thumbnailUrl: keywordField,
     alt: textField,
-    dominantColorsHsl: nestedField,
-    histogram: denseVectorHistogramField,
+    dominantColors: {
+      type: 'nested',
+      properties: {
+        l: shortField, // lightness and always varies from 0 to 100
+        a: shortField, // a* represents from green (-128) to red (+127)
+        b: shortField, // b* from blue (-128) to yellow (+127)
+        hex: keywordField, // Hexadecimal string without #
+        percent: shortField, // 0-100%
+      },
+    },
     date: textField,
     view: keywordField,
     rank: integerField,

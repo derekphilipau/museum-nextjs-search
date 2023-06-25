@@ -9,13 +9,13 @@ import { getDocument } from './document';
 
 const SIMILAR_PAGE_SIZE = 24; // 24 results per similar search
 
-export async function similarImageHistogramById(
+export async function similarDominantColorsById(
   id: number | string | undefined
 ) {
   if (!id) return [];
   const docResponse = await getDocument('collections', id);
   const document = docResponse?.data;
-  if (document) return similarImageHistogram(document);
+  if (document) return similarDominantColors(document);
 }
 
 /**
@@ -25,11 +25,11 @@ export async function similarImageHistogramById(
  * @param client The ES client
  * @returns Array of similar objects
  */
-export async function similarImageHistogram(
+export async function similarDominantColors(
   document?: any,
   client?: Client
 ): Promise<CollectionObjectDocument[]> {
-  if (!document || !document.id || !document.imageHistogram) return [];
+  if (!document || !document.id || !document.DominantColors) return [];
 
   const esQuery = {
     index: 'collections',
@@ -47,9 +47,9 @@ export async function similarImageHistogram(
         script: {
           source:
             // Ignore objects that don't have an image histogram
-            "doc['imageHistogram'].size() == 0 ? 0 : cosineSimilarity(params.queryVector, 'imageHistogram')",
+            "doc['DominantColors'].size() == 0 ? 0 : cosineSimilarity(params.queryVector, 'DominantColors')",
           params: {
-            queryVector: document.imageHistogram,
+            queryVector: document.DominantColors,
           },
         },
       },

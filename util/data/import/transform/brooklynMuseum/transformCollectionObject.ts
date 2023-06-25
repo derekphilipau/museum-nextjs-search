@@ -154,8 +154,6 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
           cod.copyrightRestricted
         ),
         alt: myImage.alt,
-        // histogram: image.histogram,
-        // dominantColorsHsl: image.dominantColorsHsl,
         date: myImage.date,
         view: myImage.view,
         rank: 0, // should always be zero
@@ -183,8 +181,6 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
         cod.copyrightRestricted
       ),
       alt: image.alt,
-      // histogram: image.histogram,
-      // dominantColorsHsl: image.dominantColorsHsl,
       date: image.date,
       view: image.view,
       rank: image.rank,
