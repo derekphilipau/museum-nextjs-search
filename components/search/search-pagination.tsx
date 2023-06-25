@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import { Icons } from '@/components/icons';
+import { SearchFilterButton } from '@/components/search/search-filter-button';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -41,6 +42,8 @@ interface SearchPaginationProps {
   layout: string;
   card: string;
   isShowViewOptions: boolean;
+  options: any;
+  filters: any;
 }
 
 export function SearchPagination({
@@ -56,6 +59,8 @@ export function SearchPagination({
   layout,
   card,
   isShowViewOptions,
+  options,
+  filters,
 }: SearchPaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -92,12 +97,6 @@ export function SearchPagination({
     updatedParams.delete('p');
     router.push(`${pathname}?${updatedParams}`);
     window.scroll(0, 0);
-  }
-
-  function clickShowFilters() {
-    const updatedParams = new URLSearchParams(params);
-    updatedParams.set('f', 'true');
-    router.push(`${pathname}?${updatedParams}`);
   }
 
   function clickChangeLayout(layout: string) {
@@ -150,26 +149,21 @@ export function SearchPagination({
 
   return (
     <nav
-      className="items-center justify-between gap-x-4 sm:flex"
+      className="items-start justify-between gap-x-4 sm:flex"
       aria-label={dict['button.pagination']}
     >
-      <div className="flex items-center justify-start gap-x-2">
+      <div className="flex flex-wrap items-center justify-start gap-1">
         {isShowViewOptions && (
           <>
-            {!isShowFilters &&
-              (index === 'collections' || index === 'archives') && (
-                <div className="hidden sm:block">
-                  <Button
-                    onClick={() => clickShowFilters()}
-                    variant="ghost"
-                    size="sm"
-                    aria-label={dict['search.showFilters']}
-                  >
-                    <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-                    {dict['search.showFilters']}
-                  </Button>
-                </div>
-              )}
+            <div>
+              <SearchFilterButton
+                index={index}
+                params={params}
+                options={options}
+                filters={filters}
+                isShowFilters={isShowFilters}
+              />
+            </div>
             <div>
               <TooltipProvider>
                 <Tooltip>
@@ -358,12 +352,12 @@ export function SearchPagination({
           </>
         )}
 
-        <div className="text-xs">
+        <div className="ml-2 text-xs">
           {count} {dict['search.resultsPage']} {p} {dict['search.of']}{' '}
           {totalPages}.
         </div>
       </div>
-      <div className="flex items-center justify-end gap-x-4">
+      <div className="mt-4 flex items-center justify-end gap-x-4 sm:mt-0">
         <Button
           disabled={p <= 1}
           onClick={() => pageClick(p - 1)}
@@ -371,8 +365,8 @@ export function SearchPagination({
           size="sm"
           aria-label={dict['search.previous']}
         >
-          <Icons.chevronLeft className="mr-2 h-5 w-5" aria-hidden="true" />
-          {dict['search.previous']}
+          <Icons.chevronLeft className="h-5 w-5 sm:mr-2" aria-hidden="true" />
+          <span className="hidden sm:block">{dict['search.previous']}</span>
         </Button>
         <Button
           disabled={p >= totalPages}
@@ -381,8 +375,8 @@ export function SearchPagination({
           size="sm"
           aria-label={dict['search.next']}
         >
-          {dict['search.next']}
-          <Icons.chevronRight className="ml-2 h-5 w-5" aria-hidden="true" />
+          <span className="hidden sm:block">{dict['search.next']}</span>
+          <Icons.chevronRight className="h-5 w-5 sm:ml-2" aria-hidden="true" />
         </Button>
       </div>
     </nav>

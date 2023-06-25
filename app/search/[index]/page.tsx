@@ -16,7 +16,6 @@ import { ContentCard } from '@/components/search-card/content-card';
 import { PaletteCard } from '@/components/search-card/palette-card';
 import { SwatchCard } from '@/components/search-card/swatch-card';
 import { TermCard } from '@/components/search-card/term-card';
-import { SearchAggSectionMobile } from '@/components/search/search-agg-section-mobile';
 import { SearchAsYouTypeInput } from '@/components/search/search-as-you-type-input';
 import { SearchCheckbox } from '@/components/search/search-checkbox';
 import { SearchFilterTag } from '@/components/search/search-filter-tag';
@@ -131,18 +130,8 @@ export default async function Page({ params, searchParams }) {
         )}
       </div>
       <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
-        {index === 'collections' && (
-          <div className="h-full space-y-6 sm:col-span-1 sm:hidden">
-            <SearchAggSectionMobile
-              index={index}
-              params={searchParams}
-              filters={aggFilters}
-              options={options}
-            />
-          </div>
-        )}
         {isShowFilters && (
-          <div className="hidden h-full space-y-6 sm:col-span-1 sm:block">
+          <div className="hidden h-full space-y-2 sm:col-span-1 sm:block">
             <SearchFilters
               index={index}
               params={searchParams}
@@ -198,23 +187,29 @@ export default async function Page({ params, searchParams }) {
                 )
             )}
 
-          <SearchPagination
-            index={index}
-            params={searchParams}
-            count={count}
-            p={p}
-            size={size}
-            totalPages={totalPages}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            isShowFilters={isShowFilters}
-            layout={layout}
-            card={cardType}
-            isShowViewOptions={true}
-          />
+          <div className="flex w-full">
+            <div className="w-full">
+              <SearchPagination
+                index={index}
+                params={searchParams}
+                count={count}
+                p={p}
+                size={size}
+                totalPages={totalPages}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                isShowFilters={isShowFilters}
+                layout={layout}
+                card={cardType}
+                isShowViewOptions={true}
+                options={options}
+                filters={aggFilters}
+              />
+            </div>
+          </div>
 
           {filterArr?.length > 0 && (
-            <div className="flex flex-wrap gap-x-2 pt-3">
+            <div className="flex flex-wrap gap-2 pt-3">
               {filterArr?.length > 0 &&
                 filterArr.map(
                   (filter, i) =>
@@ -308,6 +303,8 @@ export default async function Page({ params, searchParams }) {
             layout={layout}
             card={cardType}
             isShowViewOptions={false}
+            options={options}
+            filters={aggFilters}
           />
         </div>
       </div>

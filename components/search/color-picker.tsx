@@ -39,7 +39,7 @@ export function ColorPicker({ params }: ColorPickerProps) {
   }
 
   return (
-    <div className="flex w-full flex-wrap gap-2">
+    <div className="flex w-full flex-wrap gap-1">
       {colors.map((color, i: Key) => (
         <div
           key={i}
