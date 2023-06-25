@@ -36,6 +36,7 @@
   "button.toggleTheme": "Toggle Theme",
   "button.pagination": "Pagination",
   "button.resultsPerPage": "Results per page",
+  "button.download": "Download",
   "search.sort.label": "Sort results by:",
   "search.sort.startDate.asc": "Oldest to newest",
   "search.sort.startDate.desc": "Newest to oldest",

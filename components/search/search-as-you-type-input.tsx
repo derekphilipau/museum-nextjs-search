@@ -5,14 +5,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { useDebounce } from '@/util/debounce';
 
+import { SearchInput } from '@/components/search/search-input';
 import { Badge } from '@/components/ui/badge';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
-} from '@/components/ui/popover';
-import { SearchInput } from '@/components/search/search-input';
+} from '@/components/ui/popover-local';
 
 interface SearchAsYouTypeInputProps {
   params?: any;

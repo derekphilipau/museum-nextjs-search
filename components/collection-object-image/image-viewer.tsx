@@ -4,23 +4,25 @@ import { Key, useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getDictionary } from '@/dictionaries/dictionaries';
 import { getCaption } from '@/util/various';
 import useEmblaCarousel from 'embla-carousel-react';
 
 import { Icons } from '@/components/icons';
 import { buttonVariants } from '@/components/ui/button';
 import {
+  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  FullScreenDialog,
-} from '@/components/ui/full-screen-dialog';
+} from '@/components/ui/dialog-full-screen-local';
 
 const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
   ssr: false,
 });
 
 export function ImageViewer({ item }) {
+  const dict = getDictionary();
   const images = item?.images;
   const [selectedImage, setSelectedImage] = useState<any>({});
   const [open, setOpen] = useState(false);
@@ -105,27 +107,34 @@ export function ImageViewer({ item }) {
               </p>
             )}
           </div>
-          <FullScreenDialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="">
-              <DialogHeader className="">
-                <DialogTitle className="">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="h-full max-w-none p-0">
+              <DialogHeader className="z-50 h-16 bg-white p-4 dark:bg-neutral-900 sm:p-4  sm:text-left">
+                <DialogTitle className="mb-2 px-2 text-base font-semibold text-neutral-900 sm:px-0 sm:text-lg">
                   <span className="mr-3">{item.title}</span>
                   <Link
                     href={selectedImage?.url}
-                    className={buttonVariants({ variant: 'default', size: 'sm' })}
-                    aria-label='Download File'
+                    className={buttonVariants({
+                      variant: 'outline',
+                      size: 'sm',
+                    })}
+                    aria-label="Download File"
                   >
-                    <Icons.download className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                    <Icons.download
+                      className="mr-2 h-4 w-4"
+                      aria-hidden="true"
+                    />
+                    {dict['button.download']}
                   </Link>
                 </DialogTitle>
               </DialogHeader>
               {selectedImage.url && (
-                <div className="">
+                <div className="h-full w-full overflow-y-scroll">
                   <OpenSeaDragonViewer image={selectedImage.url} />
                 </div>
               )}
             </DialogContent>
-          </FullScreenDialog>
+          </Dialog>
         </div>
       )}
       {images.length > 1 && (
