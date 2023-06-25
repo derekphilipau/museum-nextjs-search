@@ -46,7 +46,7 @@ export function SearchFilters({
           {dict['search.hideFilters']}
         </Button>
       </div>
-      {index === 'collections' && false && (
+      {index === 'collections' && (
         <div className="color-picker">
           <ColorPicker params={params} />
         </div>

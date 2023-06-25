@@ -16,14 +16,14 @@ function getDetailsClass(layout) {
 }
 
 function getHsl(item) {
-  if (!(item.image?.dominantColorsHsl?.length > 0)) return 'white';
-  const hsl = `hsl(${item.image?.dominantColorsHsl[0].h}, ${item.image?.dominantColorsHsl[0].s}%, ${item.image?.dominantColorsHsl[0].l}%)`;
+  if (!(item.image?.dominantColors?.length > 0)) return 'white';
+  const hsl = `hsl(${item.image?.dominantColors[0].h}, ${item.image?.dominantColors[0].s}%, ${item.image?.dominantColors[0].l}%)`;
   return hsl;
 }
 
 function getFontColor(item) {
-  if (!(item.image?.dominantColorsHsl?.length > 0)) return 'black';
-  if (item.image?.dominantColorsHsl[0].l > 50) return 'black';
+  if (!(item.image?.dominantColors?.length > 0)) return 'black';
+  if (item.image?.dominantColors[0].l > 50) return 'black';
   return 'white';
 }
 
@@ -44,7 +44,7 @@ export function ColorCard({ item, layout, showType }) {
               {dict['index.collections.itemTitle']}
             </h4>
           )}
-          {item.image?.dominantColorsHsl && (
+          {item.image?.dominantColors && (
             <div
               className="flex aspect-square items-center justify-center p-10 text-center text-2xl"
               style={{

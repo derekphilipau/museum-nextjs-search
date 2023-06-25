@@ -6,6 +6,7 @@ import {
   trimStringToLengthAtWordBoundary,
 } from '@/util/various';
 
+import { DominantColors } from '@/components/color/dominant-colors';
 import { Icons } from '@/components/icons';
 
 function getContainerClass(layout) {
@@ -18,11 +19,12 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function CollectionObjectCard({ item, layout, showType }) {
+export function CollectionObjectCard({ item, layout, showType, showColor }) {
   if (!item) return null;
   const dict = getDictionary();
 
-  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
+  const primaryConstituentName =
+    item.primaryConstituent?.name || 'Maker Unknown';
 
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -55,6 +57,11 @@ export function CollectionObjectCard({ item, layout, showType }) {
             </figure>
           </div>
         </div>
+        {showColor && (
+          <div className="mt-2">
+            <DominantColors item={item} height={4} />
+          </div>
+        )}
         <div className={getDetailsClass(layout)}>
           {showType && layout === 'list' && (
             <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">

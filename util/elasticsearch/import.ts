@@ -279,3 +279,19 @@ export async function bulk(
     } docs, index size now ${await countIndex(client, indexName)}`
   );
 }
+
+export async function chunkedBulk(client: Client | undefined, documents: any[]) {
+  if (client === undefined) throw new Error(ERR_CLIENT);
+
+  const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
+
+  const chunks: any[] = [];
+  for (let i = 0; i < documents.length; i += chunkSize) {
+    chunks.push(documents.slice(i, i + chunkSize));
+  }
+
+  for (const chunk of chunks) {
+    console.log(`Processing chunk`);
+    await bulk(client, 'collections', documents, 'id', 'update');
+  }
+}

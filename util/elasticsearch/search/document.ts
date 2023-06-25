@@ -5,7 +5,7 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { BaseDocument } from '@/types/baseDocument';
 import { getClient } from '../client';
-import { similarImageHistogram } from './similarImageHistogram';
+import { similarDominantColors } from './similarDominantColors';
 import { similarCollectionObjects } from './similarObjects';
 
 /**
@@ -35,7 +35,7 @@ export async function getDocument(
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
   if (index === 'collections' && getAdditionalData) {
     apiResponse.similar = await similarCollectionObjects(data, client);
-    apiResponse.similarImageHistogram = await similarImageHistogram(
+    apiResponse.similarDominantColors = await similarDominantColors(
       data,
       client
     );

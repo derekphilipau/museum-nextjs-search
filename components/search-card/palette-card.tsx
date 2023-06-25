@@ -45,9 +45,9 @@ export function PaletteCard({ item, layout, showType }) {
               {dict['index.collections.itemTitle']}
             </h4>
           )}
-          {item.image?.dominantColorsHsl && (
+          {item.image?.dominantColors && (
             <div className="relative aspect-square items-center justify-center">
-              {item.image?.dominantColorsHsl.map(
+              {item.image?.dominantColors.map(
                 (color: any, i: Key) =>
                   color && (
                     <div

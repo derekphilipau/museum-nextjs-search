@@ -8,10 +8,10 @@ import { encode } from 'html-entities';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
-import { SimilarCollectionObjectList } from '@/components/collection-object/similar-collection-object-list';
 import { ImageViewer } from '@/components/collection-object-image/image-viewer';
-import { LanguageDisclaimer } from '@/components/collection-object/language-disclaimer';
 import { CollectionObjectDescription } from '@/components/collection-object/collection-object-description';
+import { LanguageDisclaimer } from '@/components/collection-object/language-disclaimer';
+import { SimilarCollectionObjectList } from '@/components/collection-object/similar-collection-object-list';
 import { MuseumMapDialog } from '@/components/museum-map/museum-map-dialog';
 
 export async function generateMetadata({ params }): Promise<Metadata> {
@@ -54,8 +54,8 @@ export default async function Page({ params }) {
 
   const collectionObject = data?.data as CollectionObjectDocument;
   const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
-  const similarImageHistogram =
-    data?.similarImageHistogram as CollectionObjectDocument[];
+  const similarDominantColors =
+    data?.similarDominantColors as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
 
   return (
@@ -98,7 +98,7 @@ export default async function Page({ params }) {
           ></div>
           <div className="gap-x-4 pt-4 lg:flex">
             <div>
-            <CollectionObjectDescription item={collectionObject} />
+              <CollectionObjectDescription item={collectionObject} />
             </div>
             <div className="flex-0 my-4">
               <MuseumMapDialog item={collectionObject} />
@@ -119,7 +119,7 @@ export default async function Page({ params }) {
 
       <SimilarCollectionObjectList
         title={dict['artwork.similarHistogram']}
-        similar={similarImageHistogram}
+        similar={similarDominantColors}
       />
 
       {/* https://beta.nextjs.org/docs/guides/seo */}

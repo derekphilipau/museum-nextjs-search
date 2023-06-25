@@ -8,6 +8,7 @@ import { abort, ask, questionsDone } from '@/util/command';
 import { loadEnvConfig } from '@next/env';
 
 import { importJsonlFileData } from './importDatafile';
+import { updateDominantColors } from './updateDominantColors';
 import { updateAllTerms } from './updateTerms';
 import { updateUlanTerms } from './updateUlanTerms';
 
@@ -84,6 +85,9 @@ async function run() {
   if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
 
   if ((await ask(`Update ULAN terms? (y/n) `)) === 'y') await updateUlanTerms();
+
+  if ((await ask(`Update dominant colors? (y/n) `)) === 'y')
+    await updateDominantColors();
 
   questionsDone();
 }

@@ -45,6 +45,7 @@ export default async function Page({ params, searchParams }) {
   const cardType = searchParams?.card || '';
   const sortField = searchParams?.sf || '';
   const sortOrder = searchParams?.so || '';
+  const color = searchParams?.color || '';
 
   const isShowFilters = getBooleanValue(searchParams?.f);
 
@@ -274,6 +275,7 @@ export default async function Page({ params, searchParams }) {
                           item={item}
                           layout={layout}
                           showType={index === 'all'}
+                          showColor={color ? true : false}
                         />
                       )}
                       {item.type === 'archive' && (

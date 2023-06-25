@@ -60,9 +60,9 @@ export function SwatchCard({ item, layout, showType }) {
               )}
               <figcaption></figcaption>
             </figure>
-            {item.image?.dominantColorsHsl && (
+            {item.image?.dominantColors && (
               <div className="flex items-center justify-center">
-                {item.image?.dominantColorsHsl.map(
+                {item.image?.dominantColors.map(
                   (color: any, i: Key) =>
                     color && (
                       <div
