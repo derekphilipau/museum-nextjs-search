@@ -1,9 +1,7 @@
 import { Key } from 'react';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-
-export function DominantColors({ item, height = 10 }) {
+export function DominantColors({ item, height = 10, isLinked = true }) {
   if (!item?.image?.dominantColors?.length) return null;
 
   // get total percent of all colors
@@ -12,21 +10,42 @@ export function DominantColors({ item, height = 10 }) {
     0
   );
 
+  if (isLinked) {
+    return (
+      <div className="flex w-full items-center border border-neutral-200 dark:border-neutral-600">
+        {item.image.dominantColors.map(
+          (color, index: Key) =>
+            color?.hex && (
+              <Link
+                className="rounded-none"
+                key={index}
+                href={`/search/collections?hasPhoto=true&color=${color.hex}`}
+                style={{
+                  backgroundColor: `#${color.hex}`,
+                  height: `${height}px`,
+                  width: `${(color.percent * totalPercent) / 100}%`,
+                }}
+              ></Link>
+            )
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex w-full items-center">
+    <div className="flex w-full items-center border border-neutral-200 dark:border-neutral-600">
       {item.image.dominantColors.map(
         (color, index: Key) =>
           color?.hex && (
-            <Link
+            <div
               className="rounded-none"
               key={index}
-              href={`/search/collections?hasPhoto=true&color=${color.hex}`}
               style={{
                 backgroundColor: `#${color.hex}`,
                 height: `${height}px`,
                 width: `${(color.percent * totalPercent) / 100}%`,
               }}
-            ></Link>
+            ></div>
           )
       )}
     </div>
