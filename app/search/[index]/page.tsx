@@ -208,7 +208,7 @@ export default async function Page({ params, searchParams }) {
             </div>
           </div>
 
-          {filterArr?.length > 0 && (
+          {(filterArr?.length > 0 || color) && (
             <div className="flex flex-wrap gap-2 pt-3">
               {filterArr?.length > 0 &&
                 filterArr.map(
@@ -222,6 +222,13 @@ export default async function Page({ params, searchParams }) {
                       />
                     )
                 )}
+              {color && (
+                <SearchFilterTag
+                  params={searchParams}
+                  name="color"
+                  value={color}
+                />
+              )}
             </div>
           )}
           {terms?.length > 0 && (
