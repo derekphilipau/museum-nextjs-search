@@ -27,27 +27,10 @@ export function SearchFilters({
   const router = useRouter();
   const pathname = usePathname();
 
-  function hideFilters() {
-    const updatedParams = new URLSearchParams(params);
-    updatedParams.delete('f');
-    router.push(`${pathname}?${updatedParams}`);
-  }
-
   return (
     <>
-      <div className="">
-        <Button
-          onClick={() => hideFilters()}
-          variant="ghost"
-          size="sm"
-          aria-label={dict['button.hideFilters']}
-        >
-          <Icons.slidersHorizontal className="mr-4 h-5 w-5" />
-          {dict['search.hideFilters']}
-        </Button>
-      </div>
       {index === 'collections' && (
-        <div className="color-picker">
+        <div className="color-picker mb-2">
           <ColorPicker params={params} />
         </div>
       )}

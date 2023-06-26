@@ -14,12 +14,7 @@ import { MuseumMap } from './museum-map';
 export function MuseumMapDialog({ item }: { item: CollectionObjectDocument }) {
   const [open, setOpen] = useState(false);
 
-  if (
-    !item?.id ||
-    !item?.museumLocation?.name ||
-    !item?.onView
-  )
-    return null;
+  if (!item?.id || !item?.museumLocation?.name || !item?.onView) return null;
 
   return (
     <>
@@ -33,14 +28,14 @@ export function MuseumMapDialog({ item }: { item: CollectionObjectDocument }) {
         <DialogContent className="h-full min-w-full">
           <DialogHeader>
             <DialogTitle className="z-50">{item.title}</DialogTitle>
-            <div className="h-screen overflow-y-scroll">
-              <div className="w-full">
-                <div className="flex max-w-md justify-center">
-                  <MuseumMap item={item} />
-                </div>
+          </DialogHeader>
+          <div className="h-screen overflow-y-scroll">
+            <div className="w-full">
+              <div className="flex max-w-md justify-center">
+                <MuseumMap item={item} />
               </div>
             </div>
-          </DialogHeader>
+          </div>
         </DialogContent>
       </Dialog>
     </>

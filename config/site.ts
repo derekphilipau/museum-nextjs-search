@@ -15,7 +15,7 @@ export const siteConfig: SiteConfig = {
   mainNav: [
     {
       dict: 'nav.search',
-      href: '/search/collections?hasPhoto=true',
+      href: '/search/collections?hasPhoto=true&f=true',
     },
   ],
   links: {

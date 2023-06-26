@@ -58,8 +58,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "slugify": "^1.6.5",
-    "tailwind-merge": "^1.8.0",
-    "tailwindcss-animate": "^1.0.5",
+    "tailwind-merge": "^1.13.2",
+    "tailwindcss-animate": "^1.0.6",
     "xml2js": "^0.4.23",
     "zlib": "^1.0.5"
   },

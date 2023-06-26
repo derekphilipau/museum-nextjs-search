@@ -6,34 +6,29 @@ import { X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-const FullScreenDialog = DialogPrimitive.Root;
+const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;
 
 const DialogPortal = ({
   className,
-  children,
   ...props
 }: DialogPrimitive.DialogPortalProps) => (
-  <DialogPrimitive.Portal className={cn(className)} {...props}>
-    <div className="fixed inset-0 z-50 flex items-start justify-center sm:items-center">
-      {children}
-    </div>
-  </DialogPrimitive.Portal>
+  <DialogPrimitive.Portal className={cn(className)} {...props} />
 );
 DialogPortal.displayName = DialogPrimitive.Portal.displayName;
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, children, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
+    ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-all duration-100 data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out',
+      'fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className
     )}
     {...props}
-    ref={ref}
   />
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
@@ -47,15 +42,14 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed z-50 grid h-full w-full gap-4 rounded-b-lg bg-white animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:rounded-lg sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0',
-        'dark:bg-neutral-900',
+        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full',
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="bg-opacity/50 absolute top-4 right-4 z-50 rounded-lg bg-white p-2 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-100 dark:bg-black dark:focus:ring-neutral-400 dark:focus:ring-offset-neutral-900 dark:data-[state=open]:bg-neutral-800">
-        <X className="h-6 w-6" />
+      <DialogPrimitive.Close className="absolute right-4 top-4 z-50 mt-2 rounded-sm opacity-100 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <X className="h-6 w-6 text-neutral-500" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
@@ -67,15 +61,13 @@ const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className="z-50 h-20">
-    <div
-      className={cn(
-        'flex flex-col space-y-2 bg-white px-4 pt-14 pb-4 text-center dark:bg-neutral-900 sm:p-4 sm:text-left',
-        className
-      )}
-      {...props}
-    />
-  </div>
+  <div
+    className={cn(
+      'flex flex-col space-y-1.5 text-center sm:text-left',
+      className
+    )}
+    {...props}
+  />
 );
 DialogHeader.displayName = 'DialogHeader';
 
@@ -100,8 +92,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-base font-semibold text-neutral-900 sm:text-lg',
-      'dark:text-neutral-50',
+      'text-lg font-semibold leading-none tracking-tight',
       className
     )}
     {...props}
@@ -115,18 +106,14 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn(
-      'text-sm text-neutral-500',
-      'dark:text-neutral-400',
-      className
-    )}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
-  FullScreenDialog,
+  Dialog,
   DialogTrigger,
   DialogContent,
   DialogHeader,
