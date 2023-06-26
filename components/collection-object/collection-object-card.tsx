@@ -59,7 +59,7 @@ export function CollectionObjectCard({ item, layout, showType, showColor }) {
         </div>
         {showColor && (
           <div className="mt-2">
-            <DominantColors item={item} height={4} />
+            <DominantColors item={item} height={4} isLinked={false} />
           </div>
         )}
         <div className={getDetailsClass(layout)}>
