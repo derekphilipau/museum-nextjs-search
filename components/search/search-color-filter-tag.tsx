@@ -3,15 +3,17 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
-import { Icons } from '../icons';
-
 interface SearchFilterTagProps {
   params?: any;
   name: string;
   value: any;
 }
 
-export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
+export function SearchColorFilterTag({
+  params,
+  name,
+  value,
+}: SearchFilterTagProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -31,14 +33,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
       onClick={() => buttonClick()}
       aria-label={dict['button.removeFilter']}
     >
-      {name === 'color' ? (
-        <Icons.circle
-          className={`h-6 w-6 rounded-full`}
-          style={{ backgroundColor: `#${value}`, color: `#${value}` }}
-        />
-      ) : (
-        <div>{value}</div>
-      )}
+      <div>{value}</div>
       <div>
         <svg
           className="h-3 w-3"

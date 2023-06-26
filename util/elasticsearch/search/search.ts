@@ -3,6 +3,7 @@
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
+import convert from 'color-convert';
 
 import type { AggOptions } from '@/types/aggOptions';
 import type {
@@ -390,22 +391,12 @@ function addQueryAggs(esQuery: any, indexName: string | string[] | undefined) {
   }
 }
 
-function addColorQuery(esQuery: any, colorName: string) {
-  // Lab colors object with properties for each color
-  const colors = {
-    red: { l: 53, a: 80, b: 67 },
-    orange: { l: 74, a: 23, b: 78 },
-    yellow: { l: 97, a: -21, b: 94 },
-    green: { l: 87, a: -86, b: 83 },
-    cyan: { l: 91, a: -48, b: -14 },
-    blue: { l: 32, a: 79, b: -107 },
-    purple: { l: 60, a: 98, b: -60 },
-    black: { l: 0, a: 0, b: 0 },
-    white: { l: 100, a: -0.005, b: -0.01 },
-  };
+function addColorQuery(esQuery: any, hexColor: string) {
+  if (!hexColor) return;
 
-  const color = colors?.[colorName];
-  if (!color) return;
+  const color = convert.hex.lab(hexColor);
+
+  if (!color || color.length !== 3) return;
 
   const colorQuery: T.QueryDslQueryContainer = {
     function_score: {
@@ -419,7 +410,7 @@ function addColorQuery(esQuery: any, colorName: string) {
                 {
                   exp: {
                     'image.dominantColors.l': {
-                      origin: color.l,
+                      origin: color[0],
                       offset: 10,
                       scale: 20,
                     },
@@ -428,7 +419,7 @@ function addColorQuery(esQuery: any, colorName: string) {
                 {
                   exp: {
                     'image.dominantColors.a': {
-                      origin: color.a,
+                      origin: color[1],
                       offset: 5,
                       scale: 10,
                     },
@@ -437,7 +428,7 @@ function addColorQuery(esQuery: any, colorName: string) {
                 {
                   exp: {
                     'image.dominantColors.b': {
-                      origin: color.b,
+                      origin: color[2],
                       offset: 5,
                       scale: 10,
                     },

@@ -4,8 +4,8 @@ import * as React from 'react';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import CollectionObjectContactForm from '@/components/collection-object-contact-form/collection-object-contact-form';
-import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 export function LanguageDisclaimer({ item, formId }) {
   const dict = getDictionary();
