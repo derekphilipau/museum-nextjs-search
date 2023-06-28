@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { useDebounce } from '@/util/debounce';
 
+import type { Term } from '@/types/term';
 import { SearchInput } from '@/components/search/search-input';
 import { Badge } from '@/components/ui/badge';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
@@ -25,7 +26,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
   // const popoverRef = useRef<HTMLDivElement>(null);
 
   const [value, setValue] = useState(params?.q || '');
-  const [searchOptions, setSearchOptions] = useState<any[]>([]);
+  const [searchOptions, setSearchOptions] = useState<Term[]>([]);
 
   const debouncedSuggest = useDebounce(() => {
     if (value?.length < 3) {
@@ -41,13 +42,30 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
         });
   }, 100);
 
-  function doSearch(currentValue = '') {
+  function searchForQuery(currentValue = '') {
     const updatedParams = new URLSearchParams(params);
     if (currentValue) updatedParams.set('q', currentValue);
     else updatedParams.delete('q');
     updatedParams.delete('p');
     setSearchOptions([]);
     setValue(currentValue);
+    router.push(`${pathname}?${updatedParams}`);
+  }
+
+  function searchForTerm(term: Term) {
+    const updatedParams = new URLSearchParams(params);
+    if (!term.value || !term.field) return;
+    if (term.field === 'primaryConstituent') {
+      updatedParams.set('primaryConstituent.name', term.value);
+    } else if (term.field === 'classification') {
+      updatedParams.set('classification', term.value);
+    } else if (term.field === 'collections') {
+      updatedParams.set('collections', term.value);
+    }
+    updatedParams.delete('q');
+    updatedParams.delete('p');
+    setSearchOptions([]);
+    setValue('');
     router.push(`${pathname}?${updatedParams}`);
   }
 
@@ -58,7 +76,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
 
   function handleOnSubmit(event: FormEvent) {
     event.preventDefault();
-    doSearch(value);
+    searchForQuery(value);
   }
 
   /*
@@ -108,7 +126,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
               <CommandItem
                 key={term.value}
                 onSelect={() => {
-                  doSearch(term.value);
+                  searchForTerm(term);
                 }}
                 className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700"
               >
