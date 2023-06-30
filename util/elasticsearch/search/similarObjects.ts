@@ -52,11 +52,12 @@ export async function similarCollectionObjects(
     size: SIMILAR_PAGE_SIZE,
   };
 
+  // Adjust these boosts to accomodate your conception of object similarity:
   if (
-    document.primaryConstituent?.name &&
+    document.primaryConstituent?.id &&
     document.primaryConstituent?.name !== UNKNOWN_CONSTITUENT
   ) {
-    addShouldTerms(document, esQuery, 'primaryConstituent.name', 4);
+    addShouldTerms(document, esQuery, 'primaryConstituent.id', 4);
   }
   //addShouldTerms(esQuery, 'style', document.style, 3.5)
   //addShouldTerms(esQuery, 'movement', document.movement, 3)
@@ -94,9 +95,13 @@ function addShouldTerms(
   name: string,
   boost: number
 ) {
-  if (!(name in document)) return;
-  let value = document[name];
-  if (!(value?.length > 0)) return;
+  if (!name) return;
+  // only handle max two levels deep:
+  const nameParts = name.split('.');
+  let value: string | string[] = '';
+  if (nameParts?.length === 2) value = document?.[nameParts[0]]?.[nameParts[1]];
+  else value = document[name];
+  if (!value) return;
   if (!Array.isArray(value)) value = [value];
   if (!esQuery?.query) esQuery.query = {};
   if (!esQuery.query?.bool) esQuery.query.bool = {};
