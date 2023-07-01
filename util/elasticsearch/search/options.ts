@@ -1,5 +1,3 @@
-'use strict';
-
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import type { AggOption } from '@/types/aggOption';

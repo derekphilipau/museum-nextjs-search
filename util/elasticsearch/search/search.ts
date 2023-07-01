@@ -1,5 +1,3 @@
-'use strict';
-
 import { indicesMeta } from '@/util/elasticsearch/indicesMeta';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';

@@ -1,5 +1,3 @@
-'use strict';
-
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
