@@ -1,5 +1,3 @@
-'use strict';
-
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
@@ -12,11 +10,12 @@ const UNKNOWN_CONSTITUENT = 'Unknown'; // Default string for unknown constituent
 
 export async function similarCollectionObjectsById(
   id: number | string | undefined
-) {
+): Promise<CollectionObjectDocument[]> {
   if (!id) return [];
   const docResponse = await getDocument('collections', id);
-  const document = docResponse?.data;
+  const document = docResponse?.data as CollectionObjectDocument;
   if (document) return similarCollectionObjects(document);
+  return [];
 }
 
 /**
@@ -27,12 +26,12 @@ export async function similarCollectionObjectsById(
  * @returns Array of similar objects
  */
 export async function similarCollectionObjects(
-  document?: any,
+  document?: CollectionObjectDocument,
   client?: Client
 ): Promise<CollectionObjectDocument[]> {
   if (!document || !document.id) return [];
 
-  const esQuery = {
+  const esQuery: T.SearchRequest = {
     index: 'collections',
     query: {
       bool: {
@@ -59,16 +58,11 @@ export async function similarCollectionObjects(
   ) {
     addShouldTerms(document, esQuery, 'primaryConstituent.id', 4);
   }
-  //addShouldTerms(esQuery, 'style', document.style, 3.5)
-  //addShouldTerms(esQuery, 'movement', document.movement, 3)
-  //addShouldTerms(esQuery, 'culture', document.culture, 3)
   addShouldTerms(document, esQuery, 'dynasty', 2);
-  //addShouldTerms(esQuery, 'reign', document.reign, 2)
   addShouldTerms(document, esQuery, 'period', 2);
   addShouldTerms(document, esQuery, 'classification', 1.5);
   addShouldTerms(document, esQuery, 'medium', 1);
   addShouldTerms(document, esQuery, 'collections', 1);
-  //addShouldTerms(esQuery, 'artistRole', document, 1)
   addShouldTerms(document, esQuery, 'exhibitions', 1);
   addShouldTerms(document, esQuery, 'primaryGeographicalLocation.name', 1);
 
@@ -90,8 +84,8 @@ export async function similarCollectionObjects(
  * @returns  Void.  The ES Query is modified in place
  */
 function addShouldTerms(
-  document: any,
-  esQuery: any,
+  document: CollectionObjectDocument,
+  esQuery: T.SearchRequest,
   name: string,
   boost: number
 ) {
@@ -99,17 +93,22 @@ function addShouldTerms(
   // only handle max two levels deep:
   const nameParts = name.split('.');
   let value: string | string[] = '';
-  if (nameParts?.length === 2) value = document?.[nameParts[0]]?.[nameParts[1]];
-  else value = document[name];
+  if (nameParts?.length === 2) {
+    value = document?.[nameParts[0]]?.[nameParts[1]];
+  } else {
+    value = document[name];
+  }
   if (!value) return;
   if (!Array.isArray(value)) value = [value];
-  if (!esQuery?.query) esQuery.query = {};
-  if (!esQuery.query?.bool) esQuery.query.bool = {};
-  if (!esQuery.query.bool?.should) esQuery.query.bool.should = [];
-  esQuery.query.bool.should.push({
+  const queryFilter: T.QueryDslQueryContainer = {
     terms: {
       [name]: value,
       boost,
     },
-  });
+  };
+  esQuery.query = esQuery?.query || {};
+  esQuery.query.bool = esQuery.query?.bool || {};
+  esQuery.query.bool.should =
+    esQuery.query.bool?.should || ([] as T.QueryDslQueryContainer[]);
+  (esQuery.query.bool.should as T.QueryDslQueryContainer[]).push(queryFilter);
 }

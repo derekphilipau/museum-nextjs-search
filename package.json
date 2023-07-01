@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "import": "npx ts-node ./util/data/import/importDataCommand.ts",
     "preview": "next build && next start",
     "test:e2e": "playwright test",
     "format": "prettier --check --ignore-path .gitignore ."

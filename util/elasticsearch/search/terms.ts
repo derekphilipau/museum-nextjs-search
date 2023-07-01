@@ -1,11 +1,9 @@
-'use strict';
-
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
+import { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { Term } from '@/types/term';
 import { getClient } from '../client';
-import { ApiResponseDocument } from '@/types/apiResponseDocument';
 
 const TERMS_PAGE_SIZE = 12; // 12 results per aggregation terms search
 
@@ -17,7 +15,6 @@ const TERMS_PAGE_SIZE = 12; // 12 results per aggregation terms search
  * @param client Elasticsearch client
  * @returns ApiResponseDocument containing Term
  */
-// primaryConstituent.name: 'Oscar yi Hou' }
 export async function getTerm(
   field: string,
   value: string,
@@ -28,12 +25,9 @@ export async function getTerm(
     index: 'terms',
     query: {
       bool: {
-        must: [
-          { match: { field } },
-          { match: { value } },
-        ]
-      }
-    }
+        must: [{ match: { field } }, { match: { value } }],
+      },
+    },
   };
 
   if (!client) client = getClient();
@@ -61,9 +55,9 @@ export async function terms(
     query: {
       multi_match: {
         query: myQuery,
-        fields: [ "value^3", "alternates" ],
+        fields: ['value^3', 'alternates'],
         fuzziness: 'AUTO:3,7',
-      }
+      },
     },
     from: 0,
     size,

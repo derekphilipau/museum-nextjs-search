@@ -38,8 +38,6 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
     }
   }
 
-  //"visible": 1,
-  //"date_added": "2008-06-30",
   cod.searchText = obj.accession_number;
   cod.accessionNumber = obj.accession_number; // "14.301a-e"
   cod.accessionDate = new Date(obj.accession_date).toISOString(); // "1915-11-06 00:00:00"
@@ -67,7 +65,7 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
       name: NOT_ON_VIEW,
       isPublic: false,
       isFloor: false,
-    }
+    };
   } else if (obj.museum_location?.id) {
     cod.onView = true;
     cod.museumLocation = {
@@ -76,13 +74,13 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
       isPublic: obj.museum_location.is_public === 1,
       isFloor: obj.museum_location.is_floor,
       parentId: obj.museum_location.parent_location_id,
-    }
+    };
   }
 
   if (obj.rights_type?.name !== '(not assigned)') {
     cod.rightsType = obj.rights_type?.public_name;
   }
-  cod.completeness  = obj.completeness.percentage;
+  cod.completeness = obj.completeness.percentage;
 
   if (obj.artists?.length) {
     cod.constituents = obj.artists.map((artist: any) => ({
@@ -114,17 +112,21 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
 
   cod.collections = obj.collections?.map((collection: any) => collection.name);
   cod.exhibitions = obj.exhibitions?.map((exhibition: any) => exhibition.title);
-  cod.relatedObjects = obj.related_items?.map((related: any) => related.object_id);
+  cod.relatedObjects = obj.related_items?.map(
+    (related: any) => related.object_id
+  );
 
   if (obj.geographical_locations?.length) {
     // TODO: get continent, country, etc.
-    cod.geographicalLocations = obj.geographical_locations.map((location: any) => ({
-      id: location.id,
-      name: location.name,
-      continent: location.continent,
-      country: location.country,
-      type: location.type,
-    }));
+    cod.geographicalLocations = obj.geographical_locations.map(
+      (location: any) => ({
+        id: location.id,
+        name: location.name,
+        continent: location.continent,
+        country: location.country,
+        type: location.type,
+      })
+    );
     if (cod.geographicalLocations?.length) {
       cod.primaryGeographicalLocation = cod.geographicalLocations[0];
     }
@@ -132,13 +134,18 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
 
   let primaryImageInArray = true;
   if (obj.primary_image) {
-    const myImage = obj.images.find((image: any) => image.filename === obj.primary_image);
+    const myImage = obj.images.find(
+      (image: any) => image.filename === obj.primary_image
+    );
     if (!myImage) {
       // Sometimes primary image isn't in list of all images
       primaryImageInArray = false;
       cod.image = {
         id: obj.primary_image,
-        url: getLargeOrRestrictedImageUrl(obj.primary_image, cod.copyrightRestricted),
+        url: getLargeOrRestrictedImageUrl(
+          obj.primary_image,
+          cod.copyrightRestricted
+        ),
         thumbnailUrl: getSmallOrRestrictedImageUrl(
           obj.primary_image,
           cod.copyrightRestricted
@@ -148,7 +155,10 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
     } else {
       cod.image = {
         id: myImage.id,
-        url: getLargeOrRestrictedImageUrl(myImage.filename, cod.copyrightRestricted),
+        url: getLargeOrRestrictedImageUrl(
+          myImage.filename,
+          cod.copyrightRestricted
+        ),
         thumbnailUrl: getSmallOrRestrictedImageUrl(
           myImage.filename,
           cod.copyrightRestricted
