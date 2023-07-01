@@ -54,8 +54,6 @@ export default async function Page({ params }) {
 
   const collectionObject = data?.data as CollectionObjectDocument;
   const similarCollectionObjects = data?.similar as CollectionObjectDocument[];
-  const similarDominantColors =
-    data?.similarDominantColors as CollectionObjectDocument[];
   const jsonLd = getSchemaVisualArtworkJson(collectionObject);
 
   return (
@@ -115,11 +113,6 @@ export default async function Page({ params }) {
       <SimilarCollectionObjectList
         title={dict['artwork.similar']}
         similar={similarCollectionObjects}
-      />
-
-      <SimilarCollectionObjectList
-        title={dict['artwork.similarHistogram']}
-        similar={similarDominantColors}
       />
 
       {/* https://beta.nextjs.org/docs/guides/seo */}
