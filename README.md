@@ -67,8 +67,7 @@ Adjust number_of_shards and number_of_replicas for your use case.
 
 - `unaggregatedStandardAnalyzer` - For common text fields that are not aggregated.
 - `aggregatedKeywordAnalyzer` - For aggregated keyword fields
-- `aggregatedSimpleKeywordAnalyzer` - Not filtered, although converted to lowercase.
-- `suggestAnalyzer` - For search_as_you_type fields, not currently implemented. TODO.
+- `suggestAnalyzer` - For search_as_you_type fields
 
 #### Field definitions
 
@@ -332,13 +331,9 @@ If you have not yet loaded the Elasticsearch data, you should see an error on th
 
 ### Loading the data
 
-The main data file with collection objects is `./data/BrooklynMuseum/archivesSpaceDCRecords.jsonl.gz`. `importDataCommand.ts` will load compressed data from .jsonl.gz files in the `data/BrooklynMuseum/` directory into Elasticsearch indices. **_Warning: This will erase Elasticsearch indices._**
+From the command line, run: `npm run import`
 
-From the command line, run:
-
-```
-npx ts-node ./util/data/import/importDataCommand.ts
-```
+The main data file with collection objects is `./data/BrooklynMuseum/archivesSpaceDCRecords.jsonl.gz`. `importDataCommand.ts` will load compressed data from .jsonl.gz files in the `data/BrooklynMuseum/` directory into Elasticsearch indices. **_Warning: This will modify Elasticsearch indices._**
 
 This command will:
 
@@ -349,19 +344,7 @@ This command will:
 5. Ask if you want to import the archives index (all records)
 6. Ask if you want to update the terms index. Queries collections index for collections, classifications, and primaryConstituent fields, then adds unique values to the terms index.
 7. Ask if you want to update the ULAN terms index. Queries collections index for all unique primaryConstituent values, then searches ULAN data files for each name. If a match is found, ULAN data is added to the term.
-
-```
-Loaded env from /Users/aud/Projects/bkm/museum-nextjs-search/.env.local
-Import Elasticsearch data from JSON files.
-WARNING: Using Elasticsearch Cloud
-Proceeding will overwrite existing Elasticsearch indices & data. Continue? (y/n) y
-Beginning import of Elasticsearch data from JSON files...
-Import collections index from ./data/brooklynMuseum/collections.jsonl.gz? (y/n) n
-Import content index from ./data/brooklynMuseum/content.jsonl.gz? (y/n) n
-Import archives index from ./data/brooklynMuseum/archivesSpaceDCRecords.jsonl.gz? (y/n) n
-Update terms? (y/n) n
-Update ULAN terms? (y/n) y
-```
+8. Ask if you want to update dominant colors. This will only update colors for images which haven't already been analyzed.
 
 The import process will take some time, as it inserts 1000 documents at a time using Elasticsearch bulk and then rests for a couple seconds. There are about 100,000 documents in the collections dataset, 800 in content, and 31,000 in the archives dataset.
 

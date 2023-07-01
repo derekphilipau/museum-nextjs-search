@@ -92,7 +92,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
   */
 
   const handleOpenChange = (event) => {
-    event.preventDefault();
+    event?.preventDefault();
   };
 
   function getFieldName(field: string) {

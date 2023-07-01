@@ -29,7 +29,7 @@ export const collections: T.IndicesIndexSettings = {
       ...baseDocument,
       constituents: S.constituentObjectField,
       images: S.disabledObjectField,
-      accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
+      accessionNumber: S.searchableAggregatedKeywordAnalyzerField,
       accessionDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,
       dynasty: S.searchableAggregatedKeywordAnalyzerField,
@@ -82,9 +82,9 @@ export const archives: T.IndicesIndexSettings = {
   mappings: {
     properties: {
       ...baseDocument,
-      accessionNumber: S.searchableAggregatedSimpleKeywordAnalyzerField,
-      subject: S.searchableAggregatedSimpleKeywordAnalyzerField,
-      language: S.searchableAggregatedSimpleKeywordAnalyzerField,
+      accessionNumber: S.searchableAggregatedKeywordAnalyzerField,
+      subject: S.searchableAggregatedKeywordAnalyzerField,
+      language: S.searchableAggregatedKeywordAnalyzerField,
       publisher: S.keywordField,
       format: S.textField,
       rights: S.textField,

@@ -19,11 +19,6 @@ export const analysis: T.IndicesIndexSettingsAnalysis = {
       char_filter: ['hyphenApostropheMappingFilter'],
       filter: ['lowercase', 'asciifolding'],
     },
-    aggregatedSimpleKeywordAnalyzer: {
-      type: 'custom',
-      tokenizer: 'keyword',
-      filter: ['lowercase'],
-    },
     suggestAnalyzer: {
       type: 'custom',
       tokenizer: 'standard',
@@ -77,21 +72,10 @@ export const searchableAggregatedKeywordAnalyzerField: T.MappingProperty = {
   fields: {
     search: {
       type: 'text',
-      analyzer: 'aggregatedKeywordAnalyzer',
+      analyzer: 'unaggregatedStandardAnalyzer',
     },
   },
 };
-
-export const searchableAggregatedSimpleKeywordAnalyzerField: T.MappingProperty =
-  {
-    type: 'keyword',
-    fields: {
-      search: {
-        type: 'text',
-        analyzer: 'aggregatedSimpleKeywordAnalyzer',
-      },
-    },
-  };
 
 export const suggestUnaggregatedStandardAnalyzerField: T.MappingProperty = {
   type: 'keyword',
