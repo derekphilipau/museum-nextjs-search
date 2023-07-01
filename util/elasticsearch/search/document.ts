@@ -11,9 +11,11 @@ import { similarCollectionObjects } from './similarObjects';
 /**
  * Get a document by Elasticsearch id
  *
+ * If we're querying the collections index, also return similar objects and similar dominant colors
+ *
  * @param index Index to search
  * @param id ID of document to search for
- * @returns Elasticsearch Document
+ * @returns ApiResponseDocument containing query, data, similar objects and similar dominant colors
  */
 export async function getDocument(
   index: string,

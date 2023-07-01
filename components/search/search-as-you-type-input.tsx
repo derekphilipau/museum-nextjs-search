@@ -40,7 +40,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
           if (data?.data?.length > 0) setSearchOptions(data.data);
           else setSearchOptions([]);
         });
-  }, 100);
+  }, 50);
 
   function searchForQuery(currentValue = '') {
     const updatedParams = new URLSearchParams(params);
