@@ -1,12 +1,16 @@
 import { getClient } from '@/util/elasticsearch/client';
-import { ERR_CLIENT, bulk, deleteDocuments, createIndex } from '@/util/elasticsearch/import';
+import {
+  ERR_CLIENT,
+  bulk,
+  createIndex,
+  deleteDocuments,
+} from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import slugify from 'slugify';
 
 import { type Term } from '@/types/term';
 
 export async function updateAllTerms() {
-
   const client = getClient();
   if (client === undefined) throw new Error(ERR_CLIENT);
   // Re-create terms index, effectively deleting the old one
@@ -16,12 +20,13 @@ export async function updateAllTerms() {
   await updateTerms('collections', 'collections');
   await updateTerms('collections', 'classification');
   await updateTerms('collections', 'primaryConstituent', 'id', 'name');
+  await updateTerms('collections', 'exhibitions');
 }
 
 /**
  * This function performs the core task of getting all documents from the Elasticsearch index
  * and then process the specific field in each document to create new terms.
- * 
+ *
  * @param index The Elasticsearch index to search
  * @param field The field in the Elasticsearch index to process
  * @param fieldUniqueId The unique id field in the field object (if it's an object)
@@ -34,11 +39,7 @@ async function updateTerms(
   valueFieldProperty?: string
 ) {
   // Search all documents with the specific field:
-  const docs: any[] = await searchAll(
-    index,
-    { exists: { field } },
-    [field]
-  );
+  const docs: any[] = await searchAll(index, { exists: { field } }, [field]);
   // Map all results into a new array that only contains the specific field:
   const results: any[] = docs.map((o: any) => o[field]);
 

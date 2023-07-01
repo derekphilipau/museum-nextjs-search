@@ -41,12 +41,14 @@ export function getCaption(
 ): string {
   if (!item) return '';
   let caption = '';
-  caption += item?.primaryConstituent?.name ? `${item.primaryConstituent.name}. ` : '';
+  caption += item?.primaryConstituent?.name
+    ? `${item.primaryConstituent.name}. `
+    : '';
   caption += item?.title ? `${item.title}, ` : '';
   caption += item?.date ? `${item.date}. ` : '';
   caption += item?.medium ? `${item.medium}, ` : '';
   caption += item?.dimensions ? `${item.dimensions}. ` : '';
-  caption += item?.creditLine ? `Brooklyn Museum, ${item.creditLine}, ` : '';
+  caption += item?.creditLine ? `${item.creditLine}, ` : '';
   caption += item?.accessionNumber ? `${item.accessionNumber}. ` : '';
   caption += item?.copyright ? `${item.copyright} ` : '';
   caption += item?.source ? `(Photo: ${item.source})` : '';
@@ -84,7 +86,10 @@ export function trimStringToLengthAtWordBoundary(
   return str.substr(0, str.lastIndexOf(' ', length)) + ellipsis;
 }
 
-export function getObjectUrlWithSlug(id: number | string, title: string | undefined) {
+export function getObjectUrlWithSlug(
+  id: number | string,
+  title: string | undefined
+) {
   if (!id) return '';
   let url = `/collection/object/${id}`;
   if (title === undefined) return url;

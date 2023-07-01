@@ -57,10 +57,8 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
     if (!term.value || !term.field) return;
     if (term.field === 'primaryConstituent') {
       updatedParams.set('primaryConstituent.name', term.value);
-    } else if (term.field === 'classification') {
-      updatedParams.set('classification', term.value);
-    } else if (term.field === 'collections') {
-      updatedParams.set('collections', term.value);
+    } else {
+      updatedParams.set(term.field, term.value);
     }
     updatedParams.delete('q');
     updatedParams.delete('p');
@@ -96,14 +94,9 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
   };
 
   function getFieldName(field: string) {
-    switch (field) {
-      case 'primaryConstituent':
-        return dict['index.collections.agg.primaryConstituent.name'];
-      case 'classification':
-        return dict['index.collections.agg.classification'];
-      case 'collections':
-        return dict['index.collections.agg.collections'];
-    }
+    if (field === 'primaryConstituent')
+      return dict['index.collections.agg.primaryConstituent.name'];
+    else return dict[`index.collections.agg.${field}`];
   }
 
   return (
