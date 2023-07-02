@@ -58,7 +58,7 @@ export default async function Page({ params }) {
 
   return (
     <>
-      <section className="container grid gap-y-6 gap-x-12 pt-6 pb-8 md:grid-cols-2 md:py-10 lg:grid-cols-8">
+      <section className="container grid gap-x-12 gap-y-6 pb-8 pt-6 md:grid-cols-2 md:py-10 lg:grid-cols-8">
         <div className="flex items-start justify-center md:col-span-1 lg:col-span-3">
           <ImageViewer item={collectionObject} />
         </div>

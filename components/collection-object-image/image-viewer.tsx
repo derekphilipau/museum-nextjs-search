@@ -75,7 +75,7 @@ export function ImageViewer({ item }) {
                       onClick={() => clickImage(index)}
                     >
                       <div className="relative">
-                        <div className="absolute top-0 right-0 hidden group-hover:block">
+                        <div className="absolute right-0 top-0 hidden group-hover:block">
                           <Icons.expand className="h-5 w-5 fill-current" />
                         </div>
                         <figure key={index}>
@@ -109,8 +109,8 @@ export function ImageViewer({ item }) {
           </div>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="h-full max-w-none p-0">
-              <DialogHeader className="z-50 h-16 bg-white p-4 dark:bg-neutral-900 sm:p-4  sm:text-left">
-                <DialogTitle className="mb-2 px-2 text-base font-semibold text-neutral-900 sm:px-0 sm:text-lg">
+              <DialogHeader className="z-50 h-16 bg-white p-4 dark:bg-neutral-900 sm:p-4 sm:text-left">
+                <DialogTitle className="mb-2 px-2 text-base font-semibold sm:px-0 sm:text-lg">
                   <span className="mr-3">{item.title}</span>
                   <Link
                     href={selectedImage?.url}
