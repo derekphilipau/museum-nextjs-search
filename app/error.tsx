@@ -8,7 +8,8 @@ import { buttonVariants } from '@/components/ui/button';
 
 function getErrorMessage(error: Error) {
   if (!error?.message) return 'Unknown error';
-  if (error.message.includes('ECONNREFUSED')) return 'Unable to connect to Elasticsearch Service';
+  if (error.message.includes('ECONNREFUSED'))
+    return 'Unable to connect to Elasticsearch Service';
   return error.message;
 }
 
@@ -25,7 +26,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <section className="container grid items-center gap-6 pt-6 pb-8 md:py-10">
+    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl">
           Error

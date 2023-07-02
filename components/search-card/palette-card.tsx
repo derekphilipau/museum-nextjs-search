@@ -32,7 +32,8 @@ export function PaletteCard({ item, layout, showType }) {
   if (!item) return null;
   const dict = getDictionary();
 
-  const primaryConstituentName = item.primaryConstituent?.name || 'Maker Unknown';
+  const primaryConstituentName =
+    item.primaryConstituent?.name || 'Maker Unknown';
 
   const href = getObjectUrlWithSlug(item.id, item.title);
 
@@ -59,7 +60,7 @@ export function PaletteCard({ item, layout, showType }) {
                     ></div>
                   )
               )}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-2xl">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-2xl">
                 {trimStringToLengthAtWordBoundary(item.title, 100)}
               </div>
             </div>

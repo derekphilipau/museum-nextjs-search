@@ -129,7 +129,7 @@ export default async function Page({ params, searchParams }) {
           </div>
         )}
       </div>
-      <div className="gap-6 pt-4 pb-8 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
+      <div className="gap-6 pb-8 pt-4 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
         {isShowFilters && (
           <div className="hidden h-full space-y-2 sm:col-span-1 sm:block">
             <SearchFilters
@@ -173,7 +173,7 @@ export default async function Page({ params, searchParams }) {
                       <p className="">{term.data.ulan?.descriptiveNotes}</p>
                     )}
                     {term.data?.ulan?.id && (
-                      <p className="mt-2 mb-4">
+                      <p className="mb-4 mt-2">
                         <Link
                           href={`https://www.getty.edu/vow/ULANFullDisplay?find=${term.data.ulan?.id}&role=&nation=&subjectid=${term.data.ulan?.id}`}
                           target="_blank"
@@ -233,7 +233,7 @@ export default async function Page({ params, searchParams }) {
           )}
           {terms?.length > 0 && (
             <>
-              <h4 className="mt-4 mb-2 text-lg text-neutral-900 dark:text-white">
+              <h4 className="mb-2 mt-4 text-lg text-neutral-900 dark:text-white">
                 Did you mean:
               </h4>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:pb-6 lg:grid-cols-4">

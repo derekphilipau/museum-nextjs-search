@@ -75,7 +75,7 @@ export function ImageViewer({ item }) {
                       onClick={() => clickImage(index)}
                     >
                       <div className="relative">
-                        <div className="absolute top-0 right-0 hidden group-hover:block">
+                        <div className="absolute right-0 top-0 hidden group-hover:block">
                           <Icons.expand className="h-5 w-5 fill-current" />
                         </div>
                         <figure key={index}>
