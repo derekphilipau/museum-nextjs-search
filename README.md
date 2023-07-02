@@ -358,7 +358,7 @@ The import process will take some time, as it inserts 1000 documents at a time u
 
 ## License
 
-Licensed under the [MIT license](https://github.com/shadcn/ui/blob/main/LICENSE.md).
+Licensed under the [MIT license](./LICENSE.md).
 
 ## Lighthouse Score
 
