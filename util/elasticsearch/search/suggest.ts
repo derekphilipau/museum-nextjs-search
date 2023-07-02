@@ -30,7 +30,7 @@ export async function suggest(q?: string): Promise<ApiResponseSuggest> {
         ],
       },
     },
-    _source: ['field', 'value'], // Just return the value
+    _source: ['field', 'value', 'index'], // Just return the value
     size: MAX_SUGGESTIONS,
   };
 

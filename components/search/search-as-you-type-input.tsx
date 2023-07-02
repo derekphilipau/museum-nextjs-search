@@ -1,7 +1,7 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import { useDebounce } from '@/util/debounce';
 
@@ -23,9 +23,9 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
   const dict = getDictionary();
   const router = useRouter();
   const pathname = usePathname();
-  // const popoverRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
-  const [value, setValue] = useState(params?.q || '');
+  const [value, setValue] = useState(searchParams?.get('q') || '');
   const [searchOptions, setSearchOptions] = useState<Term[]>([]);
 
   const debouncedSuggest = useDebounce(() => {
@@ -62,9 +62,10 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
     }
     updatedParams.delete('q');
     updatedParams.delete('p');
+    const searchPath = `/search/${term.index || ''}`;
     setSearchOptions([]);
     setValue('');
-    router.push(`${pathname}?${updatedParams}`);
+    router.push(`${searchPath}?${updatedParams}`);
   }
 
   const onQueryChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -77,21 +78,14 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
     searchForQuery(value);
   }
 
-  /*
-  TODO: Figure out a way to focus the popover on arrow down
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (popoverRef.current && typeof popoverRef.current.focus === 'function') {
-        popoverRef.current.focus();
-      }
-    }
-  };
-  */
+  function handleOpenChange(event) {
+    if (event) event.preventDefault();
+  }
 
-  const handleOpenChange = (event) => {
-    event?.preventDefault();
-  };
+  useEffect(() => {
+    setSearchOptions([]);
+    setValue(searchParams?.get('q') || '');
+  }, [pathname, searchParams]);
 
   function getFieldName(field: string) {
     if (field === 'primaryConstituent')
@@ -125,7 +119,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
               >
                 <div className="flex w-full items-center justify-between ">
                   <div className="ml-2">{term.value}</div>
-                  <Badge variant="default">{getFieldName(term.field)}</Badge>
+                  <Badge variant="secondary">{getFieldName(term.field)}</Badge>
                 </div>
               </CommandItem>
             ))}
