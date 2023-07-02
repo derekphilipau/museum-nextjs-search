@@ -25,14 +25,27 @@ export async function updateDominantColors(forceUpdate: boolean = false) {
       INDEX_NAME,
       {
         bool: {
-          must_not: [
-            {
-              exists: { field: 'image.dominantColors' },
-            },
-          ],
           must: [
             {
               exists: { field: 'image.thumbnailUrl' },
+            },
+          ],
+          must_not: [
+            {
+              nested: {
+                path: 'image.dominantColors',
+                query: {
+                  bool: {
+                    must: [
+                      {
+                        exists: {
+                          field: 'image.dominantColors',
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
             },
           ],
         },
