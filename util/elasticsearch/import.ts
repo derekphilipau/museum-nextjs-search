@@ -102,14 +102,18 @@ export async function createIndex(
   indexName: string,
   deleteIfExists = true
 ) {
-  if (deleteIfExists) await deleteIndex(client, indexName);
   if (!indices[indexName]) {
     throw new Error(`Index ${indexName} does not exist in indices definition`);
   }
-  await client.indices.create({
-    index: indexName,
-    body: indices[indexName],
-  });
+  if (deleteIfExists) await deleteIndex(client, indexName);
+
+  const indexExists = await existsIndex(client, indexName);
+  if (!indexExists) {
+    await client.indices.create({
+      index: indexName,
+      body: indices[indexName],
+    });
+  }
 }
 
 /**
@@ -224,6 +228,27 @@ export async function setIndexAsAlias(
 }
 
 /**
+ * Completely remove an alias an all current and past indices associated with it.
+ *
+ * @param client Elasticsearch client.
+ * @param aliasName Name of the alias.
+ */
+export async function deleteAliasIndices(client: Client, aliasName: string) {
+  // Get status of OpenSearch:
+  const statusResponse: T.IndicesStatsResponse = await client.indices.stats();
+
+  // Remove all old timestamped indices
+  if (statusResponse.indices && typeof statusResponse.indices === 'object') {
+    for (const timestampedIndexName of Object.keys(statusResponse.indices)) {
+      if (aliasName === timestampedIndexName.split('_', 1)[0]) {
+        await deleteIndex(client, timestampedIndexName);
+        console.log('Deleted index: ' + timestampedIndexName);
+      }
+    }
+  }
+}
+
+/**
  * Count the number of documents in an index.
  *
  * @param client Elasticsearch client.
@@ -280,7 +305,10 @@ export async function bulk(
   );
 }
 
-export async function chunkedBulk(client: Client | undefined, documents: any[]) {
+export async function chunkedBulk(
+  client: Client | undefined,
+  documents: any[]
+) {
   if (client === undefined) throw new Error(ERR_CLIENT);
 
   const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');

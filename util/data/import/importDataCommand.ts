@@ -9,6 +9,7 @@ import { loadEnvConfig } from '@next/env';
 
 import { importJsonlFileData } from './importDatafile';
 import { updateDominantColors } from './updateDominantColors';
+import { updateFromJsonlFile } from './updateFromFile';
 import { updateAllTerms } from './updateTerms';
 import { updateUlanTerms } from './updateUlanTerms';
 
@@ -48,15 +49,14 @@ async function run() {
 
   if (
     (await ask(
-      `Import collections index from ${collectionsDataFile}? (y/n) `
+      `Update collections index with data from ${collectionsDataFile}? (y/n) `
     )) === 'y'
   )
-    await importJsonlFileData(
+    await updateFromJsonlFile(
       'collections',
       ID_FIELD_NAME,
       collectionsDataFile,
-      collectionsTransformable.transform,
-      true
+      collectionsTransformable.transform
     );
 
   if (
