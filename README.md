@@ -18,9 +18,17 @@ TODO: Implement the "Cloud Function Periodic Sync" using AWS Lambda or Google Cl
 
 ### Importing data
 
-This project completely rebuilds the indices each sync, which is a simplistic approach that has some advantages: it only takes a few minutes for a typical collection of 200,000 documents, indices can easily be completely restored in casae of an issue, and by using Elasticsearch indices there is almost no downtime.
+Two methods are offered for updating indices: Update and insert.
 
-![Loading data into timestamped index with index alias](./doc/img/IndexAliases.png)
+![Loading data with Update and Insert methods](./doc/img/UpdateInsertIndex.png)
+
+#### Update Method
+
+The update method loads data from a JSONL file and updates documents in an index. If the document doesn't already exist, it is created. Document fields are updated with new information, but fields not contained in the data file are not updated. For example, the image.dominantColor field is not present in the original data file, as it is populated by another script, so that information is preserved across updates. Note that it may be necessary to force an update of calculated fields, for example if the primary image of an object has changed. Also note that approach will fail for nested fields.
+
+#### Insert method
+
+The insert method completely repopulates an index from a JSONL data file. To avoid any downtime, first a timestamped index is created and populated, then the alias is pointed at the newly-created index. This will completely rebuild an index with each sync, and any calculated field values will be lost.
 
 ## Datasets
 
