@@ -60,6 +60,10 @@ export async function similarCollectionObjectEmbedding(
     from: 0,
     size: SIMILAR_PAGE_SIZE,
   };
+  // Remove unneeded fields
+  esQuery._source = {
+    excludes: ['image.embedding'],
+  };
 
   if (!client) client = getClient();
   if (client === undefined) return [];

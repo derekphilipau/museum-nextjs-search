@@ -50,6 +50,10 @@ export async function similarCollectionObjects(
     from: 0,
     size: SIMILAR_PAGE_SIZE,
   };
+  // Remove unneeded fields
+  esQuery._source = {
+    excludes: ['image.embedding'],
+  };
 
   // Adjust these boosts to accomodate your conception of object similarity:
   if (
