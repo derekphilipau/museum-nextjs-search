@@ -3,6 +3,7 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { BaseDocument } from '@/types/baseDocument';
 import { getClient } from '../client';
+import { similarCollectionObjectEmbedding } from './similarObjectEmbedding';
 import { similarCollectionObjects } from './similarObjects';
 
 /**
@@ -34,6 +35,10 @@ export async function getDocument(
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
   if (index === 'collections' && getAdditionalData) {
     apiResponse.similar = await similarCollectionObjects(data, client);
+    apiResponse.embeddings = await similarCollectionObjectEmbedding(
+      data,
+      client
+    );
   }
   return apiResponse;
 }

@@ -12,7 +12,7 @@ export async function similarCollectionObjectsById(
   id: number | string | undefined
 ): Promise<CollectionObjectDocument[]> {
   if (!id) return [];
-  const docResponse = await getDocument('collections', id);
+  const docResponse = await getDocument('collections', id, false);
   const document = docResponse?.data as CollectionObjectDocument;
   if (document) return similarCollectionObjects(document);
   return [];
@@ -49,6 +49,10 @@ export async function similarCollectionObjects(
     },
     from: 0,
     size: SIMILAR_PAGE_SIZE,
+  };
+  // Remove unneeded fields
+  esQuery._source = {
+    excludes: ['image.embedding'],
   };
 
   // Adjust these boosts to accomodate your conception of object similarity:

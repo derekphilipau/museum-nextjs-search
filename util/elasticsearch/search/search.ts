@@ -68,6 +68,10 @@ export async function search(params: any): Promise<ApiResponseSearch> {
       },
     ];
   }
+  // Remove unneeded fields
+  esQuery._source = {
+    excludes: ['image.embedding'],
+  };
 
   if (index === 'all') {
     esQuery.indices_boost = [
@@ -144,6 +148,11 @@ export async function searchCollections(
       },
     ];
   }
+
+  // Remove unneeded fields
+  esQuery._source = {
+    excludes: ['image.embedding'],
+  };
 
   if (color) {
     addColorQuery(esQuery, color);

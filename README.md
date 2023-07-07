@@ -121,6 +121,7 @@ Image:
 - `year` - The year of the image
 - `view` - The view of the image, e.g. "front", "back", "detail", etc.
 - `rank` - The rank of the image, used for sorting
+- `embedding` - Experimental Feature. CLIP image embedding for similarity & text search.
 
 Museum Location:
 
@@ -276,6 +277,10 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 - [next-themes](https://github.com/pacocoursey/next-themes) dark/light modes
 - [@next/font](https://nextjs.org/docs/api-reference/next/font) font loading
 
+## Experimental Features
+
+I've added CLIP Embeddings but there's no code in this project to add embeddings yourself. I've used [the code here](https://github.com/derekphilipau/elastic-clip-museum-search) to add the embeddings via a Colab notebook, but it's a hack. You can still run the project without the embeddings, only the Similar CLIP Embeddings section will be hidden.
+
 ## Adopt it yourself
 
 It's hoped that all one will need to do is be able to export TMS data to JSON matching the format of the Elasticsearch index.
@@ -375,6 +380,10 @@ Light mode example:
 Dark mode example:
 
 ![Dark Mode Screenshot](./doc/img/ui_dark.jpg)
+
+Color search example:
+
+![Color Search Screenshot](./doc/img/ui_color.jpg)
 
 Object page example:
 
