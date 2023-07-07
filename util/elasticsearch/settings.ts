@@ -147,6 +147,12 @@ export const imageObjectField: T.MappingProperty = {
         percent: shortField, // 0-100%
       },
     },
+    embedding: {
+      type: 'dense_vector',
+      dims: 512,
+      index: true,
+      similarity: 'cosine',
+    },
     date: textField,
     view: keywordField,
     rank: integerField,

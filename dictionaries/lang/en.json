@@ -45,6 +45,7 @@
   "search.sort.primaryConstituent.name.desc": "Maker/Artist Z-A",
   "artwork.similar": "Similar Artworks",
   "artwork.similarDominantColors": "Similar Colors",
+  "artwork.similarEmbeddings": "Similar CLIP Embeddings",
   "artwork.showMore": "Show More",
   "artwork.languageDisclaimer.question": "Have a concern, a correction, or something to add?",
   "artwork.languageDisclaimer.contactUs": "Contact us",

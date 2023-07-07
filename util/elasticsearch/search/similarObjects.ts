@@ -12,7 +12,7 @@ export async function similarCollectionObjectsById(
   id: number | string | undefined
 ): Promise<CollectionObjectDocument[]> {
   if (!id) return [];
-  const docResponse = await getDocument('collections', id);
+  const docResponse = await getDocument('collections', id, false);
   const document = docResponse?.data as CollectionObjectDocument;
   if (document) return similarCollectionObjects(document);
   return [];

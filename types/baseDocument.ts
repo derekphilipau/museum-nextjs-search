@@ -46,6 +46,7 @@ export interface DocumentImage {
   thumbnailUrl?: string;
   alt?: string;
   dominantColors?: DocumentImageDominantColor[];
+  embedding?: number[];
   date?: string;
   view?: string;
   rank?: number;
