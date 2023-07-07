@@ -376,6 +376,10 @@ Dark mode example:
 
 ![Dark Mode Screenshot](./doc/img/ui_dark.jpg)
 
+Color search example:
+
+![Color Search Screenshot](./doc/img/ui_color.jpg)
+
 Object page example:
 
 ![Object page sample](./doc/img/ui_object_view.jpg)
