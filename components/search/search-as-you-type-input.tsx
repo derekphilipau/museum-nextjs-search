@@ -121,7 +121,11 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
           </div>
         </form>
       </PopoverAnchor>
-      <PopoverContent className="p-0" onOpenAutoFocus={handleOpenChange}>
+      <PopoverContent
+        className="p-0"
+        onOpenAutoFocus={handleOpenChange}
+        align="start"
+      >
         <Command>
           <CommandGroup>
             {searchOptions.map((term) => (

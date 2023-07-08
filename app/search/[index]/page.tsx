@@ -70,7 +70,7 @@ export default async function Page({ params, searchParams }) {
 
   return (
     <section className="container pt-4 md:pt-6">
-      <div className="flex flex-wrap gap-x-2 pb-2">
+      <div className="flex flex-wrap gap-x-1 pb-2 sm:gap-x-2">
         <SearchIndexButton
           index={index}
           params={searchParams}
