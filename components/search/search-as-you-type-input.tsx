@@ -102,6 +102,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
           <div className="flex rounded-md shadow-sm">
             <div className="relative flex grow items-stretch focus-within:z-10">
               <Input
+                type="search"
                 className="rounded-none rounded-l-md text-base sm:text-sm"
                 name="query"
                 placeholder={dict['search.search']}
