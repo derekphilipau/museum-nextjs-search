@@ -1,8 +1,7 @@
-'use client';
+import Link from 'next/link';
 
-import { useRouter } from 'next/navigation';
-
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 interface SearchIndexButtonProps {
   index: string;
@@ -17,30 +16,28 @@ export function SearchIndexButton({
   name,
   label,
 }: SearchIndexButtonProps) {
-  const router = useRouter();
-
-  function buttonClick() {
-    if (index !== name) {
-      const newParams = new URLSearchParams();
-      if (name === 'collections') newParams.set('hasPhoto', 'true');
-      if (params?.q) newParams.set('q', params.q);
-      if (params?.layout) newParams.set('layout', params.layout);
-      if (params?.f) newParams.set('f', params.f);
-      router.push(`/search/${name}?${newParams}`);
-    }
+  function getIndexHref() {
+    const newParams = new URLSearchParams();
+    if (name === 'collections') newParams.set('hasPhoto', 'true');
+    if (params?.q) newParams.set('q', params.q);
+    if (params?.layout) newParams.set('layout', params.layout);
+    if (params?.f) newParams.set('f', params.f);
+    return `/search/${name}?${newParams}`;
   }
 
   return (
-    <>
-      <Button
-        variant={index === name ? 'outline' : 'ghost'}
-        className="text-base disabled:font-semibold disabled:opacity-100 sm:text-lg"
-        onClick={() => buttonClick()}
-        aria-label={`Search within ${label}`}
-        disabled={index === name}
-      >
-        {label}
-      </Button>
-    </>
+    <Link
+      className={cn(
+        index === name && 'pointer-events-none',
+        'text-base sm:text-lg',
+        buttonVariants({
+          variant: index === name ? 'outline' : 'ghost',
+        })
+      )}
+      href={getIndexHref()}
+      aria-label={`Search within ${label}`}
+    >
+      {label}
+    </Link>
   );
 }
