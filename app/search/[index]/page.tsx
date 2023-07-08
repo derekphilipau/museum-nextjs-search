@@ -96,7 +96,7 @@ export default async function Page({ params, searchParams }) {
           label={dict['index.archives']}
         />
       </div>
-      <div className="flex flex-wrap gap-x-6 gap-y-4">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
         <div className="grow">
           <SearchAsYouTypeInput params={searchParams} />
         </div>

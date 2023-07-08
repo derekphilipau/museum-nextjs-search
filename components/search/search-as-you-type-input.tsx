@@ -6,9 +6,11 @@ import { getDictionary } from '@/dictionaries/dictionaries';
 import { useDebounce } from '@/util/debounce';
 
 import type { Term } from '@/types/term';
-import { SearchInput } from '@/components/search/search-input';
+import { Icons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverAnchor,
@@ -97,13 +99,26 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
     <Popover open={searchOptions?.length > 0} onOpenChange={handleOpenChange}>
       <PopoverAnchor asChild>
         <form onSubmit={handleOnSubmit}>
-          <SearchInput
-            name="query"
-            placeholder={dict['search.search']}
-            onChange={onQueryChange}
-            value={value}
-            autoComplete="off"
-          />
+          <div className="flex rounded-md shadow-sm">
+            <div className="relative flex grow items-stretch focus-within:z-10">
+              <Input
+                className="rounded-none rounded-l-md text-base sm:text-sm"
+                name="query"
+                placeholder={dict['search.search']}
+                onChange={onQueryChange}
+                value={value}
+                autoComplete="off"
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="default"
+              className="rounded-none  rounded-r-md"
+              aria-label={dict['search.search']}
+            >
+              <Icons.search className="h-5 w-5" />
+            </Button>
+          </div>
         </form>
       </PopoverAnchor>
       <PopoverContent className="p-0" onOpenAutoFocus={handleOpenChange}>
