@@ -34,9 +34,10 @@ export function SearchIndexButton({
     <>
       <Button
         variant={index === name ? 'outline' : 'ghost'}
-        className="text-lg"
+        className="text-base disabled:font-semibold disabled:opacity-100 sm:text-lg"
         onClick={() => buttonClick()}
         aria-label={`Search within ${label}`}
+        disabled={index === name}
       >
         {label}
       </Button>
