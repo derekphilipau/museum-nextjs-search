@@ -41,7 +41,7 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
   cod.searchText = obj.accession_number;
   cod.accessionNumber = obj.accession_number; // "14.301a-e"
   cod.accessionDate = new Date(obj.accession_date).toISOString(); // "1915-11-06 00:00:00"
-  cod.date = obj.date; // "18th century"
+  cod.date = obj.object_date; // "18th century"
   cod.startDate = obj.object_date_begin; // "1700"
   cod.endDate = obj.object_date_end; // "1799"
   cod.period = obj.period; // "Qianlong Period"
