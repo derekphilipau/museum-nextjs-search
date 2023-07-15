@@ -38,12 +38,19 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
     }
   }
 
+  let endDate = obj.object_date_end;
+  if (obj.object_date_begin >= 0 && obj.object_date_end < obj.object_date_begin) {
+    // Sometimes end date is defaulted to 0 even though start date is a year like 2017.
+    // Note: Only works for AD dates.
+    endDate = obj.object_date_begin;
+  }
+
   cod.searchText = obj.accession_number;
   cod.accessionNumber = obj.accession_number; // "14.301a-e"
   cod.accessionDate = new Date(obj.accession_date).toISOString(); // "1915-11-06 00:00:00"
   cod.date = obj.object_date; // "18th century"
   cod.startDate = obj.object_date_begin; // "1700"
-  cod.endDate = obj.object_date_end; // "1799"
+  cod.endDate = endDate; // "1799"
   cod.period = obj.period; // "Qianlong Period"
   cod.dynasty = obj.dynasty; // "Qing Dynasty"
   cod.medium = obj.medium; // "Carved jade and hardstone"
