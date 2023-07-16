@@ -30,6 +30,7 @@ export const metadata = {
         media: '(prefers-color-scheme: dark)',
       },
     ],
+    apple: '/apple-icon.jpg',
   },
 };
 
