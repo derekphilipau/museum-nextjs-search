@@ -69,7 +69,7 @@ export default async function Page({ params }) {
             {collectionObject?.title}
           </h1>
           <div className="mb-4 text-neutral-700 dark:text-neutral-400">
-            {collectionObject?.date}
+            {collectionObject?.formattedDate}
           </div>
           <h2 className="text-lg md:text-xl">
             {collectionObject?.primaryConstituent?.name || 'Maker Unknown'}

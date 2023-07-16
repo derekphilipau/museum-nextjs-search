@@ -41,9 +41,27 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
   cod.searchText = obj.accession_number;
   cod.accessionNumber = obj.accession_number; // "14.301a-e"
   cod.accessionDate = new Date(obj.accession_date).toISOString(); // "1915-11-06 00:00:00"
-  cod.date = obj.date; // "18th century"
-  cod.startDate = obj.object_date_begin; // "1700"
-  cod.endDate = obj.object_date_end; // "1799"
+  cod.formattedDate = obj.object_date; // "18th century"
+
+  // Handle dates:
+  if (Number.isInteger(obj.object_date_begin)) {
+    // date is either an integer or null
+    cod.startYear = obj.object_date_begin;
+  }
+
+  // Handle dates.  In Brooklyn Museum, the start & end dates are either year numbers or null.
+  let endYear = obj.object_date_end;
+  if (obj.object_date_begin >= 0 && obj.object_date_end < obj.object_date_begin) {
+    // Sometimes end date is defaulted to 0 even though start date is a year like 2017.
+    // Note: Only works for AD dates.
+    endYear = obj.object_date_begin;
+  }
+  
+  // If the date is just a year, convert it to an ISO date string.
+  if (Number.isInteger(endYear)) {
+    cod.endYear = endYear;
+  }
+
   cod.period = obj.period; // "Qianlong Period"
   cod.dynasty = obj.dynasty; // "Qing Dynasty"
   cod.medium = obj.medium; // "Carved jade and hardstone"

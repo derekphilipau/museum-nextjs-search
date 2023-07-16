@@ -146,9 +146,10 @@ The base document defines common fields for all indices, these are the fields us
 - `boostedKeywords` - An array of keywords that should be boosted in search results
 - `primaryConstituent` - The primary constituent of the document, e.g. the artist of a painting.
 - `image` - Image. The main image of the document
-- `date` - A string representing the date, no strict format.
-- `startDate` - A date representing the start date. Used for date range filtering.
-- `endDate` - A date representing the end date. Used for date range filtering.
+- `date` - Date the document was created.
+- `formattedDate` - A string representing the date, no strict format.
+- `startYear` - An integer representing the start date year. Used for year range filtering.
+- `endYear` - An integer representing the end date year. Used for year range filtering.
 
 #### Collection Document
 

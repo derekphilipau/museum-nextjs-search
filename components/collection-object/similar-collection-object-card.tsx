@@ -40,7 +40,7 @@ export function SimilarCollectionObjectCard({
             {primaryConstituentName}
           </h5>
           <p className="text-xs font-normal text-neutral-700 dark:text-neutral-400">
-            {item.date}
+            {item.formattedDate}
           </p>
         </div>
       </div>

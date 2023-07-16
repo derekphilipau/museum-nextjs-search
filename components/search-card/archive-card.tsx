@@ -20,7 +20,7 @@ export function ArchiveCard({ item, showType }) {
         <div className="">
           <h4 className="mb-2 text-xl font-semibold">
             {item.title}
-            {item.date ? `, ${item.date}` : ''}
+            {item.formattedDate ? `, ${item.formattedDate}` : ''}
           </h4>
           <h5 className="text-lg">{primaryConstituentName}</h5>
           {Array.isArray(item.description) &&

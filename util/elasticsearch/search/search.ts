@@ -81,13 +81,14 @@ export async function search(params: any): Promise<ApiResponseSearch> {
     ];
   }
 
+  addQueryBoolDateRange(esQuery, params);
   addQueryBoolFilterTerms(esQuery, index, params);
   addQueryAggs(esQuery, index);
 
   if (sf && so) {
     esQuery.sort = [{ [sf]: so }];
   } else {
-    esQuery.sort = [{ startDate: 'desc' }];
+    esQuery.sort = [{ startYear: 'desc' }];
   }
 
   const client = getClient();
@@ -159,7 +160,7 @@ export async function searchCollections(
   } else if (sf && so) {
     esQuery.sort = [{ [sf]: so }];
   } else {
-    esQuery.sort = [{ startDate: 'desc' }];
+    esQuery.sort = [{ startYear: 'desc' }];
   }
 
   addQueryBoolDateRange(esQuery, params);
@@ -269,20 +270,36 @@ async function getFilterTerm(
  */
 function addQueryBoolDateRange(esQuery: any, params: any) {
   const ranges: T.QueryDslQueryContainer[] = [];
-  if (params?.startDate) {
+  if (params?.startYear !== undefined && params?.endYear !== undefined) {
     ranges.push({
       range: {
-        startDate: {
-          gte: params.startDate,
+        startYear: {
+          gte: params.startYear,
+          lte: params.endYear,
         },
       },
     });
-  }
-  if (params?.endDate) {
     ranges.push({
       range: {
-        endDate: {
-          lte: params.endDate,
+        endYear: {
+          gte: params.startYear,
+          lte: params.endYear,
+        },
+      },
+    });
+  } else if (params?.startYear !== undefined) {
+    ranges.push({
+      range: {
+        startYear: {
+          gte: params.startYear,
+        },
+      },
+    });
+  } else if (params?.endYear !== undefined) {
+    ranges.push({
+      range: {
+        endYear: {
+          lte: params.endYear,
         },
       },
     });

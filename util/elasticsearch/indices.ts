@@ -14,9 +14,10 @@ const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
   boostedKeywords: S.unaggregatedStandardAnalyzerTextField,
   primaryConstituent: S.constituentObjectField,
   image: S.imageObjectField,
-  date: S.textField,
-  startDate: S.dateField,
-  endDate: S.dateField,
+  date: S.dateField,
+  formattedDate: S.textField,
+  startYear: S.integerField,
+  endYear: S.integerField,
 };
 
 export const collections: T.IndicesIndexSettings = {

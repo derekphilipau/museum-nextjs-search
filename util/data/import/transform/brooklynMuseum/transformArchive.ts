@@ -54,34 +54,40 @@ function getDublinCoreAccession(metadata: any) {
 function getDates(metadata: any) {
   const date = getDublinCoreProperty(metadata, 'dc:date');
   // Date can be of form "1994", "1974 -- 1975", "1980-10", "1988-03-1988-05", "1988-1989"
-  // Use regular expression if the date is of the form YYYY-MM:
   const match = /^(\d{4})-(\d{2})$/.exec(date);
   if (match?.length === 3) {
-    const dateStr = `${match[1]}-${match[2]}-01`;
-    // dang it, gotta do a date calculation now :(
-    // TODO: import date-fns
+    // Date is of the form YYYY-MM:
     return {
-      date,
-      startDate: dateStr,
-      endDate: dateStr,
+      formattedDate: date,
+      startYear: parseInt(match[1]),
+      endYear: parseInt(match[1]),
     };
   }
-  // Date is of the form YYYY-MM-YYYY-MM:
   const match2 = /^(\d{4})-(\d{2})\s*-+\s*(\d{4})-(\d{2})$/.exec(date);
   if (match2?.length === 5) {
+    // Date is of the form YYYY-MM-YYYY-MM:
     return {
-      date,
-      startDate: `${match2[1]}-${match2[2]}-01`,
-      endDate: `${match2[3]}-${match2[4]}-01`,
+      formattedDate: date,
+      startYear: parseInt(match2[1]),
+      endYear: parseInt(match2[3]),
     };
   }
-  // Date is of the form YYYY-YYYY or YYYY -- YYYY:
   const match3 = /^(\d{4})\s*-+\s*(\d{4})$/.exec(date);
   if (match3?.length === 3) {
+    // Date is of the form YYYY-YYYY or YYYY -- YYYY:
     return {
-      date,
-      startDate: `${match3[1]}-01-01`,
-      endDate: `${match3[2]}-01-01`,
+      formattedDate: date,
+      startYear: parseInt(match3[1]),
+      endYear: parseInt(match3[2]),
+    };
+  }
+  const match4 = /^(\d{4})$/.exec(date);
+  if (match4?.length === 2) {
+    // Date is of the form YYYY:
+    return {
+      formattedDate: date,
+      startYear: parseInt(match4[1]),
+      endYear: parseInt(match4[1]),
     };
   }
   return undefined;
@@ -134,9 +140,9 @@ async function transform(doc: {
     format: getDublinCoreProperty(md, 'dc:format'),
     rights: getDublinCoreProperty(md, 'dc:rights'),
     relation: getDublinCoreProperty(md, 'dc:relation'),
-    date: dates?.date,
-    startDate: dates?.startDate,
-    endDate: dates?.endDate,
+    formattedDate: dates?.formattedDate,
+    startYear: dates?.startYear,
+    endYear: dates?.endYear,
   } as ArchiveDocument;
 }
 

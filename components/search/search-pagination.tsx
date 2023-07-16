@@ -125,7 +125,7 @@ export function SearchPagination({
     let mySortField = sortField;
     let mySortOrder = sortOrder;
     if (!sortField && !sortOrder) {
-      mySortField = 'startDate'; // Default order
+      mySortField = 'startYear'; // Default order
       mySortOrder = 'desc';
     }
 
@@ -222,12 +222,12 @@ export function SearchPagination({
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     {sortDropdownMenuItem(
-                      'startDate',
+                      'startYear',
                       'asc',
                       'artwork.field.date'
                     )}
                     {sortDropdownMenuItem(
-                      'startDate',
+                      'startYear',
                       'desc',
                       'artwork.field.date'
                     )}

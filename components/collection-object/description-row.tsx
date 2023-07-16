@@ -9,6 +9,7 @@ interface DescriptionRowProps {
   value?: string;
   item?: CollectionObjectDocument;
   isLink?: boolean;
+  link?: string;
 }
 
 export function DescriptionRow({
@@ -16,6 +17,7 @@ export function DescriptionRow({
   value,
   item,
   isLink = false,
+  link,
 }: DescriptionRowProps) {
   const dict = getDictionary();
   const displayName = dict?.[`artwork.field.${name}`] || 'Unknown field';
@@ -31,25 +33,34 @@ export function DescriptionRow({
         {displayName}
       </dt>
       <dd className="mt-1 text-sm sm:col-span-2 sm:mt-0">
-        {isLink &&
+        {link &&
           val.map(
-            (tag, index) =>
+            (tag: string, i: Key) =>
+              tag && (
+                <Link key={i} href={link} className="underline">
+                  {`${tag}${i !== val.length - 1 ? ',  ' : ''}`}
+                </Link>
+              )
+          )}
+        {isLink &&
+          !link &&
+          val.map(
+            (tag: string, i: Key) =>
               tag && (
                 <Link
-                  key={index}
+                  key={i}
                   href={`${searchUrl}${name}=${tag}`}
                   className="underline"
                 >
-                  {`${tag}${index !== val.length - 1 ? ',  ' : ''}`}
+                  {`${tag}${i !== val.length - 1 ? ',  ' : ''}`}
                 </Link>
               )
           )}
         {!isLink &&
+          !link &&
           val.map(
             (tag: string, i: Key) =>
-              tag && (
-                <span key={i}>{`${i > 0 ? ',  ' : ''}${tag}`}</span>
-              )
+              tag && <span key={i}>{`${i > 0 ? ',  ' : ''}${tag}`}</span>
           )}
       </dd>
     </div>
