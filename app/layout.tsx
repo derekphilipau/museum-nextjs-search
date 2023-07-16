@@ -15,18 +15,18 @@ const inter = Inter({
 
 export const metadata = {
   title: {
-    default: 'My Museum',
-    template: '%s | My Museum',
+    default: 'Museum Search',
+    template: '%s | Museum Search',
   },
   description: 'Elasticsearch + Next.js Search Prototype',
   icons: {
     icon: [
       {
-        url: '/favicon.ico',
+        url: '/favicon.svg',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/favicon.ico',
+        url: '/favicon.svg',
         media: '(prefers-color-scheme: dark)',
       },
     ],
