@@ -6,6 +6,8 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
+OpenAI CLIP Embeddings similarity feature is in the [feature-experimental-clip](https://github.com/derekphilipau/museum-nextjs-search/tree/feature-experimental-clip) branch and results can be [viewed here](http://bkm-next-search-git-feature-experim-f7b255-derekphilipau-s-team.vercel.app/collection/object/60443/shrine-in-form-of-a-gothic-temple?_vercel_share=dha3g9093ZhIbOuZOEGo3AllIHkPeH0w).
+
 ## Overview
 
 A typical approach for building a collections website is to periodically sync data from a backend collections management system (sometimes augmented with data from an internal CMS) into a relational database which is queried by a frontend website.
@@ -146,10 +148,12 @@ The base document defines common fields for all indices, these are the fields us
 - `boostedKeywords` - An array of keywords that should be boosted in search results
 - `primaryConstituent` - The primary constituent of the document, e.g. the artist of a painting.
 - `image` - Image. The main image of the document
-- `date` - Date the document was created.
+- `date` - Date the document was created, not currently used.
 - `formattedDate` - A string representing the date, no strict format.
 - `startYear` - An integer representing the start date year. Used for year range filtering.
 - `endYear` - An integer representing the end date year. Used for year range filtering.
+
+Note on dates:  Museum objects have a wide range of dates from pre-historic BCE to contemporary CE that ISO 8601 cannot represent, hence the use of signed integers to represent years.
 
 #### Collection Document
 
