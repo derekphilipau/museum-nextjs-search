@@ -1,6 +1,8 @@
 import * as React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
+import logoIcon from '@/public/favicon.svg';
 
 import type { NavItem } from '@/types/nav';
 import { cn } from '@/lib/utils';
@@ -27,12 +29,20 @@ export function MainNav({ items }: MainNavProps) {
     <div className="flex gap-6 md:gap-10">
       <Link
         href="/"
-        className="hidden items-center space-x-2 text-2xl font-bold md:flex"
+        className="hidden items-center space-x-2 text-2xl font-bold md:inline-flex"
       >
+        <Image
+          src={logoIcon}
+          className="h-8 object-contain"
+          alt={dict['site.title']}
+        />
         {dict['site.title']}
       </Link>
       {items?.length ? (
-        <nav className="hidden gap-6 md:flex" aria-label={dict['button.mainMenu']}>
+        <nav
+          className="hidden gap-6 md:flex"
+          aria-label={dict['button.mainMenu']}
+        >
           {items?.map(
             (item, index) =>
               item.href && (
