@@ -56,7 +56,7 @@ export function getSchemaVisualArtwork(
   schema.accessMode = 'visual'; // TODO
   if (item.copyright) schema.copyrightNotice = item.copyright;
   if (item.creditLine) schema.creditText = item.creditLine;
-  if (item.date) schema.dateCreated = item.date; // TODO
+  if (item.formattedDate) schema.dateCreated = item.formattedDate; // TODO
   schema.inLanguage = 'English'; // TODO
   if (item.keywords) schema.keywords = item.keywords;
   return schema;

@@ -19,6 +19,14 @@ export function CollectionObjectDescription({
   const primaryConstituentName =
     item.primaryConstituent?.name || 'Maker Unknown';
 
+  //  http://localhost:3000/search/collections?hasPhoto=true&f=true&startYear=2014&endYear=2014
+  const startYear = item.startYear;
+  const endYear = item.endYear || item.startYear;
+  let dateLink = '';
+  if (startYear && endYear) {
+    dateLink = `/search/collections?hasPhoto=true&f=true&startYear=${item.startYear}&endYear=${item.endYear}`;
+  }
+
   return (
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
@@ -29,7 +37,8 @@ export function CollectionObjectDescription({
         />
         <DescriptionRow name="medium" item={item} isLink={true} />
         <GeographicalDescriptionRow item={item} />
-        <DescriptionRow name="date" item={item} />
+        {dateLink && <DescriptionRow name="date" item={item} link={dateLink} />}
+        {!dateLink && <DescriptionRow name="date" item={item} />}
         <DescriptionRow name="dynasty" item={item} isLink={true} />
         <DescriptionRow name="period" item={item} isLink={true} />
         <DescriptionRow name="dimensions" item={item} />

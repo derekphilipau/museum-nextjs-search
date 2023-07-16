@@ -45,7 +45,7 @@ export function getCaption(
     ? `${item.primaryConstituent.name}. `
     : '';
   caption += item?.title ? `${item.title}, ` : '';
-  caption += item?.date ? `${item.date}. ` : '';
+  caption += item?.formattedDate ? `${item.formattedDate}. ` : '';
   caption += item?.medium ? `${item.medium}, ` : '';
   caption += item?.dimensions ? `${item.dimensions}. ` : '';
   caption += item?.creditLine ? `${item.creditLine}, ` : '';

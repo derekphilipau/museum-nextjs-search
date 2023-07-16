@@ -75,7 +75,7 @@ export function PaletteCard({ item, layout, showType }) {
 
           {layout !== 'list' && (
             <h4 className="text-sm">
-              {item.date ? `${item.date},` : ''}
+              {item.formattedDate ? `${item.formattedDate},` : ''}
               {primaryConstituentName}
             </h4>
           )}
@@ -83,7 +83,7 @@ export function PaletteCard({ item, layout, showType }) {
             <>
               <h4 className="mb-2 text-xl font-semibold">
                 {item.title}
-                {item.date ? `, ${item.date}` : ''}
+                {item.formattedDate ? `, ${item.formattedDate}` : ''}
               </h4>
               <p>{trimStringToLengthAtWordBoundary(item.description, 200)}</p>
             </>

@@ -24,32 +24,32 @@ export function DateFilter({ params }: DateFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [fromDate, setFromDate] = useState(params?.startDate || '');
-  const [toDate, setToDate] = useState(params?.endDate || '');
-  const [isOpen, setIsOpen] = useState(false);
+  const [fromYear, setFromYear] = useState(params?.startYear || '');
+  const [toYear, setToYear] = useState(params?.endYear || '');
+  const [isOpen, setIsOpen] = useState(params?.startYear || params?.endYear);
 
   const displayName = dict['index.collections.date'];
-  const fromDateName = dict['index.collections.date.from'];
-  const toDateName = dict['index.collections.date.to'];
+  const fromYearName = dict['index.collections.date.from'];
+  const toYearName = dict['index.collections.date.to'];
 
   const debouncedRequest = useDebounce(() => {
-    if (!fromDate && !toDate) return;
+    if (!fromYear && !toYear) return;
     const updatedParams = new URLSearchParams(params);
-    if (fromDate) updatedParams.set('startDate', fromDate);
-    else updatedParams.delete('startDate');
-    if (toDate) updatedParams.set('endDate', toDate);
-    else updatedParams.delete('endDate');
+    if (fromYear) updatedParams.set('startYear', fromYear);
+    else updatedParams.delete('startYear');
+    if (toYear) updatedParams.set('endYear', toYear);
+    else updatedParams.delete('endYear');
     updatedParams.delete('p');
     router.push(`${pathname}?${updatedParams}`);
   });
 
-  const onFromDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFromDate(e.target.value);
+  const onFromYearChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFromYear(e.target.value);
     debouncedRequest();
   };
 
-  const onToDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setToDate(e.target.value);
+  const onToYearChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setToYear(e.target.value);
     debouncedRequest();
   };
 
@@ -77,26 +77,28 @@ export function DateFilter({ params }: DateFilterProps) {
         <div className="mb-2 flex flex-wrap gap-x-4">
           <div>
             <Label className="mb-2" htmlFor="email">
-              {fromDateName}
+              {fromYearName}
             </Label>
             <Input
               className="w-20"
-              name="fromDate"
+              name="fromYear"
+              type="number"
               placeholder={'YYYY'}
-              onChange={onFromDateChange}
-              value={fromDate}
+              onChange={onFromYearChange}
+              value={fromYear}
             />
           </div>
           <div>
             <Label className="mb-2" htmlFor="email">
-              {toDateName}
+              {toYearName}
             </Label>
             <Input
               className="w-20"
-              name="toDate"
+              name="toYear"
+              type="number"
               placeholder={'YYYY'}
-              onChange={onToDateChange}
-              value={toDate}
+              onChange={onToYearChange}
+              value={toYear}
             />
           </div>
         </div>

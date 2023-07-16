@@ -65,6 +65,7 @@ export interface BaseDocument {
   primaryConstituent?: DocumentConstituent;
   image?: DocumentImage;
   date?: string;
-  startDate?: string;
-  endDate?: string;
+  formattedDate?: string;
+  startYear?: number;
+  endYear?: number;
 }
