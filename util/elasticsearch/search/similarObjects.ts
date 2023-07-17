@@ -40,11 +40,14 @@ export async function similarCollectionObjects(
             id: document.id,
           },
         },
+        /*
+        // Don't require similar objects to have images
         must: {
           exists: {
             field: 'image',
           },
         },
+        */
       },
     },
     from: 0,
