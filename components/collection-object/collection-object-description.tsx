@@ -36,6 +36,7 @@ export function CollectionObjectDescription({
           isLink={true}
         />
         <DescriptionRow name="classification" item={item} isLink={true} />
+        <DescriptionRow name="formattedMedium" item={item} isLink={false} />
         <DescriptionRow name="medium" item={item} isLink={true} />
         <GeographicalDescriptionRow item={item} />
         {dateLink && <DescriptionRow name="date" item={item} link={dateLink} />}

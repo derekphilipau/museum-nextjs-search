@@ -23,6 +23,8 @@ export async function options(
 ): Promise<AggOption[]> {
   const { index, field, q } = params;
 
+  const lowerCaseQuery = q?.toLowerCase();
+
   if (!index || !field) {
     return [];
   }
@@ -40,11 +42,11 @@ export async function options(
     },
   };
 
-  if (q) {
+  if (lowerCaseQuery) {
     request.query = {
       wildcard: {
         [field]: {
-          value: '*' + q + '*',
+          value: '*' + lowerCaseQuery + '*',
           case_insensitive: true,
         },
       },
@@ -57,7 +59,15 @@ export async function options(
     const response: T.SearchTemplateResponse = await client.search(request);
     if (response.aggregations?.[field] !== undefined) {
       const aggAgg: T.AggregationsAggregate = response.aggregations?.[field];
-      if ('buckets' in aggAgg && aggAgg?.buckets) return aggAgg.buckets;
+      if ('buckets' in aggAgg && aggAgg?.buckets) {
+        if (!lowerCaseQuery) return aggAgg.buckets;
+        else {
+          // make sure each bucket key actually matches the query:
+          return aggAgg.buckets.filter((b: { key?: string, bucket?: number }) => {
+            return b.key?.toLowerCase().includes(lowerCaseQuery) || false;
+          });
+        }
+      }
     }
   } catch (e) {
     console.error(e);

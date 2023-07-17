@@ -59,6 +59,7 @@
   "baseDocument.field.title": "Title",
   "artwork.field.primaryConstituent.name": "Maker/Artist",
   "artwork.field.classification": "Classification",
+  "artwork.field.formattedMedium": "Formatted Medium",
   "artwork.field.medium": "Medium",
   "artwork.field.geographicalLocations": "Locations",
   "artwork.field.date": "Date",

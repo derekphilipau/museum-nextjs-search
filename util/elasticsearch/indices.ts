@@ -36,7 +36,8 @@ export const collections: T.IndicesIndexSettings = {
       period: S.searchableAggregatedKeywordAnalyzerField,
       dynasty: S.searchableAggregatedKeywordAnalyzerField,
       provenance: S.unaggregatedStandardAnalyzerTextField,
-      medium: S.searchableAggregatedKeywordAnalyzerField,
+      medium: S.searchableAggregatedKeywordAnalyzerField, // Array of each medium
+      formattedMedium: S.unaggregatedStandardAnalyzerTextField, // Full medium
       dimensions: S.textField,
       edition: S.textField,
       portfolio: S.textField,

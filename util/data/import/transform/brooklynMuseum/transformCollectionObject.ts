@@ -21,6 +21,33 @@ function getSortedImages(images: any[], url: string | undefined) {
   return images.sort((a, b) => (a.rank || 0) - (b.rank || 0));
 }
 
+function splitMediumString(medium: string): string[] {
+  const mediums = medium
+    .toLowerCase() // convert entire string to lowercase
+    .replace(/\.$/, '') // remove trailing period
+    .replace(/\r\n|\r|\n/g, ' ') // replace carriage returns and newlines with space
+    .replace(/\?/g, ' ')
+    .replace(/\(/g, ' ')
+    .replace(/\)/g, ' ')
+    .replace(/:/g, ' , ')
+    .replace(/ mounted on /g, ' , ')
+    .replace(/ mounted to /g, ' , ')
+    .replace(/ on /g, ' , ')
+    .replace(/ under /g, ' , ')
+    .replace(/ over /g, ' , ')
+    .replace(/ with /g, ' , ')
+    .replace(/ traces of /g, ' , ')
+    .replace(/ and /g, ' , ')
+    .replace(/ an /g, ' , ')
+    .replace(/ a /g, ' , ')
+    .replace(/\d+% /g, ' ') // removes percentages such as "98% "
+    .replace(/;/g, ',')
+    .split(',')
+    .map((item) => item.trim()) // trim whitespace from each item
+    .filter((item) => item.length > 0); // remove any empty strings
+  return Array.from(new Set(mediums)); // remove duplicates
+}
+
 async function transform(obj: any): Promise<CollectionObjectDocument> {
   const cod: CollectionObjectDocument = {
     // Begin BaseDocument fields
@@ -51,12 +78,15 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
 
   // Handle dates.  In Brooklyn Museum, the start & end dates are either year numbers or null.
   let endYear = obj.object_date_end;
-  if (obj.object_date_begin >= 0 && obj.object_date_end < obj.object_date_begin) {
+  if (
+    obj.object_date_begin >= 0 &&
+    obj.object_date_end < obj.object_date_begin
+  ) {
     // Sometimes end date is defaulted to 0 even though start date is a year like 2017.
     // Note: Only works for AD dates.
     endYear = obj.object_date_begin;
   }
-  
+
   // If the date is just a year, convert it to an ISO date string.
   if (Number.isInteger(endYear)) {
     cod.endYear = endYear;
@@ -64,7 +94,15 @@ async function transform(obj: any): Promise<CollectionObjectDocument> {
 
   cod.period = obj.period; // "Qianlong Period"
   cod.dynasty = obj.dynasty; // "Qing Dynasty"
+
   cod.medium = obj.medium; // "Carved jade and hardstone"
+
+  // Medium is a comma-delimited list of materials.  Split it into an array.
+  // The array of materials is stored in the medium field,
+  // while the entire string is stored in the medium.search field.
+  cod.formattedMedium = obj.medium;
+  if (obj.medium) cod.medium = splitMediumString(obj.medium);
+
   cod.provenance = obj.provenance;
   cod.dimensions = obj.dimensions;
   cod.edition = obj.edition;
