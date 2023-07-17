@@ -58,6 +58,7 @@
   "artwork.contactForm.submit": "Submit your feedback!",
   "baseDocument.field.title": "Title",
   "artwork.field.primaryConstituent.name": "Maker/Artist",
+  "artwork.field.classification": "Classification",
   "artwork.field.medium": "Medium",
   "artwork.field.geographicalLocations": "Locations",
   "artwork.field.date": "Date",
