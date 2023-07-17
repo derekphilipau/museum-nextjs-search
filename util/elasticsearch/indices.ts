@@ -18,6 +18,7 @@ const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
   formattedDate: S.textField,
   startYear: S.integerField,
   endYear: S.integerField,
+  sortPriority: S.integerField,
 };
 
 export const collections: T.IndicesIndexSettings = {
