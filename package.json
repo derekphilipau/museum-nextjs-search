@@ -51,7 +51,7 @@
     "html-entities": "^2.3.3",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.248.0",
-    "next": "^13.4.9",
+    "next": "^13.4.10",
     "next-themes": "npm:@wits/next-themes@^0.2.16",
     "node-kmeans": "^1.1.9",
     "openseadragon": "^4.1.0",

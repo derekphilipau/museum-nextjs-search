@@ -138,6 +138,7 @@ export async function searchCollections(
             'accessionNumber',
             'constituents.name.search',
             'exhibitions.search',
+            'medium.search',
           ],
         },
       },
