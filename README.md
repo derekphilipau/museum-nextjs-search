@@ -6,7 +6,7 @@ Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](htt
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
 
-OpenAI CLIP Embeddings similarity feature is in the [feature-experimental-clip](https://github.com/derekphilipau/museum-nextjs-search/tree/feature-experimental-clip) branch and results can be [viewed here](http://bkm-next-search-git-feature-experim-f7b255-derekphilipau-s-team.vercel.app/collection/object/60443/shrine-in-form-of-a-gothic-temple?_vercel_share=dha3g9093ZhIbOuZOEGo3AllIHkPeH0w).
+OpenAI CLIP Embeddings similarity feature is in the [feature-experimental-clip](https://github.com/derekphilipau/museum-nextjs-search/tree/feature-experimental-clip) branch.  The embeddings were slowing down my test Elasticsearch instance, so I've taken down the Vercel deployment.  [You can see examples of artwork similarity here.](./doc/embeddings.md)
 
 ## Overview
 
@@ -123,7 +123,7 @@ Image:
 - `year` - The year of the image
 - `view` - The view of the image, e.g. "front", "back", "detail", etc.
 - `rank` - The rank of the image, used for sorting
-- `embedding` - Experimental Feature. CLIP image embedding for similarity & text search.
+- `embedding` - Experimental Feature. CLIP image embedding for similarity & text search.  Removed.  [See examples here.](./doc/embeddings.md)
 
 Museum Location:
 
@@ -284,7 +284,7 @@ which is an implementation of [Radix UI](https://www.radix-ui.com/) with [Tailwi
 
 ## Experimental Features
 
-I've added CLIP Embeddings but there's no code in this project to add embeddings yourself. I've used [the code here](https://github.com/derekphilipau/elastic-clip-museum-search) to add the embeddings via a Colab notebook, but it's a hack. You can still run the project without the embeddings, only the Similar CLIP Embeddings section will be hidden.
+I've added CLIP Embeddings but there's no code in this project to add embeddings yourself. I've used [the code here](https://github.com/derekphilipau/elastic-clip-museum-search) to add the embeddings via a Colab notebook, but it's a hack. Removed. [See examples here.](./doc/embeddings.md)
 
 ## Adopt it yourself
 
