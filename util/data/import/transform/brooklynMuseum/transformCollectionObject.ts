@@ -32,7 +32,7 @@ function splitMediumString(medium: string): string[] {
     .replace(/:/g, ' , ')
     .replace(/ mounted on /g, ' , ')
     .replace(/ mounted to /g, ' , ')
-    .replace(/ on /g, ' , ')
+    // .replace(/ on /g, ' , ') // still need strings like "oil on canvas"
     .replace(/ under /g, ' , ')
     .replace(/ over /g, ' , ')
     .replace(/ with /g, ' , ')
