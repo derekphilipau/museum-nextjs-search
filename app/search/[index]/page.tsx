@@ -129,6 +129,25 @@ export default async function Page({ params, searchParams }) {
           </div>
         )}
       </div>
+      {(filterArr?.length > 0 || color) && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          {filterArr?.length > 0 &&
+            filterArr.map(
+              (filter, i) =>
+                filter && (
+                  <SearchFilterTag
+                    key={i}
+                    params={searchParams}
+                    name={filter[0]}
+                    value={filter[1]}
+                  />
+                )
+            )}
+          {color && (
+            <SearchFilterTag params={searchParams} name="color" value={color} />
+          )}
+        </div>
+      )}
       <div className="gap-6 pb-8 pt-4 sm:grid sm:grid-cols-3 md:grid-cols-4 md:py-6">
         {isShowFilters && (
           <div className="hidden h-full space-y-2 sm:col-span-1 sm:block">
@@ -208,29 +227,6 @@ export default async function Page({ params, searchParams }) {
             </div>
           </div>
 
-          {(filterArr?.length > 0 || color) && (
-            <div className="flex flex-wrap gap-2 pt-3">
-              {filterArr?.length > 0 &&
-                filterArr.map(
-                  (filter, i) =>
-                    filter && (
-                      <SearchFilterTag
-                        key={i}
-                        params={searchParams}
-                        name={filter[0]}
-                        value={filter[1]}
-                      />
-                    )
-                )}
-              {color && (
-                <SearchFilterTag
-                  params={searchParams}
-                  name="color"
-                  value={color}
-                />
-              )}
-            </div>
-          )}
           {terms?.length > 0 && (
             <>
               <h4 className="mb-2 mt-4 text-lg text-neutral-900 dark:text-white">
