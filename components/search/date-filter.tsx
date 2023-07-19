@@ -3,9 +3,9 @@
 import { ChangeEvent, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
+import { useDebounce } from '@/util/debounce';
 import { ChevronsUpDown } from 'lucide-react';
 
-import { useDebounce } from '@/util/debounce';
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
@@ -33,12 +33,11 @@ export function DateFilter({ params }: DateFilterProps) {
   const toYearName = dict['index.collections.date.to'];
 
   const debouncedRequest = useDebounce(() => {
-    if (!fromYear && !toYear) return;
     const updatedParams = new URLSearchParams(params);
+    updatedParams.delete('startYear');
+    updatedParams.delete('endYear');
     if (fromYear) updatedParams.set('startYear', fromYear);
-    else updatedParams.delete('startYear');
     if (toYear) updatedParams.set('endYear', toYear);
-    else updatedParams.delete('endYear');
     updatedParams.delete('p');
     router.push(`${pathname}?${updatedParams}`);
   });

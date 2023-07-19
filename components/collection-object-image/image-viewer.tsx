@@ -39,7 +39,16 @@ export function ImageViewer({ item }) {
     onSelect();
   }, [embla, onSelect]);
 
-  if (!item || !item?.id || !(item?.images?.length > 0)) return null;
+  if (!item || !item?.id) return null;
+  if (!item?.images?.length) {
+    return (
+      <div className="flex h-48 flex-col items-center justify-center  text-neutral-500 dark:text-neutral-400">
+        <Icons.imageOff className="h-24 w-24" />
+        <div className="mt-2 font-semibold">{dict['search.imageUnavailable']}
+          </div>
+      </div>
+    )
+  }
 
   function getThumbnailClass(thumbnailUrl: string) {
     const base = 'flex w-16 items-center justify-center p-1 cursor-pointer';

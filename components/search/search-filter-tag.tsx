@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
+import { Button } from '@/components/ui/button';
 import { Icons } from '../icons';
 
 interface SearchFilterTagProps {
@@ -25,11 +26,11 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
   }
 
   return (
-    <button
-      type="button"
-      className="flex items-center gap-x-2 rounded-full bg-neutral-100 px-3 py-1.5 font-medium text-neutral-700 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"
+    <Button
       onClick={() => buttonClick()}
       aria-label={dict['button.removeFilter']}
+      variant="outline"
+      size="sm"
     >
       {name === 'color' ? (
         <Icons.circle
@@ -39,17 +40,7 @@ export function SearchFilterTag({ params, name, value }: SearchFilterTagProps) {
       ) : (
         <div>{value}</div>
       )}
-      <div>
-        <svg
-          className="h-3 w-3"
-          stroke="currentColor"
-          fill="none"
-          viewBox="0 0 8 8"
-        >
-          <path strokeLinecap="round" strokeWidth="2" d="M1 1l6 6m0-6L1 7" />
-        </svg>
-        <span className="sr-only">Remove filter option</span>
-      </div>
-    </button>
+      <Icons.x className="ml-2 h-4 w-4" />
+    </Button>
   );
 }

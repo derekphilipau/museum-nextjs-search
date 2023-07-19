@@ -27,6 +27,7 @@
   "search.hasPhoto": "Has Photo",
   "search.onView": "On View",
   "search.openAccess": "Open Access",
+  "search.imageUnavailable": "Image Unavailable",
   "search.noResults": "Sorry, we couldn’t find any results matching your criteria.",
   "button.mainMenu": "Main Menu",
   "button.openMenu": "Open Menu",
@@ -57,6 +58,8 @@
   "artwork.contactForm.submit": "Submit your feedback!",
   "baseDocument.field.title": "Title",
   "artwork.field.primaryConstituent.name": "Maker/Artist",
+  "artwork.field.classification": "Classification",
+  "artwork.field.formattedMedium": "Formatted Medium",
   "artwork.field.medium": "Medium",
   "artwork.field.geographicalLocations": "Locations",
   "artwork.field.date": "Date",
@@ -93,5 +96,6 @@
   "index.collections.agg.section": "Section",
   "index.collections.date": "Year Made",
   "index.collections.date.from": "From",
-  "index.collections.date.to": "To"
+  "index.collections.date.to": "To",
+  "index.collections.altText": "Photo of collection object"
 }

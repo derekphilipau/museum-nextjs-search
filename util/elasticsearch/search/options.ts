@@ -42,10 +42,10 @@ export async function options(
 
   if (q) {
     request.query = {
-      wildcard: {
-        [field]: {
-          value: '*' + q + '*',
-          case_insensitive: true,
+      match: {
+        [`${field}.search`]: {
+          query: q,
+          fuzziness: 'AUTO:3,7',
         },
       },
     };

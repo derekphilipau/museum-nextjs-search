@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 import {
@@ -7,7 +6,7 @@ import {
 } from '@/util/various';
 
 import { DominantColors } from '@/components/color/dominant-colors';
-import { Icons } from '@/components/icons';
+import { CollectionObjectThumbnail } from '../collection-object-image/collection-object-thumbnail';
 
 function getContainerClass(layout) {
   if (layout === 'grid') return 'py-4';
@@ -37,24 +36,8 @@ export function CollectionObjectCard({ item, layout, showType, showColor }) {
               {dict['index.collections.itemTitle']}
             </h4>
           )}
-          <div className="flex items-center justify-center bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700">
-            <figure>
-              {item.image?.thumbnailUrl ? (
-                <Image
-                  src={item.image?.thumbnailUrl}
-                  className="h-48 object-contain"
-                  alt=""
-                  width={400}
-                  height={400}
-                />
-              ) : (
-                <div className="flex h-48 w-full items-center justify-center">
-                  <Icons.imageOff className="h-24 w-24 text-neutral-300 group-hover:text-neutral-400" />
-                  <span className="sr-only">Image Unavailable</span>
-                </div>
-              )}
-              <figcaption></figcaption>
-            </figure>
+          <div className="flex items-center justify-center bg-neutral-50 text-neutral-200 hover:bg-neutral-100 hover:text-neutral-300 dark:bg-neutral-800 dark:text-neutral-900 dark:hover:bg-neutral-700  dark:hover:text-neutral-800">
+            <CollectionObjectThumbnail item={item} />
           </div>
         </div>
         {showColor && (

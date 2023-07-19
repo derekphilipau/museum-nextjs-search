@@ -30,6 +30,7 @@ import {
   SlidersHorizontal,
   SunMedium,
   Twitter,
+  X,
   type Icon as LucideIcon,
 } from 'lucide-react';
 
@@ -66,4 +67,5 @@ export const Icons = {
   arrowUp: ArrowUp,
   arrowDown: ArrowDown,
   check: Check,
+  x: X,
 };

@@ -5,26 +5,32 @@ export const index: T.IndicesIndexSettings = {
   number_of_replicas: 1,
 };
 
+export const unaggregatedStandardAnalyzer: T.AnalysisAnalyzer = {
+  type: 'custom',
+  tokenizer: 'standard',
+  char_filter: ['hyphenApostropheMappingFilter'],
+  filter: ['lowercase', 'asciifolding', 'enSnowball'],
+};
+
+export const aggregatedKeywordAnalyzer: T.AnalysisAnalyzer = {
+  type: 'custom',
+  tokenizer: 'keyword',
+  char_filter: ['hyphenApostropheMappingFilter'],
+  filter: ['lowercase', 'asciifolding'],
+};
+
+export const suggestAnalyzer: T.AnalysisAnalyzer = {
+  type: 'custom',
+  tokenizer: 'standard',
+  char_filter: ['hyphenApostropheMappingFilter'],
+  filter: ['lowercase', 'asciifolding'],
+};
+
 export const analysis: T.IndicesIndexSettingsAnalysis = {
   analyzer: {
-    unaggregatedStandardAnalyzer: {
-      type: 'custom',
-      tokenizer: 'standard',
-      char_filter: ['hyphenApostropheMappingFilter'],
-      filter: ['lowercase', 'asciifolding', 'enSnowball'],
-    },
-    aggregatedKeywordAnalyzer: {
-      type: 'custom',
-      tokenizer: 'keyword',
-      char_filter: ['hyphenApostropheMappingFilter'],
-      filter: ['lowercase', 'asciifolding'],
-    },
-    suggestAnalyzer: {
-      type: 'custom',
-      tokenizer: 'standard',
-      char_filter: ['hyphenApostropheMappingFilter'],
-      filter: ['lowercase', 'asciifolding'],
-    },
+    unaggregatedStandardAnalyzer,
+    aggregatedKeywordAnalyzer,
+    suggestAnalyzer,
   },
   char_filter: {
     hyphenApostropheMappingFilter: {
@@ -32,7 +38,8 @@ export const analysis: T.IndicesIndexSettingsAnalysis = {
       mappings: ['-=>\\u0020', "'=>", '’=>'],
     },
     /*
-    // Currently unused.
+    // Currently unused.  An attempt to improve search results for names by
+    // removing articles like "de la".
     articleCharFilter: { // T.AnalysisPatternReplaceCharFilter
       type: 'pattern_replace',
       pattern:
@@ -147,12 +154,18 @@ export const imageObjectField: T.MappingProperty = {
         percent: shortField, // 0-100%
       },
     },
-    embedding: {
-      type: 'dense_vector',
-      dims: 512,
-      index: true,
-      similarity: 'cosine',
-    },
+    date: textField,
+    view: keywordField,
+    rank: integerField,
+  },
+};
+
+export const simpleImageObjectField: T.MappingProperty = {
+  properties: {
+    id: keywordField,
+    url: keywordField,
+    thumbnailUrl: keywordField,
+    alt: textField,
     date: textField,
     view: keywordField,
     rank: integerField,

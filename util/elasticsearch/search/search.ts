@@ -88,7 +88,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
   if (sf && so) {
     esQuery.sort = [{ [sf]: so }];
   } else {
-    esQuery.sort = [{ startYear: 'desc' }];
+    esQuery.sort = [{ sortPriority: 'desc' }, { startYear: 'desc' }];
   }
 
   const client = getClient();
@@ -138,6 +138,7 @@ export async function searchCollections(
             'accessionNumber',
             'constituents.name.search',
             'exhibitions.search',
+            'medium.search',
           ],
         },
       },
@@ -160,7 +161,7 @@ export async function searchCollections(
   } else if (sf && so) {
     esQuery.sort = [{ [sf]: so }];
   } else {
-    esQuery.sort = [{ startYear: 'desc' }];
+    esQuery.sort = [{ sortPriority: 'desc' }, { startYear: 'desc' }];
   }
 
   addQueryBoolDateRange(esQuery, params);

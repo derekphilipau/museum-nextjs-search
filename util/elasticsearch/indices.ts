@@ -18,6 +18,7 @@ const baseDocument: Record<T.PropertyName, T.MappingProperty> = {
   formattedDate: S.textField,
   startYear: S.integerField,
   endYear: S.integerField,
+  sortPriority: S.integerField,
 };
 
 export const collections: T.IndicesIndexSettings = {
@@ -29,13 +30,14 @@ export const collections: T.IndicesIndexSettings = {
     properties: {
       ...baseDocument,
       constituents: S.constituentObjectField,
-      images: S.disabledObjectField,
+      images: S.simpleImageObjectField,
       accessionNumber: S.searchableAggregatedKeywordAnalyzerField,
       accessionDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,
       dynasty: S.searchableAggregatedKeywordAnalyzerField,
       provenance: S.unaggregatedStandardAnalyzerTextField,
-      medium: S.searchableAggregatedKeywordAnalyzerField,
+      medium: S.searchableAggregatedKeywordAnalyzerField, // Array of each medium
+      formattedMedium: S.unaggregatedStandardAnalyzerTextField, // Full medium
       dimensions: S.textField,
       edition: S.textField,
       portfolio: S.textField,

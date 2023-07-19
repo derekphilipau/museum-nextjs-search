@@ -8,7 +8,8 @@ export interface CollectionObjectDocument extends BaseDocument {
   period?: string;
   dynasty?: string;
   provenance?: string;
-  medium?: string;
+  medium?: string[];
+  formattedMedium?: string;
   dimensions?: string;
   edition?: string;
   portfolio?: string;
