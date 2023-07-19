@@ -30,7 +30,7 @@ export const collections: T.IndicesIndexSettings = {
     properties: {
       ...baseDocument,
       constituents: S.constituentObjectField,
-      images: S.disabledObjectField,
+      images: S.simpleImageObjectField,
       accessionNumber: S.searchableAggregatedKeywordAnalyzerField,
       accessionDate: S.dateField,
       period: S.searchableAggregatedKeywordAnalyzerField,

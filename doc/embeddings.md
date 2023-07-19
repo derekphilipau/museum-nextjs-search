@@ -2,6 +2,21 @@
 
 Below are some screenshots of CLIP Embedding similarity results.
 
+Embeddings were added to Elasticsearch as dense vectors:
+
+```
+image: {
+  ...
+  embedding: {
+    type: 'dense_vector',
+    dims: 512,
+    index: true,
+    similarity: 'cosine',
+  },
+  ...
+}
+```
+
 Example cosine similarity query:
 
 ```
