@@ -50,3 +50,4 @@ data/ULAN/json/ulanCorporateBodies.jsonl
 data/ULAN/raw/*
 data/BrooklynMuseum/collections.jsonl
 data/BrooklynMuseum/archivesSpaceDCRecords.jsonl
+data/BrooklynMuseum/content.jsonl

@@ -3,7 +3,6 @@ import * as readline from 'node:readline';
 import zlib from 'zlib'; // TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
-  ERR_CLIENT,
   bulk,
   createTimestampedIndex,
   setIndexAsAlias,
@@ -26,7 +25,6 @@ export async function importJsonlFileData(
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
 
   let realIndexName = indexName;
   if (isCreateIndex) {

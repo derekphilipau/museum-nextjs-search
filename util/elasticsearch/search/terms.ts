@@ -31,7 +31,7 @@ export async function getTerm(
   };
 
   if (!client) client = getClient();
-  if (client === undefined) return;
+
   try {
     const response: T.SearchTemplateResponse = await client.search(request);
     const data = response?.hits?.hits[0]?._source as Term;
@@ -64,7 +64,7 @@ export async function terms(
   };
 
   if (!client) client = getClient();
-  if (client === undefined) return [];
+
   try {
     const response: T.SearchTemplateResponse = await client.search(request);
     return response.hits.hits.map((h) => h._source as Term);

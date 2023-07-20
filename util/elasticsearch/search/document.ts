@@ -33,7 +33,7 @@ export async function getDocument(
     excludes: ['image.embedding'],
   };
   const client = getClient();
-  if (client === undefined) return {};
+
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   const data = response?.hits?.hits[0]?._source as BaseDocument;
   const apiResponse: ApiResponseDocument = { query: esQuery, data };

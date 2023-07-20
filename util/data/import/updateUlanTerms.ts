@@ -1,5 +1,5 @@
 import { getClient } from '@/util/elasticsearch/client';
-import { ERR_CLIENT, bulk } from '@/util/elasticsearch/import';
+import { bulk } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import { loadJsonFile } from '@/util/jsonUtil';
 
@@ -181,7 +181,7 @@ export async function updateUlanTerms() {
   console.log(`Found ${ulanTerms.length} ULAN records.`);
   if (!ulanTerms.length) return;
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
+
   await bulk(client, 'terms', ulanTerms, 'id', 'update');
   console.log(`Updated terms with ${ulanTerms.length} ULAN records.`);
 }

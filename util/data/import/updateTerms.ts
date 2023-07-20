@@ -1,6 +1,5 @@
 import { getClient } from '@/util/elasticsearch/client';
 import {
-  ERR_CLIENT,
   bulk,
   createIndex,
   deleteDocuments,
@@ -12,7 +11,7 @@ import { type Term } from '@/types/term';
 
 export async function updateAllTerms() {
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
+
   // Re-create terms index, effectively deleting the old one
   // TODO: Only needed when migrating from an old version of the index
   await createIndex(client, 'terms', true);
@@ -87,7 +86,6 @@ async function updateTerms(
   }));
 
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
 
   // Delete old documents from the index
   await deleteDocuments(client, index, field);

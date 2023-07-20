@@ -52,7 +52,7 @@ export async function options(
   }
 
   const client = getClient();
-  if (client === undefined) return [];
+
   try {
     const response: T.SearchTemplateResponse = await client.search(request);
     if (response.aggregations?.[field] !== undefined) {

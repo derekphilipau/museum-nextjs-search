@@ -66,7 +66,7 @@ export async function similarCollectionObjectEmbedding(
   };
 
   if (!client) client = getClient();
-  if (client === undefined) return [];
+
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   if (!response?.hits?.hits?.length) {
     return [];

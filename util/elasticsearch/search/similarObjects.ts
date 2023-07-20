@@ -74,7 +74,7 @@ export async function similarCollectionObjects(
   addShouldTerms(document, esQuery, 'primaryGeographicalLocation.name', 1);
 
   if (!client) client = getClient();
-  if (client === undefined) return [];
+
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   if (!response?.hits?.hits?.length) {
     return [];
