@@ -1,10 +1,11 @@
+import * as fs from 'fs';
+import * as readline from 'node:readline';
+import zlib from 'zlib';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
 import { type BaseDocument } from '@/types/baseDocument';
 import { archives, collections, content, terms } from './indices';
-
-export const ERR_CLIENT = 'Cannot connect to Elasticsearch.';
 
 const indices = {
   collections,
@@ -21,6 +22,27 @@ const indices = {
  */
 export function snooze(s: number) {
   return new Promise((resolve) => setTimeout(resolve, s * 1000));
+}
+
+/**
+ * Get a readline interface for a given filename.
+ * If the filename ends with '.gz', the file will be gunzipped.
+ *
+ * @param filename File to read
+ * @returns readline.Interface
+ */
+export function getReadlineInterface(filename: string) {
+  // Get either gunzip or regular file stream
+  if (filename.endsWith('.gz')) {
+    return readline.createInterface({
+      input: fs.createReadStream(filename).pipe(zlib.createGunzip()),
+      crlfDelay: Infinity,
+    });
+  }
+  return readline.createInterface({
+    input: fs.createReadStream(filename),
+    crlfDelay: Infinity,
+  });
 }
 
 /**
@@ -273,13 +295,12 @@ async function countIndex(client: Client, indexName: string) {
  * @param method Either 'index' or 'update'.
  */
 export async function bulk(
-  client: Client | undefined,
+  client: Client,
   indexName: string,
   documents: any[],
   idFieldName: string,
   method = 'index'
 ) {
-  if (client === undefined) throw new Error(ERR_CLIENT);
   if (!documents || documents?.length === 0) return;
   const operations = documents.flatMap((doc) => [
     {
@@ -305,12 +326,7 @@ export async function bulk(
   );
 }
 
-export async function chunkedBulk(
-  client: Client | undefined,
-  documents: any[]
-) {
-  if (client === undefined) throw new Error(ERR_CLIENT);
-
+export async function chunkedBulk(client: Client, documents: any[]) {
   const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
 
   const chunks: any[] = [];

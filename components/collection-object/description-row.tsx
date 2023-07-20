@@ -37,9 +37,12 @@ export function DescriptionRow({
           val.map(
             (tag: string, i: Key) =>
               tag && (
-                <Link key={i} href={link} className="underline">
-                  {`${tag}${i !== val.length - 1 ? ',  ' : ''}`}
-                </Link>
+                <>
+                  <Link key={i} href={link} className="underline">
+                    {tag}
+                  </Link>
+                  {i !== val.length - 1 ? ', ' : ''}
+                </>
               )
           )}
         {isLink &&
@@ -47,13 +50,16 @@ export function DescriptionRow({
           val.map(
             (tag: string, i: Key) =>
               tag && (
-                <Link
-                  key={i}
-                  href={`${searchUrl}${name}=${tag}`}
-                  className="underline"
-                >
-                  {`${tag}${i !== val.length - 1 ? ',  ' : ''}`}
-                </Link>
+                <>
+                  <Link
+                    key={i}
+                    href={`${searchUrl}${name}=${tag}`}
+                    className="underline"
+                  >
+                    {tag}
+                  </Link>
+                  {i !== val.length - 1 ? ', ' : ''}
+                </>
               )
           )}
         {!isLink &&

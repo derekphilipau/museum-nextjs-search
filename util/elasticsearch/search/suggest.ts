@@ -16,7 +16,7 @@ const MAX_SUGGESTIONS = 10; // Maximum number of suggestions to return
 export async function suggest(q?: string): Promise<ApiResponseSuggest> {
   if (!q) return {};
   const client = getClient();
-  if (client === undefined) return {};
+
   const esQuery: T.SearchRequest = {
     index: 'terms',
     query: {

@@ -1,5 +1,5 @@
 import { getClient } from '@/util/elasticsearch/client';
-import { ERR_CLIENT, bulk } from '@/util/elasticsearch/import';
+import { bulk } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import dominantColors from '@/util/image/dominantColors';
 
@@ -9,7 +9,6 @@ const NUMBER_DOMINANT_COLORS = 8;
 export async function updateDominantColors(forceUpdate: boolean = false) {
   const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
   let documents: any[] = [];
 
   if (forceUpdate) {

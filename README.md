@@ -44,6 +44,10 @@ The Archives data was collected using the OAI-PMH harvesting API of Brooklyn Mus
 
 The Dublin Core metadata is limited. It would be better to use ArchivesSpace's native API to index all the metadata fields like Language, Type, Names, etc.
 
+### Additional Metadata
+
+It's often necessary to augment backend collection data with additional metadata.  For example, theme tags like "Climate Justice" might be associated with artworks in a CMS rather the backend collections management system.  The "sortPriority" field allows one to prominently display specific documents by adjusting the ordering in default searches.  This additional metadata is stored in `data/BrooklynMuseum/additionalMetadata.jsonl`, but could just as easily be exported from a CMS.
+
 ### Getty Union List of Artist Names (ULAN) Data
 
 ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) and converted to JSON using the `transformUlan.ts` script. When updating the `terms` index, the script attempts to find a matching artist name from this JSON file. If found, the ULAN artist data is added to the terms index document.
@@ -152,6 +156,7 @@ The base document defines common fields for all indices, these are the fields us
 - `formattedDate` - A string representing the date, no strict format.
 - `startYear` - An integer representing the start date year. Used for year range filtering.
 - `endYear` - An integer representing the end date year. Used for year range filtering.
+- `sortPriority` - Integer representing the priority or weight of a document.  Allows for default search results customization.
 
 Note on dates:  Museum objects have a wide range of dates from pre-historic BCE to contemporary CE that ISO 8601 cannot represent, hence the use of signed integers to represent years.
 

@@ -1,16 +1,14 @@
-import * as fs from 'fs';
-import * as readline from 'node:readline';
-import zlib from 'zlib';
 // TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
-  ERR_CLIENT,
+  getReadlineInterface,
   bulk,
   createIndex,
   deleteAliasIndices,
   snooze,
 } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
+import { Client } from '@elastic/elasticsearch';
 
 async function getAllIds(
   indexName: string,
@@ -18,6 +16,18 @@ async function getAllIds(
 ): Promise<any[]> {
   const ids: any[] = await searchAll(indexName, undefined, [idFieldName]);
   return ids.map((id) => id[idFieldName]);
+}
+
+async function createIndexIfNotExists(client: Client, indexName: string) {
+  // Check if the index already exists as an alias
+  const aliasExists = await client.indices.existsAlias({
+    name: indexName,
+  });
+  if (aliasExists) {
+    await deleteAliasIndices(client, indexName);
+    console.log(`Deleted existing alias ${indexName}`);
+  }
+  await createIndex(client, indexName, false); // Create index if doesn't exist
 }
 
 /**
@@ -35,25 +45,10 @@ export async function updateFromJsonlFile(
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const client = getClient();
-  if (client === undefined) throw new Error(ERR_CLIENT);
+  createIndexIfNotExists(client, indexName);
+  const rl = getReadlineInterface(dataFilename);
 
-  // Check if the index already exists as an alias
-  const aliasExists = await client.indices.existsAlias({
-    name: indexName,
-  });
-  if (aliasExists) {
-    await deleteAliasIndices(client, indexName);
-    console.log(`Deleted existing alias ${indexName}`);
-  }
-  await createIndex(client, indexName, false); // Create index if doesn't exist
-
-  const fileStream = fs
-    .createReadStream(dataFilename)
-    .pipe(zlib.createGunzip());
-  const rl = readline.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
+  // Bulk insert transformed documents
   const allIds: any[] = [];
   let documents: any[] = [];
   for await (const line of rl) {
@@ -82,15 +77,14 @@ export async function updateFromJsonlFile(
     await bulk(client, indexName, documents, idFieldName, 'update');
   }
 
+  // Delete ids not present in data file
   const esAllIds = await getAllIds(indexName, idFieldName);
   console.log('Got existing index ids: ' + esAllIds?.length);
 
-  // find IDs that exist in Elasticsearch but not in `allIdsSet`
   const allIdsSet = new Set(allIds);
   const idsToDelete = [...esAllIds].filter((id) => !allIdsSet.has(id));
 
   console.log('Deleting ' + idsToDelete.length + ' ids');
-  console.log(idsToDelete);
 
   await client.deleteByQuery({
     index: indexName,

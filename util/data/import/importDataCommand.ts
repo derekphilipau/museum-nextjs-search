@@ -8,6 +8,7 @@ import { abort, ask, questionsDone } from '@/util/command';
 import { loadEnvConfig } from '@next/env';
 
 import { importJsonlFileData } from './importDatafile';
+import { updateAdditionalMetadata } from './updateAdditionalMetadata';
 import { updateDominantColors } from './updateDominantColors';
 import { updateFromJsonlFile } from './updateFromFile';
 import { updateAllTerms } from './updateTerms';
@@ -29,6 +30,7 @@ async function run() {
   const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
   const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
   const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl.gz`;
+  const additionalMetadataDataFile = `./data/${dataset}/additionalMetadata.jsonl`;
 
   console.log('Import Elasticsearch data from JSON files.');
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true')
@@ -81,6 +83,13 @@ async function run() {
       archiveTransformable.transform,
       true
     );
+
+  if (
+    (await ask(
+      `Update indices with additional metadata from ${additionalMetadataDataFile}? (y/n) `
+    )) === 'y'
+  )
+    await updateAdditionalMetadata(additionalMetadataDataFile);
 
   if ((await ask(`Update terms? (y/n) `)) === 'y') await updateAllTerms();
 

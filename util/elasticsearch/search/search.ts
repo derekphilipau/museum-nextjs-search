@@ -92,7 +92,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
   }
 
   const client = getClient();
-  if (client === undefined) return {};
+
   const response: T.SearchTemplateResponse = await client.search(esQuery);
 
   const options = getResponseOptions(response);
@@ -169,7 +169,7 @@ export async function searchCollections(
   addQueryAggs(esQuery, index);
 
   const client = getClient();
-  if (client === undefined) return {};
+
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   const options = getResponseOptions(response);
   const metadata = getResponseMetadata(response, size);
@@ -504,7 +504,6 @@ export async function searchAll(
   sourceFilter?: any
 ): Promise<any[]> {
   const client = getClient();
-  if (client === undefined) return [];
 
   const results: any[] = [];
   const responseQueue: any[] = [];
