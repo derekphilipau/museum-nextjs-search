@@ -3,7 +3,6 @@ import * as T from '@elastic/elasticsearch/lib/api/types';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { BaseDocument } from '@/types/baseDocument';
 import { getClient } from '../client';
-// import { similarCollectionObjectEmbedding } from './similarObjectEmbedding';
 import { similarCollectionObjects } from './similarObjects';
 
 /**
@@ -28,10 +27,6 @@ export async function getDocument(
       },
     },
   };
-  // Turn off embeddings for now
-  esQuery._source = {
-    excludes: ['image.embedding'],
-  };
   const client = getClient();
 
   const response: T.SearchTemplateResponse = await client.search(esQuery);
@@ -39,13 +34,6 @@ export async function getDocument(
   const apiResponse: ApiResponseDocument = { query: esQuery, data };
   if (index === 'collections' && getAdditionalData) {
     apiResponse.similar = await similarCollectionObjects(data, client);
-    /*
-    // Turn embeddings off for now
-    apiResponse.embeddings = await similarCollectionObjectEmbedding(
-      data,
-      client
-    );
-    */
   }
   return apiResponse;
 }
