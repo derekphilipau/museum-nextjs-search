@@ -356,7 +356,7 @@ If you have not yet loaded the Elasticsearch data, you should see an error on th
 
 From the command line, run: `npm run import`
 
-The main data file with collection objects is `./data/BrooklynMuseum/archivesSpaceDCRecords.jsonl.gz`. `importDataCommand.ts` will load compressed data from .jsonl.gz files in the `data/BrooklynMuseum/` directory into Elasticsearch indices. **_Warning: This will modify Elasticsearch indices._**
+The main data file with collection objects is `./data/BrooklynMuseum/collections.jsonl.gz`. `importDataCommand.ts` will load compressed data from .jsonl.gz files in the `data/BrooklynMuseum/` directory into Elasticsearch indices. **_Warning: This will modify Elasticsearch indices._**
 
 This command will:
 
