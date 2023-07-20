@@ -1,9 +1,7 @@
-import * as fs from 'fs';
-import * as readline from 'node:readline';
-import zlib from 'zlib';
 // TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
+  getReadlineInterface,
   bulk,
   createIndex,
   deleteAliasIndices,
@@ -47,22 +45,8 @@ export async function updateFromJsonlFile(
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const client = getClient();
-
   createIndexIfNotExists(client, indexName);
-
-  // Get either gunzip or regular file stream
-  let rl: readline.Interface;
-  if (dataFilename.endsWith('.gz')) {
-    rl = readline.createInterface({
-      input: fs.createReadStream(dataFilename).pipe(zlib.createGunzip()),
-      crlfDelay: Infinity,
-    });
-  } else {
-    rl = readline.createInterface({
-      input: fs.createReadStream(dataFilename),
-      crlfDelay: Infinity,
-    });
-  }
+  const rl = getReadlineInterface(dataFilename);
 
   // Bulk insert transformed documents
   const allIds: any[] = [];
