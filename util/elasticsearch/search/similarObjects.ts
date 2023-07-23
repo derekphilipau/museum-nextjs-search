@@ -65,7 +65,7 @@ export async function similarCollectionObjects(
   addShouldTerms(document, esQuery, 'period', 2);
   addShouldTerms(document, esQuery, 'classification', 1.5);
   addShouldTerms(document, esQuery, 'medium', 1);
-  addShouldTerms(document, esQuery, 'collections', 1);
+  addShouldTerms(document, esQuery, 'departments', 1);
   addShouldTerms(document, esQuery, 'exhibitions', 1);
   addShouldTerms(document, esQuery, 'primaryGeographicalLocation.name', 1);
 

@@ -1,13 +1,11 @@
 import { type BaseDocument } from '@/types/baseDocument';
-import { Transformable } from '@/types/transformable';
-import {
-  CONTENT_TYPE,
-  DOC_SOURCE,
-} from './util';
+import { DocumentTransform } from '@/types/documentTransform';
+import { CONTENT_TYPE, DOC_SOURCE } from './util';
 
-async function transform(doc: {
-  [key: string]: any;
-}): Promise<BaseDocument> {
+export const transform: DocumentTransform = async function(
+  doc: any,
+  isMultiTenant: boolean
+): Promise<BaseDocument | undefined> {
   return {
     type: CONTENT_TYPE,
     source: DOC_SOURCE,
@@ -22,7 +20,3 @@ async function transform(doc: {
     },
   } as BaseDocument;
 }
-
-export const transformable: Transformable = {
-  transform,
-};

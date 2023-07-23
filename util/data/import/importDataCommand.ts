@@ -20,12 +20,10 @@ loadEnvConfig(process.cwd());
 
 async function run() {
   const dataset = process.env.DATASET || 'brooklynMuseum';
-  let ctm = await import(`./transform/${dataset}/transformCollectionObject`);
-  const collectionsTransformable = ctm.transformable;
-  ctm = await import(`./transform/${dataset}/transformContent`);
-  const contentTransformable = ctm.transformable;
-  ctm = await import(`./transform/${dataset}/transformArchive`);
-  const archiveTransformable = ctm.transformable;
+
+  let { transform: collectionsTransform} = await import(`./transform/${dataset}/transformCollectionObject`);
+  let { transform: contentTransform} = await import(`./transform/${dataset}/transformContent`);
+  let { transform: archiveTransform} = await import(`./transform/${dataset}/transformArchive`);
 
   const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
   const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
@@ -58,7 +56,7 @@ async function run() {
       'collections',
       ID_FIELD_NAME,
       collectionsDataFile,
-      collectionsTransformable.transform
+      collectionsTransform
     );
 
   if (
@@ -68,7 +66,7 @@ async function run() {
       'content',
       ID_FIELD_NAME,
       contentDataFile,
-      contentTransformable.transform,
+      contentTransform,
       true
     );
 
@@ -80,7 +78,7 @@ async function run() {
       'archives',
       ID_FIELD_NAME,
       archivesDataFile,
-      archiveTransformable.transform,
+      archiveTransform,
       true
     );
 

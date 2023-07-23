@@ -26,7 +26,7 @@ export interface DocumentGeographicalLocation {
 
 export interface DocumentMuseumLocation {
   id?: string;
-  name: string;
+  name?: string;
   isPublic?: boolean;
   isFloor?: boolean;
   parentId?: string;

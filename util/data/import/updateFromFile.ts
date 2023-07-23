@@ -1,14 +1,17 @@
 // TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
-  getReadlineInterface,
   bulk,
   createIndex,
   deleteAliasIndices,
+  getReadlineInterface,
   snooze,
 } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import { Client } from '@elastic/elasticsearch';
+
+import type { BaseDocument } from '@/types/baseDocument';
+import type { DocumentTransform } from '@/types/documentTransform';
 
 async function getAllIds(
   indexName: string,
@@ -41,27 +44,31 @@ export async function updateFromJsonlFile(
   indexName: string,
   idFieldName: string,
   dataFilename: string,
-  transform: (row: any) => any = (row) => row
+  transform: DocumentTransform
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
+  const isMultiTenant = process.env.ELASTICSEARCH_IS_MULTI_TENANT === 'true';
   const client = getClient();
   createIndexIfNotExists(client, indexName);
   const rl = getReadlineInterface(dataFilename);
 
   // Bulk insert transformed documents
-  const allIds: any[] = [];
-  let documents: any[] = [];
+  const allIds: string[] = [];
+  let documents: BaseDocument[] = [];
   for await (const line of rl) {
     try {
       const obj = line ? JSON.parse(line) : undefined;
       if (obj !== undefined) {
         if (transform !== undefined) {
-          const transformedObj = await transform(obj);
-          if (transformedObj) documents.push(transformedObj);
+          const transformedObj = await transform(obj, isMultiTenant);
+          if (transformedObj) {
+            documents.push(transformedObj);
+            allIds.push(transformedObj[idFieldName]);
+          }
         } else {
           documents.push(obj);
+          allIds.push(obj[idFieldName]);
         }
-        allIds.push(obj[idFieldName]);
       }
     } catch (err) {
       console.error(`Error parsing line ${line}: ${err}`);

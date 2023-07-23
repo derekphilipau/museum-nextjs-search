@@ -78,12 +78,11 @@ export default async function Page({ params }) {
             </div>
           )}
           <h3 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
-            {collectionObject?.collections?.map(
-              (collection, i) =>
-                collection && (
+            {collectionObject?.departments?.map(
+              (department, i) =>
+              department && (
                   <span key={i}>
-                    {collection}
-                    {i > 0 ? ', ' : ''}
+                    {`${department}${i > 0 ? ', ' : ''}`}
                   </span>
                 )
             )}

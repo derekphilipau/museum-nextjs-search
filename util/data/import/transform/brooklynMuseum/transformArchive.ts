@@ -1,6 +1,6 @@
 import { type BaseDocument } from '@/types/baseDocument';
 import { type ArchiveDocument } from '@/types/archiveDocument';
-import { Transformable } from '@/types/transformable';
+import { DocumentTransform } from '@/types/documentTransform';
 import {
   ARCHIVE_TYPE,
   DOC_SOURCE,
@@ -109,9 +109,10 @@ function getLanguage(metadata: any) {
   }
 }
 
-async function transform(doc: {
-  [key: string]: any;
-}): Promise<BaseDocument | undefined> {
+export const transform: DocumentTransform = async function(
+  doc: any,
+  isMultiTenant: boolean
+): Promise<ArchiveDocument | undefined> {
   const md = doc?.metadata?.['oai_dc:dc'];
   if (md === undefined) return undefined;
 
@@ -145,7 +146,3 @@ async function transform(doc: {
     endYear: dates?.endYear,
   } as ArchiveDocument;
 }
-
-export const transformable: Transformable = {
-  transform,
-};

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as readline from 'node:readline';
-import zlib from 'zlib'; // TODO remove zlib from package.json
+import zlib from 'zlib';
+// TODO remove zlib from package.json
 import { getClient } from '@/util/elasticsearch/client';
 import {
   bulk,
@@ -8,6 +9,8 @@ import {
   setIndexAsAlias,
   snooze,
 } from '@/util/elasticsearch/import';
+
+import type { DocumentTransform } from '@/types/documentTransform';
 
 /**
  * Import data from a jsonl file (one JSON object per row, no endline commas)
@@ -20,15 +23,16 @@ export async function importJsonlFileData(
   indexName: string,
   idFieldName: string,
   dataFilename: string,
-  transform: (row: any) => any = (row) => row,
+  transform: DocumentTransform,
   isCreateIndex = true
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
+  const isMultiTenant = process.env.ELASTICSEARCH_IS_MULTI_TENANT === 'true';
   const client = getClient();
 
   let realIndexName = indexName;
   if (isCreateIndex) {
-    realIndexName = await createTimestampedIndex(client, indexName)
+    realIndexName = await createTimestampedIndex(client, indexName);
   }
 
   const fileStream = fs
@@ -44,7 +48,7 @@ export async function importJsonlFileData(
       const obj = line ? JSON.parse(line) : undefined;
       if (obj !== undefined) {
         if (transform !== undefined) {
-          const transformedObj = await transform(obj);
+          const transformedObj = await transform(obj, isMultiTenant);
           if (transformedObj) documents.push(transformedObj);
         } else {
           documents.push(obj);
@@ -66,6 +70,6 @@ export async function importJsonlFileData(
 
   if (isCreateIndex && indexName !== realIndexName) {
     // We just populated a timestamped index, point alias to it
-    await setIndexAsAlias(client, indexName, realIndexName)
+    await setIndexAsAlias(client, indexName, realIndexName);
   }
 }

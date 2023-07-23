@@ -16,7 +16,7 @@ export async function updateAllTerms() {
   // TODO: Only needed when migrating from an old version of the index
   await createIndex(client, 'terms', true);
 
-  await updateTerms('collections', 'collections');
+  await updateTerms('collections', 'departments');
   await updateTerms('collections', 'classification');
   await updateTerms('collections', 'primaryConstituent', 'id', 'name');
   await updateTerms('collections', 'exhibitions');

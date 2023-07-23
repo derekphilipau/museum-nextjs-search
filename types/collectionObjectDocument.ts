@@ -26,10 +26,9 @@ export interface CollectionObjectDocument extends BaseDocument {
   museumLocation?: DocumentMuseumLocation;
   onView?: boolean;
   rightsType?: string;
-  completeness?: number;
   labels?: string[];
   relatedObjects?: string[];
-  collections?: string[];
+  departments?: string[];
   exhibitions?: string[];
   primaryGeographicalLocation?: DocumentGeographicalLocation;
   geographicalLocations?: DocumentGeographicalLocation[];

@@ -189,7 +189,7 @@ Includes all Base Document fields as well as:
 - `onView` - Whether or not the object is currently on view.
 - `rightsType` - Specifies copyright type, e.g. "Creative Commons-BY"
 - `labels` - Array of gallery labels. TODO: Define type & add to searchText?
-- `collections` - An array of collections the object belongs to.
+- `departments` - An array of departments/collections the object belongs to.
 - `exhibitions` - An array of exhibitions the object has been in. TODO: Assumes exhibitions have unique names.
 - `geographicLocations` - Geographical Location array. Geographic locations associated with the object.
 - `primaryGeographicalLocation` - Geographical Location. The primary location associated with the object.
@@ -260,7 +260,7 @@ This project uses a custom bool query of boosted should terms. [similarObjects.t
 - `period` - 2
 - `classification` - 1.5
 - `medium` - 1
-- `collections` - 1
+- `departments` - 1
 - `exhibitions` - 1
 - `primaryGeographicalLocation.name` - 1
 
