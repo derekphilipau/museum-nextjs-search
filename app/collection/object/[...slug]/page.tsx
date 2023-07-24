@@ -9,6 +9,7 @@ import { encode } from 'html-entities';
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { ImageViewer } from '@/components/collection-object-image/image-viewer';
+import { CollectionObjectShare } from '@/components/collection-object/collection-object-share';
 import { CollectionObjectDescription } from '@/components/collection-object/collection-object-description';
 import { LanguageDisclaimer } from '@/components/collection-object/language-disclaimer';
 import { SimilarCollectionObjectList } from '@/components/collection-object/similar-collection-object-list';
@@ -80,10 +81,8 @@ export default async function Page({ params }) {
           <h3 className="mb-4 font-semibold uppercase text-neutral-700 dark:text-neutral-400">
             {collectionObject?.departments?.map(
               (department, i) =>
-              department && (
-                  <span key={i}>
-                    {`${department}${i > 0 ? ', ' : ''}`}
-                  </span>
+                department && (
+                  <span key={i}>{`${department}${i > 0 ? ', ' : ''}`}</span>
                 )
             )}
           </h3>
@@ -93,6 +92,9 @@ export default async function Page({ params }) {
               __html: collectionObject?.description || '',
             }}
           ></div>
+          <div>
+            <CollectionObjectShare item={collectionObject} />
+          </div>
           <div className="gap-x-4 pt-4 lg:flex">
             <div>
               <CollectionObjectDescription item={collectionObject} />

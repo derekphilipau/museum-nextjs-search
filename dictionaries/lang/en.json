@@ -37,6 +37,8 @@
   "button.pagination": "Pagination",
   "button.resultsPerPage": "Results per page",
   "button.download": "Download",
+  "button.share": "Share",
+  "button.shareTo": "Share to:",
   "search.sort.label": "Sort results by:",
   "search.sort.startYear.asc": "Oldest to newest",
   "search.sort.startYear.desc": "Newest to oldest",
