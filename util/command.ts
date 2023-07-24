@@ -1,21 +1,53 @@
 import * as readline from 'readline';
 
+const colorGreen = '\x1b[32m';
+const colorRed = '\x1b[31m';
+const resetColor = '\x1b[0m';
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-export async function ask(question) {
+/**
+ * Ask for user input and wait for response.
+ * @param question question to ask
+ * @returns string response
+ */
+export function ask(question: string): Promise<string> {
   return new Promise((resolve) => {
-    rl.question(question, resolve);
+    rl.question(question, (userInput: string) => resolve(userInput));
   });
 }
 
-export async function abort() {
-  console.log('Aborting');
-  return rl.close();
+/**
+ * Asks a yes/no question.  
+ * Any string starting with 'y' or 'Y' is considered a yes.
+ * @param question question to ask
+ * @returns boolean true if yes, false if other
+ */
+export function askYesNo(question: string): Promise<boolean> {
+  const ynQuestion = question + ' (y/n) ';
+  return new Promise((resolve) => {
+    rl.question(ynQuestion, (userInput: string) =>
+      resolve((userInput + '').toLowerCase().startsWith('y'))
+    );
+  });
 }
 
-export async function questionsDone() {
-  return rl.close();
+export function abort(): void {
+  console.warn(colorRed + 'Aborting' + resetColor);
+  rl.close();
+}
+
+export function questionsDone(): void {
+  rl.close();
+}
+
+export function info(message: string): void {
+  console.info(colorGreen + message + resetColor);
+}
+
+export function warn(message: string): void {
+  console.warn(colorRed + message + resetColor);
 }
