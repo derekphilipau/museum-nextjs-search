@@ -44,10 +44,10 @@ export async function updateFromJsonlFile(
   indexName: string,
   idFieldName: string,
   dataFilename: string,
-  transform: DocumentTransform
+  transform: DocumentTransform,
+  hasMutlipleDatasets = false
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
-  const isMultiTenant = process.env.ELASTICSEARCH_IS_MULTI_TENANT === 'true';
   const client = getClient();
   createIndexIfNotExists(client, indexName);
   const rl = getReadlineInterface(dataFilename);
@@ -60,7 +60,7 @@ export async function updateFromJsonlFile(
       const obj = line ? JSON.parse(line) : undefined;
       if (obj !== undefined) {
         if (transform !== undefined) {
-          const transformedObj = await transform(obj, isMultiTenant);
+          const transformedObj = await transform(obj, hasMutlipleDatasets);
           if (transformedObj) {
             documents.push(transformedObj);
             allIds.push(transformedObj[idFieldName]);

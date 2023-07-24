@@ -111,7 +111,7 @@ function getLanguage(metadata: any) {
 
 export const transform: DocumentTransform = async function(
   doc: any,
-  isMultiTenant: boolean
+  hasMutlipleDatasets: boolean
 ): Promise<ArchiveDocument | undefined> {
   const md = doc?.metadata?.['oai_dc:dc'];
   if (md === undefined) return undefined;

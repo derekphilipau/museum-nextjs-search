@@ -18,7 +18,7 @@ const ID_FIELD_NAME = 'id';
 
 loadEnvConfig(process.cwd());
 
-async function importDataset(dataset: string) {
+async function importDataset(dataset: string, hasMutlipleDatasets = false) {
   let { transform: collectionsTransform } = await import(
     `./transform/${dataset}/transformCollectionObject`
   );
@@ -43,7 +43,8 @@ async function importDataset(dataset: string) {
       'collections',
       ID_FIELD_NAME,
       collectionsDataFile,
-      collectionsTransform
+      collectionsTransform,
+      hasMutlipleDatasets
     );
 
   if (await askYesNo(`Import content index from ${contentDataFile}?`))
@@ -52,7 +53,8 @@ async function importDataset(dataset: string) {
       ID_FIELD_NAME,
       contentDataFile,
       contentTransform,
-      true
+      true,
+      hasMutlipleDatasets
     );
 
   if (await askYesNo(`Import archives index from ${archivesDataFile}?`))
@@ -61,7 +63,8 @@ async function importDataset(dataset: string) {
       ID_FIELD_NAME,
       archivesDataFile,
       archiveTransform,
-      true
+      true,
+      hasMutlipleDatasets
     );
 
   if (
@@ -98,7 +101,7 @@ async function run() {
 
   for (const dataset of datasets) {
     if (await askYesNo(`Import ${dataset} dataset?`))
-      await importDataset(dataset);
+      await importDataset(dataset, datasets.length > 1);
   }
 
   if (await askYesNo(`Update terms?`)) await updateAllTerms();

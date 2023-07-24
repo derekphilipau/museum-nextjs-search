@@ -4,7 +4,7 @@ import { CONTENT_TYPE, DOC_SOURCE } from './util';
 
 export const transform: DocumentTransform = async function(
   doc: any,
-  isMultiTenant: boolean
+  hasMutlipleDatasets: boolean
 ): Promise<BaseDocument | undefined> {
   return {
     type: CONTENT_TYPE,

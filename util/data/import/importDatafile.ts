@@ -24,10 +24,10 @@ export async function importJsonlFileData(
   idFieldName: string,
   dataFilename: string,
   transform: DocumentTransform,
-  isCreateIndex = true
+  isCreateIndex = true,
+  hasMutlipleDatasets = false
 ) {
   const limit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
-  const isMultiTenant = process.env.ELASTICSEARCH_IS_MULTI_TENANT === 'true';
   const client = getClient();
 
   let realIndexName = indexName;
@@ -48,7 +48,7 @@ export async function importJsonlFileData(
       const obj = line ? JSON.parse(line) : undefined;
       if (obj !== undefined) {
         if (transform !== undefined) {
-          const transformedObj = await transform(obj, isMultiTenant);
+          const transformedObj = await transform(obj, hasMutlipleDatasets);
           if (transformedObj) documents.push(transformedObj);
         } else {
           documents.push(obj);

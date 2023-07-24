@@ -2,9 +2,7 @@ import type { DocumentImage } from '@/types/baseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { DocumentTransform } from '@/types/documentTransform';
 import type {
-  BkmCollection,
   BkmDocument,
-  BkmExhibition,
   BkmImage,
 } from './types';
 import {
@@ -58,20 +56,24 @@ function splitMediumString(medium: string): string[] {
   return Array.from(new Set(mediums)); // remove duplicates
 }
 
-function formatId(id: number, isMultiTenant: boolean): string {
-  if (isMultiTenant) return `${DOC_SOURCE}_${id}`
+function getDatasetAwareId(id: number, hasMutlipleDatasets: boolean): string {
+  if (hasMutlipleDatasets) return `${DOC_SOURCE}_${id}`;
   return id + '';
 }
 
-export const transform: DocumentTransform = async function(
-  doc: any,
-  isMultiTenant: boolean
+function getElasticsearchId(id: number | string): string {
+  return id + '';
+}
+
+export const transform: DocumentTransform = async function (
+  doc: BkmDocument,
+  hasMutlipleDatasets: boolean
 ): Promise<CollectionObjectDocument | undefined> {
   const esDoc: CollectionObjectDocument = {
     // Begin BaseDocument fields
     type: OBJECT_TYPE,
     source: DOC_SOURCE,
-    id: formatId(doc.id, isMultiTenant),
+    id: getDatasetAwareId(doc.id, hasMutlipleDatasets),
     title: doc.title || undefined,
   };
 
@@ -150,12 +152,12 @@ export const transform: DocumentTransform = async function(
   } else if (doc.museum_location?.id) {
     esDoc.onView = true;
     esDoc.museumLocation = {
-      id: formatId(doc.museum_location.id, isMultiTenant),
+      id: getElasticsearchId(doc.museum_location.id),
       name: doc.museum_location.name || undefined,
       isPublic: doc.museum_location.is_public === 1,
       isFloor: doc.museum_location.is_floor,
       parentId: doc.museum_location.parent_location_id
-        ? formatId(doc.museum_location.parent_location_id, isMultiTenant)
+        ? getElasticsearchId(doc.museum_location.parent_location_id)
         : undefined,
     };
   }
@@ -186,17 +188,23 @@ export const transform: DocumentTransform = async function(
         // Most rankings are zero-based, but constituents seems one-based?
         esDoc.primaryConstituent = esDoc.constituents.find((c) => c.rank === 0);
         if (!esDoc.primaryConstituent) {
-          esDoc.primaryConstituent = esDoc.constituents.find((c) => c.rank === 1);
+          esDoc.primaryConstituent = esDoc.constituents.find(
+            (c) => c.rank === 1
+          );
         }
       }
     }
   }
 
   if (doc.collections?.length) {
-    esDoc.departments = doc.collections?.map((collection: any) => collection.name);
+    esDoc.departments = doc.collections?.map(
+      (collection: any) => collection.name
+    );
   }
   if (doc.exhibitions?.length) {
-    esDoc.exhibitions = doc.exhibitions?.map((exhibition: any) => exhibition.title);
+    esDoc.exhibitions = doc.exhibitions?.map(
+      (exhibition: any) => exhibition.title
+    );
   }
 
   esDoc.relatedObjects = doc.related_items?.map(
@@ -241,7 +249,7 @@ export const transform: DocumentTransform = async function(
       };
     } else {
       esDoc.image = {
-        id: formatId(myImage.id, isMultiTenant),
+        id: getElasticsearchId(myImage.id),
         url: getLargeOrRestrictedImageUrl(
           myImage.filename,
           esDoc.copyrightRestricted
@@ -259,21 +267,23 @@ export const transform: DocumentTransform = async function(
   }
 
   if (doc.images?.length) {
-    const unsortedImages: DocumentImage[] = doc.images.map((image: BkmImage) => ({
-      id: formatId(image.id, isMultiTenant),
-      url: getLargeOrRestrictedImageUrl(
-        image.filename,
-        esDoc.copyrightRestricted
-      ),
-      thumbnailUrl: getSmallOrRestrictedImageUrl(
-        image.filename,
-        esDoc.copyrightRestricted
-      ),
-      alt: image.description || undefined,
-      date: image.date || undefined,
-      view: image.view || undefined,
-      rank: image.rank || 10, // default to low rank
-    }));
+    const unsortedImages: DocumentImage[] = doc.images.map(
+      (image: BkmImage) => ({
+        id: getElasticsearchId(image.id),
+        url: getLargeOrRestrictedImageUrl(
+          image.filename,
+          esDoc.copyrightRestricted
+        ),
+        thumbnailUrl: getSmallOrRestrictedImageUrl(
+          image.filename,
+          esDoc.copyrightRestricted
+        ),
+        alt: image.description || undefined,
+        date: image.date || undefined,
+        view: image.view || undefined,
+        rank: image.rank || 10, // default to low rank
+      })
+    );
     if (!primaryImageInArray && doc.primary_image) {
       // If primary image wasn't in list of all images, add it
       unsortedImages.unshift({
@@ -293,4 +303,4 @@ export const transform: DocumentTransform = async function(
   }
 
   return esDoc;
-}
+};
