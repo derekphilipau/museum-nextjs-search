@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getDictionary } from '@/dictionaries/dictionaries';
 
 import { buttonVariants } from '@/components/ui/button';
-
+import { Icons } from '@/components/icons';
 export default function Page() {
   const dict = getDictionary();
 
@@ -18,10 +18,18 @@ export default function Page() {
       </div>
       <div className="flex gap-4">
         <Link
-          href={dict['home.button.link']}
+          href="/search/collections?hasPhoto=true&f=true"
           className={buttonVariants({ size: 'lg' })}
         >
+          <Icons.search className="mr-2 h-5 w-5" />
           {dict['home.button.label']}
+        </Link>
+        <Link
+          href="https://github.com/derekphilipau/museum-nextjs-search"
+          className={buttonVariants({ size: 'lg', variant: 'outline' })}
+        >
+          <Icons.github className="mr-2 h-5 w-5" />
+          Github
         </Link>
       </div>
     </section>
