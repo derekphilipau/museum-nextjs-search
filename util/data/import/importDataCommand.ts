@@ -7,84 +7,45 @@
 import { abort, askYesNo, info, questionsDone, warn } from '@/util/command';
 import { loadEnvConfig } from '@next/env';
 
-import { importJsonlFileData } from './importDatafile';
+import type { Dataset } from '@/types/dataset';
+import { siteConfig } from '@/config/site';
 import { updateAdditionalMetadata } from './updateAdditionalMetadata';
 import { updateDominantColors } from './updateDominantColors';
-import { updateFromJsonlFile } from './updateFromFile';
+import updateFromJsonlFile from './updateFromJsonlFile';
 import { updateAllTerms } from './updateTerms';
 import { updateUlanTerms } from './updateUlanTerms';
 
-const ID_FIELD_NAME = 'id';
-
 loadEnvConfig(process.cwd());
 
-async function importDataset(dataset: string, hasMutlipleDatasets = false) {
-  let { transform: collectionsTransform } = await import(
-    `./transform/${dataset}/transformCollectionObject`
-  );
-  let { transform: contentTransform } = await import(
-    `./transform/${dataset}/transformContent`
-  );
-  let { transform: archiveTransform } = await import(
-    `./transform/${dataset}/transformArchive`
-  );
-
-  const collectionsDataFile = `./data/${dataset}/collections.jsonl.gz`;
-  const contentDataFile = `./data/${dataset}/content.jsonl.gz`;
-  const archivesDataFile = `./data/${dataset}/archivesSpaceDCRecords.jsonl.gz`;
-  const additionalMetadataDataFile = `./data/${dataset}/additionalMetadata.jsonl`;
-
-  if (
-    await askYesNo(
-      `Update collections index with data from ${collectionsDataFile}?`
-    )
-  )
-    await updateFromJsonlFile(
-      'collections',
-      ID_FIELD_NAME,
-      collectionsDataFile,
-      collectionsTransform,
-      hasMutlipleDatasets
-    );
-
-  if (await askYesNo(`Import content index from ${contentDataFile}?`))
-    await importJsonlFileData(
-      'content',
-      ID_FIELD_NAME,
-      contentDataFile,
-      contentTransform,
-      true,
-      hasMutlipleDatasets
-    );
-
-  if (await askYesNo(`Import archives index from ${archivesDataFile}?`))
-    await importJsonlFileData(
-      'archives',
-      ID_FIELD_NAME,
-      archivesDataFile,
-      archiveTransform,
-      true,
-      hasMutlipleDatasets
-    );
-
-  if (
-    await askYesNo(
-      `Update indices with additional metadata from ${additionalMetadataDataFile}?`
-    )
-  )
-    await updateAdditionalMetadata(additionalMetadataDataFile);
+async function importDataset(dataset: Dataset, includeSourcePrefix: boolean) {
+  for (const indexName of dataset.indices) {
+    if (await askYesNo(`Update ${dataset.name} ${indexName} index?`)) {
+      const dataFile = `./data/${dataset.sourceName}/${indexName}.jsonl.gz`;
+      try {
+        const { transformer } = await import(`./transform/${dataset.sourceName}/${indexName}Transformer`);
+        await updateFromJsonlFile(
+          indexName,
+          dataFile,
+          transformer,
+          includeSourcePrefix
+        );
+      } catch (e) {
+        abort(`Error updating ${dataset.name} ${indexName} index: ${e}`);
+        return;
+      }
+    }
+  }
 }
 
 async function run() {
   info('Import data from gzipped JSONL files.');
 
-  const datasets = (process.env.DATASETS || '').split(',');
-  if (datasets.length === 0) {
+  if (siteConfig.datasets.length === 0) {
     warn('No datasets specified.');
     return abort();
   }
 
-  info(`Available datasets: ${datasets.join(', ')}`);
+  info(`Available datasets: ${siteConfig.datasets.map((d) => d.name).join(', ')}`);
 
   if (process.env.ELASTICSEARCH_USE_CLOUD === 'true')
     warn('WARNING: Using Elasticsearch Cloud');
@@ -99,9 +60,17 @@ async function run() {
 
   info('Beginning import of Elasticsearch data from JSON files...');
 
-  for (const dataset of datasets) {
-    if (await askYesNo(`Import ${dataset} dataset?`))
-      await importDataset(dataset, datasets.length > 1);
+  const includeSourcePrefix = siteConfig.datasets.length > 1;
+
+  for (const dataset of siteConfig.datasets) {
+    if (await askYesNo(`Import ${dataset.name} dataset?`)) {
+      await importDataset(dataset, includeSourcePrefix);
+    }
+  }
+
+  if (await askYesNo(`Update indices with additional metadata?`)) {
+    const additionalMetadataDataFile = `./data/additionalMetadata.jsonl`;
+    await updateAdditionalMetadata(additionalMetadataDataFile);
   }
 
   if (await askYesNo(`Update terms?`)) await updateAllTerms();

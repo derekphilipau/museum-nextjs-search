@@ -1,7 +1,9 @@
+import type { Dataset } from '@/types/dataset';
 import type { NavItem } from '@/types/nav';
 
 interface SiteConfig {
   defaultLocale: string;
+  datasets: Dataset[];
   mainNav: NavItem[];
   links?: {
     github?: string;
@@ -12,6 +14,18 @@ interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   defaultLocale: 'en',
+  datasets: [
+    {
+      name: 'Brooklyn Museum',
+      sourceName: 'bkm',
+      indices: ['collections', 'content', 'archives'],
+    },
+    {
+      name: 'Museum of Modern Art',
+      sourceName: 'moma',
+      indices: ['collections'],
+    },
+  ],
   mainNav: [
     {
       dict: 'nav.search',
@@ -20,7 +34,5 @@ export const siteConfig: SiteConfig = {
   ],
   links: {
     github: 'https://github.com/derekphilipau/museum-nextjs-search',
-    // twitter: 'https://twitter.com/xxx',
-    // instagram: 'https://www.instagram.com/xxx',
   },
 };

@@ -12,12 +12,12 @@ export async function updateAdditionalMetadata(dataFilename: string) {
     try {
       const document = line ? JSON.parse(line) : undefined;
       if (document !== undefined) {
-        const { id, index, ...docUpdate } = document; // Extract id, index and the rest of the document
+        const { _id, _index, ...docUpdate } = document; // Extract id, index and the rest of the document
         operations.push(
           {
             update: {
-              _index: index,
-              _id: id,
+              _index,
+              _id,
             },
           },
           { doc: docUpdate, doc_as_upsert: true }

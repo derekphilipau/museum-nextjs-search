@@ -1,5 +1,5 @@
 import { getClient } from '@/util/elasticsearch/client';
-import { bulk } from '@/util/elasticsearch/import';
+import { bulk, getBulkOperationArray } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import { loadJsonFile } from '@/util/jsonUtil';
 
@@ -136,12 +136,12 @@ async function getUlanData(term, ulanArtists, ulanCorporateBodies) {
 }
 
 async function getPrimaryConstituentTerms(): Promise<any[]> {
-  const terms: any[] = await searchAll('terms', {
+  const hits: any[] = await searchAll('terms', {
     match: {
       field: 'primaryConstituent',
     },
   });
-  return terms;
+  return hits;
 }
 
 export async function updateUlanTerms() {
@@ -168,20 +168,21 @@ export async function updateUlanTerms() {
   console.log(`ULAN artists: ${ulanArtists.length}`);
   console.log(`ULAN corporate bodies: ${ulanCorporateBodies.length}`);
 
-  const terms = await getPrimaryConstituentTerms();
-  console.log('Found', terms.length, 'terms with primary constituent.');
-  const ulanTerms: any[] = [];
-  for (const term of terms) {
-    const ulanMatch = await getUlanData(term, ulanArtists, ulanCorporateBodies);
+  const hits = await getPrimaryConstituentTerms();
+  console.log('Found', hits.length, 'hits with primary constituent.');
+  const operations: any[] = [];
+  for (const hit of hits) {
+    const ulanMatch = await getUlanData(hit._source, ulanArtists, ulanCorporateBodies);
     if (ulanMatch) {
       // Great, found a single matching record for ULAN preferred term.
-      ulanTerms.push(ulanMatch);
+      operations.push(...getBulkOperationArray('update', 'terms', hit._id, ulanMatch));
+
     }
   }
-  console.log(`Found ${ulanTerms.length} ULAN records.`);
-  if (!ulanTerms.length) return;
+  console.log(`Found ${operations.length/2} ULAN records.`);
+  if (!operations.length) return;
   const client = getClient();
 
-  await bulk(client, 'terms', ulanTerms, 'id', 'update');
-  console.log(`Updated terms with ${ulanTerms.length} ULAN records.`);
+  await bulk(client, operations);
+  console.log(`Updated terms with ${operations.length/2} ULAN records.`);
 }

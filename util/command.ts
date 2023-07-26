@@ -21,7 +21,7 @@ export function ask(question: string): Promise<string> {
 }
 
 /**
- * Asks a yes/no question.  
+ * Asks a yes/no question.
  * Any string starting with 'y' or 'Y' is considered a yes.
  * @param question question to ask
  * @returns boolean true if yes, false if other
@@ -35,8 +35,9 @@ export function askYesNo(question: string): Promise<boolean> {
   });
 }
 
-export function abort(): void {
-  console.warn(colorRed + 'Aborting' + resetColor);
+export function abort(message?: string): void {
+  const abortMessage = message ? message : 'Aborting';
+  console.warn(colorRed + abortMessage + resetColor);
   rl.close();
 }
 

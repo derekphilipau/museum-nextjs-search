@@ -3,8 +3,10 @@ import {
   bulk,
   createIndex,
   deleteDocuments,
+  getBulkOperationArray,
 } from '@/util/elasticsearch/import';
-import { searchAll } from '@/util/elasticsearch/search/search';
+import type { AggOption } from '@/types/aggOption';
+import { options } from '@/util/elasticsearch/search/options';
 import slugify from 'slugify';
 
 import { type Term } from '@/types/term';
@@ -14,11 +16,11 @@ export async function updateAllTerms() {
 
   // Re-create terms index, effectively deleting the old one
   // TODO: Only needed when migrating from an old version of the index
-  await createIndex(client, 'terms', true);
+  await createIndex(client, 'terms', true, true);
 
   await updateTerms('collections', 'departments');
   await updateTerms('collections', 'classification');
-  await updateTerms('collections', 'primaryConstituent', 'id', 'name');
+  await updateTerms('collections', 'primaryConstituent.name');
   await updateTerms('collections', 'exhibitions');
 }
 
@@ -34,61 +36,29 @@ export async function updateAllTerms() {
 async function updateTerms(
   index: string,
   field: string,
-  fieldUniqueId?: string,
-  valueFieldProperty?: string
 ) {
-  // Search all documents with the specific field:
-  const docs: any[] = await searchAll(index, { exists: { field } }, [field]);
-  // Map all results into a new array that only contains the specific field:
-  const results: any[] = docs.map((o: any) => o[field]);
-
-  let uniqueResults: any[] = [];
-  for (const result of results) {
-    if (Array.isArray(result)) {
-      // If the result is an array, add all its elements
-      uniqueResults.push(...result);
-    } else {
-      uniqueResults.push(result);
-    }
-  }
-  if (
-    uniqueResults.length &&
-    typeof uniqueResults[0] === 'object' && // make sure it's an object
-    fieldUniqueId
-  ) {
-    // Remove duplicates based on the field's unique id:
-    uniqueResults = uniqueResults.filter(
-      (element, index, self) =>
-        index ===
-        self.findIndex((t) => t[fieldUniqueId] === element[fieldUniqueId])
-    );
-  } else if (uniqueResults.length && typeof uniqueResults[0] === 'string') {
-    // Remove duplicate strings:
-    uniqueResults = [...new Set(uniqueResults)];
-  }
-
-  // Map all unique results to a new array of terms
-  const terms: Term[] = uniqueResults.map((c: any) => ({
-    id: `${index}-${field}-${
-      c?.id || slugify(valueFieldProperty ? c[valueFieldProperty] : c)
-    }`,
-    source: 'TMS',
-    sourceId: 'Brooklyn Museum',
-    sourceType: null,
+  // Just index the top 10000 results
+  const esTerms: AggOption[] = await options({ index, field }, 10000);
+  const terms: Term[] = esTerms.map((esTerm: any) => ({
     index,
     field,
-    value: valueFieldProperty ? c[valueFieldProperty] : c,
-    preferred: null,
-    alternates: null,
-    summary: null,
-    description: null,
-    data: typeof c === 'object' ? c : null,
+    value: esTerm.key,
   }));
+  const operations: any[] = [];
+  for (const term of terms) {
+    if (term.value) {
+      const id = `${index}-${field}-${slugify(term.value)}`;
+      operations.push(...getBulkOperationArray('update', 'terms', id, term));  
+    }
+  }
 
   const client = getClient();
 
+  await createIndex(client, 'terms', false, false);
+
   // Delete old documents from the index
   await deleteDocuments(client, index, field);
+
   // Bulk update the terms index with new terms
-  await bulk(client, 'terms', terms, 'id', 'update');
+  await bulk(client, operations);
 }

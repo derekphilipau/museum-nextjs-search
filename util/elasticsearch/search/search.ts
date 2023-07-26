@@ -518,9 +518,7 @@ export async function searchAll(
 
   while (responseQueue.length) {
     const body = responseQueue.shift();
-    body.hits.hits.forEach(function (hit) {
-      results.push(hit._source);
-    });
+    results.push(...body.hits.hits);
     if (body.hits.total.value === results.length) {
       break;
     }

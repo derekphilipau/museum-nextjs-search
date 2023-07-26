@@ -4,7 +4,6 @@ import zlib from 'zlib';
 import { Client } from '@elastic/elasticsearch';
 import * as T from '@elastic/elasticsearch/lib/api/types';
 
-import { type BaseDocument } from '@/types/baseDocument';
 import { archives, collections, content, terms } from './indices';
 
 const indices = {
@@ -107,8 +106,6 @@ export async function deleteDocuments(
       deleteQuery.body.query.match = { field: fieldName };
     }
     await client.deleteByQuery(deleteQuery);
-  } else {
-    await createIndex(client, indexName);
   }
 }
 
@@ -117,17 +114,31 @@ export async function deleteDocuments(
  *
  * @param client Elasticsearch client.
  * @param indexName Name of the index.
- * @param deleteIfExists Delete the index if it already exists.
+ * @param deleteIndexIfExists Delete the index if it already exists.
+ * @param deleteAliasIfExists Delete the alias if it already exists.
  */
 export async function createIndex(
   client: Client,
   indexName: string,
-  deleteIfExists = true
+  deleteIndexIfExists = false,
+  deleteAliasIfExists = true
 ) {
   if (!indices[indexName]) {
     throw new Error(`Index ${indexName} does not exist in indices definition`);
   }
-  if (deleteIfExists) await deleteIndex(client, indexName);
+
+  if (deleteAliasIfExists) {
+    // Check if the index already exists as an alias
+    const aliasExists = await client.indices.existsAlias({
+      name: indexName,
+    });
+    if (aliasExists) {
+      await deleteAliasIndices(client, indexName);
+      console.log(`Deleted existing alias ${indexName}`);
+    }
+  } else if (deleteIndexIfExists) {
+    await deleteIndex(client, indexName);
+  }
 
   const indexExists = await existsIndex(client, indexName);
   if (!indexExists) {
@@ -136,6 +147,18 @@ export async function createIndex(
       body: indices[indexName],
     });
   }
+}
+
+async function createIndexIfNotExists(client: Client, indexName: string) {
+  // Check if the index already exists as an alias
+  const aliasExists = await client.indices.existsAlias({
+    name: indexName,
+  });
+  if (aliasExists) {
+    await deleteAliasIndices(client, indexName);
+    console.log(`Deleted existing alias ${indexName}`);
+  }
+  await createIndex(client, indexName, false); // Create index if doesn't exist
 }
 
 /**
@@ -289,53 +312,35 @@ async function countIndex(client: Client, indexName: string) {
  * Bulk insert or update documents in an index.
  *
  * @param client Elasticsearch client.
- * @param indexName Name of the index.
- * @param documents Array of BaseDocument to insert or update.
- * @param idFieldName Optional name of the field to use as the document ID.
- * @param method Either 'index' or 'update'.
+ * @param operations Array of operations to insert or update.
  */
-export async function bulk(
-  client: Client,
-  indexName: string,
-  documents: any[],
-  idFieldName: string,
-  method = 'index'
-) {
-  if (!documents || documents?.length === 0) return;
-  const operations = documents.flatMap((doc) => [
-    {
-      [method]: {
-        _index: indexName,
-        ...(idFieldName in doc &&
-          (doc[idFieldName] || doc[idFieldName] === 0) && {
-            _id: doc[idFieldName],
-          }),
-      },
-    },
-    ...(method === 'update' ? [{ doc, doc_as_upsert: true }] : [doc]),
-  ]);
+export async function bulk(client: Client, operations: any[]) {
+  if (!operations || operations?.length === 0) return;
   const bulkResponse = await client.bulk({ refresh: true, operations });
   if (bulkResponse.errors) {
     console.log(JSON.stringify(bulkResponse, null, 2));
-    throw new Error('Failed to import data');
+    throw new Error('Bulk operations failed');
   }
   console.log(
-    `${method} ${
-      operations?.length / 2
-    } docs, index size now ${await countIndex(client, indexName)}`
+    `Bulk ${operations?.length / 2} operations completed in ${
+      bulkResponse.took
+    }ms`
   );
 }
 
-export async function chunkedBulk(client: Client, documents: any[]) {
-  const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
-
-  const chunks: any[] = [];
-  for (let i = 0; i < documents.length; i += chunkSize) {
-    chunks.push(documents.slice(i, i + chunkSize));
-  }
-
-  for (const chunk of chunks) {
-    console.log(`Processing chunk`);
-    await bulk(client, 'collections', documents, 'id', 'update');
-  }
+export function getBulkOperationArray(
+  method: string,
+  index: string,
+  id: string | undefined,
+  doc: any
+): any[] {
+  return [
+    {
+      [method]: {
+        _index: index,
+        ...(id && { _id: id }),
+      },
+    },
+    method === 'update' ? { doc, doc_as_upsert: true } : { doc },
+  ];
 }

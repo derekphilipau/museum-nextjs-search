@@ -1,5 +1,5 @@
 import { getClient } from '@/util/elasticsearch/client';
-import { bulk } from '@/util/elasticsearch/import';
+import { bulk, getBulkOperationArray } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 import dominantColors from '@/util/image/dominantColors';
 
@@ -7,20 +7,21 @@ const INDEX_NAME = 'collections';
 const NUMBER_DOMINANT_COLORS = 8;
 
 export async function updateDominantColors(forceUpdate: boolean = false) {
-  const chunkSize = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
+  const bulkLimit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
+  const maxBulkOperations = bulkLimit * 2;
   const client = getClient();
-  let documents: any[] = [];
+  let hits: any[] = [];
 
   if (forceUpdate) {
     // Get all documents with images, regardless of whether we've already processed them
-    documents = await searchAll(
+    hits = await searchAll(
       INDEX_NAME,
       { exists: { field: 'image.thumbnailUrl' } },
-      ['id', 'image']
+      ['image']
     );
   } else {
     // Get all documents with images that we haven't processed yet
-    documents = await searchAll(
+    hits = await searchAll(
       INDEX_NAME,
       {
         bool: {
@@ -49,24 +50,25 @@ export async function updateDominantColors(forceUpdate: boolean = false) {
           ],
         },
       },
-      ['id', 'image']
+      ['image']
     );
   }
 
   console.log(
-    `Dominant Colors: Found ${documents.length} documents with images to analyze.`,
-    `Update with force equal to ${forceUpdate}, chunk size ${chunkSize}.`
+    `Dominant Colors: Found ${hits.length} documents with images to analyze.`,
+    `Update with force equal to ${forceUpdate}, max operations ${maxBulkOperations}.`
   );
 
-  let documentsToUpdate: any[] = [];
-  for (const document of documents) {
+  let operations: any[] = [];
+  for (const hit of hits) {
+    const document = hit._source;
     if (!document.image?.thumbnailUrl) continue;
     const palette = await dominantColors(
       document.image.thumbnailUrl,
       NUMBER_DOMINANT_COLORS
     );
     console.log(
-      `doc id ${document.id} image ${document.image.thumbnailUrl} has ${palette.length} colors`
+      `doc id ${hit._id} image ${document.image.thumbnailUrl} has ${palette.length} colors`
     );
 
     const colors: any[] = [];
@@ -92,17 +94,17 @@ export async function updateDominantColors(forceUpdate: boolean = false) {
       document.image.dominantColors = colors;
     }
 
-    documentsToUpdate.push(document);
+    operations.push(...getBulkOperationArray('update', INDEX_NAME, hit._id, document));
 
-    if (documentsToUpdate.length >= chunkSize) {
+    if (operations.length >= maxBulkOperations) {
       console.log('BULK UPDATE');
-      await bulk(client, INDEX_NAME, documentsToUpdate, 'id', 'update');
-      documentsToUpdate = [];
+      await bulk(client, operations);
+      operations = [];
     }
   }
 
-  if (documentsToUpdate.length > 0) {
+  if (operations.length > 0) {
     console.log('BULK UPDATE');
-    await bulk(client, INDEX_NAME, documentsToUpdate, 'id', 'update');
+    await bulk(client, operations);
   }
 }

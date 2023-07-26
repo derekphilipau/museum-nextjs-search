@@ -1,8 +1,8 @@
 export interface DocumentConstituent {
   id?: string;
   name: string;
-  prefix: string;
-  suffix: string;
+  prefix?: string;
+  suffix?: string;
   dates?: string;
   birthYear?: number;
   deathYear?: number;
@@ -55,7 +55,7 @@ export interface BaseDocument {
   type: string;
   source?: string;
   url?: string;
-  id: string;
+  id?: string;
   title?: string;
   description?: string;
   searchText?: string;
