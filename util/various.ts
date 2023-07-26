@@ -87,7 +87,7 @@ export function trimStringToLengthAtWordBoundary(
 }
 
 export function getObjectUrlWithSlug(
-  id: number | string,
+  id: string | undefined,
   title: string | undefined
 ) {
   if (!id) return '';

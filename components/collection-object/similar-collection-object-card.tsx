@@ -9,7 +9,7 @@ export function SimilarCollectionObjectCard({
 }: {
   item: CollectionObjectDocument;
 }) {
-  if (!item) return null;
+  if (!item || !item.id) return null;
 
   const primaryConstituentName =
     item.primaryConstituent?.name || 'Maker Unknown';
