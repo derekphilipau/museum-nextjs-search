@@ -93,7 +93,11 @@ export async function search(params: any): Promise<ApiResponseSearch> {
 
   const options = getResponseOptions(response);
   const metadata = getResponseMetadata(response, size);
-  const data = response.hits.hits.map((h) => h._source as BaseDocument);
+  const data = response.hits.hits.map(hit => ({
+    _id: hit._id,
+    _index: hit._index,
+    ...(hit._source || {}),
+  }));
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;
@@ -164,9 +168,11 @@ export async function searchCollections(
   const response: T.SearchTemplateResponse = await client.search(esQuery);
   const options = getResponseOptions(response);
   const metadata = getResponseMetadata(response, size);
-  const data = response.hits.hits.map(
-    (h) => h._source as CollectionObjectDocument
-  );
+  const data = response.hits.hits.map(hit => ({
+    _id: hit._id,
+    _index: hit._index,
+    ...(hit._source || {}),
+  }));
   const res: ApiResponseSearch = { query: esQuery, data, options, metadata };
   const qt = await getSearchQueryTerms(q, p, client);
   if (qt !== undefined && qt?.length > 0) res.terms = qt;

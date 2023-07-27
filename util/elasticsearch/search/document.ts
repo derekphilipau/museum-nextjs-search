@@ -19,19 +19,18 @@ export async function getDocument(
   id: number | string,
   getAdditionalData: boolean = true
 ): Promise<ApiResponseDocument> {
-  const esQuery: T.SearchRequest = {
-    index,
-    query: {
-      match: {
-        id,
-      },
-    },
-  };
   const client = getClient();
+  const document = await client.get({
+    index,
+    id
+  });
+  const data = {
+    _id: document._id,
+    _index: document._index,
+    ...(document._source || {}),
+  } as BaseDocument;
 
-  const response: T.SearchTemplateResponse = await client.search(esQuery);
-  const data = response?.hits?.hits[0]?._source as BaseDocument;
-  const apiResponse: ApiResponseDocument = { query: esQuery, data };
+  const apiResponse: ApiResponseDocument = { data };
   if (index === 'collections' && getAdditionalData) {
     apiResponse.similar = await similarCollectionObjects(data, client);
   }

@@ -9,11 +9,11 @@ export function SimilarCollectionObjectCard({
 }: {
   item: CollectionObjectDocument;
 }) {
-  if (!item || !item.id) return null;
+  if (!item || !item._id) return null;
 
   const primaryConstituentName =
     item.primaryConstituent?.name || 'Maker Unknown';
-  const href = getObjectUrlWithSlug(item.id, item.title);
+  const href = getObjectUrlWithSlug(item._id, item.title);
 
   return (
     <Link href={href}>

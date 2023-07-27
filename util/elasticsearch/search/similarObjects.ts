@@ -35,11 +35,13 @@ export async function similarCollectionObjects(
     index: 'collections',
     query: {
       bool: {
-        must_not: {
-          term: {
-            id: document.id,
+        must_not: [
+          {
+            ids: {
+              values: [document._id || ''],
+            },
           },
-        },
+        ],
         /*
         // Don't require similar objects to have images
         must: {
@@ -75,7 +77,14 @@ export async function similarCollectionObjects(
   if (!response?.hits?.hits?.length) {
     return [];
   }
-  return response.hits.hits.map((h) => h._source as CollectionObjectDocument);
+  return response.hits.hits.map(
+    (hit) =>
+      ({
+        _id: hit._id,
+        _index: hit._index,
+        ...(hit._source || {}),
+      } as CollectionObjectDocument)
+  );
 }
 
 /**
