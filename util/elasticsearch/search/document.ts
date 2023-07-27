@@ -16,13 +16,13 @@ import { similarCollectionObjects } from './similarObjects';
  */
 export async function getDocument(
   index: string,
-  id: number | string,
+  id: string,
   getAdditionalData: boolean = true
 ): Promise<ApiResponseDocument> {
   const client = getClient();
   const document = await client.get({
     index,
-    id
+    id: id + '' // force to string
   });
   const data = {
     _id: document._id,

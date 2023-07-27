@@ -54,7 +54,7 @@ export interface DocumentImage {
 export interface BaseDocument {
   _id?: string;
   _index?: string;
-  type: string;
+  type?: string;
   source?: string;
   url?: string;
   id?: string;

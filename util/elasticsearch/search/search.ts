@@ -8,8 +8,6 @@ import type {
   ApiResponseSearch,
   ApiResponseSearchMetadata,
 } from '@/types/apiResponseSearch';
-import type { BaseDocument } from '@/types/baseDocument';
-import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { Term } from '@/types/term';
 import { getClient } from '../client';
 import { getTerm, terms } from './terms';

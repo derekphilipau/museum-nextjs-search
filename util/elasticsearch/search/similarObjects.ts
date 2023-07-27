@@ -9,7 +9,7 @@ const SIMILAR_PAGE_SIZE = 24; // 24 results per similar search
 const UNKNOWN_CONSTITUENT = 'Unknown'; // Default string for unknown constituent in dataset
 
 export async function similarCollectionObjectsById(
-  id: number | string | undefined
+  id: string
 ): Promise<CollectionObjectDocument[]> {
   if (!id) return [];
   const docResponse = await getDocument('collections', id, false);
