@@ -1,13 +1,17 @@
-import type { BaseDocument, DocumentImage } from '@/types/baseDocument';
+import type { DocumentImage } from '@/types/baseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { ElasticsearchTransformer } from '@/types/elasticsearchTransformer';
 import { getStringValue, sourceAwareIdFormatter } from '../transformUtil';
-import type { BkmDocument, BkmImage } from './types';
+import { searchUlanArtists } from '../ulan/searchUlanArtists';
+import type { BkmImage } from './types';
 import {
   getLargeOrRestrictedImageUrl,
   getSmallOrRestrictedImageUrl,
 } from './util';
+import { collectionsTermsExtractor } from '../util/collectionsTermsExtractor';
 
+const DATASOURCE_NAME = 'bkm';
+const OBJECT_TYPE = 'object';
 const NOT_ON_VIEW = 'This item is not on view';
 
 /**
@@ -53,11 +57,11 @@ function splitMediumString(medium: string): string[] {
   return Array.from(new Set(mediums)); // remove duplicates
 }
 
-function transformDoc(doc: any): CollectionObjectDocument {
+async function transformDoc(doc: any): Promise<CollectionObjectDocument> {
   const esDoc: CollectionObjectDocument = {
     // Begin BaseDocument fields
-    type: 'object',
-    source: 'bkm',
+    type: OBJECT_TYPE,
+    source: DATASOURCE_NAME,
     id: getStringValue(doc.id),
     title: doc.title || undefined,
   };
@@ -155,6 +159,7 @@ function transformDoc(doc: any): CollectionObjectDocument {
     esDoc.constituents = doc.artists.map((artist: any) => ({
       id: artist.id,
       name: artist.name,
+      canonicalName: artist.name,
       prefix: artist.prefix, // Role adjective: "Attributed to"
       suffix: artist.suffix, // Mixed bag: "School", "or", "Style", "Northern"
       dates: artist.dates,
@@ -163,20 +168,44 @@ function transformDoc(doc: any): CollectionObjectDocument {
       nationality: [artist.nationality], // "American"
       role: artist.role,
       rank: artist.rank,
-      source: 'bkm',
+      source: DATASOURCE_NAME,
       sourceId: artist.id,
     }));
+
     if (esDoc.constituents?.length) {
-      if (esDoc.constituents.length === 1) {
-        esDoc.primaryConstituent = esDoc.constituents[0];
-      } else {
-        // Most rankings are zero-based, but constituents seems one-based?
-        esDoc.primaryConstituent = esDoc.constituents.find((c) => c.rank === 0);
-        if (!esDoc.primaryConstituent) {
-          esDoc.primaryConstituent = esDoc.constituents.find(
+      // Remove constituents with name = "Unknown":
+      esDoc.constituents = esDoc.constituents.filter(
+        (c) => c.name !== 'Unknown' && c.name !== 'Unknown Artist'
+      );
+    }
+
+    if (esDoc.constituents?.length) {
+      // Determine index of primary constituent:
+      let primaryConstituentIndex = 0;
+      if (esDoc.constituents.length > 1) {
+        // Most rankings are zero-based, but constituents may be one-based?
+        primaryConstituentIndex = esDoc.constituents.findIndex(
+          (c) => c.rank === 0
+        );
+        if (primaryConstituentIndex < 0) {
+          primaryConstituentIndex = esDoc.constituents.findIndex(
             (c) => c.rank === 1
           );
         }
+      }
+      if (primaryConstituentIndex >= 0) {
+        // Check for canonical ULAN name of this artist:
+        const ulanArtist = await searchUlanArtists(
+          esDoc.constituents[primaryConstituentIndex].name,
+          esDoc.constituents[primaryConstituentIndex].birthYear,
+          esDoc.constituents[primaryConstituentIndex].deathYear
+        );
+        if (ulanArtist?.preferredTerm) {
+          esDoc.constituents[primaryConstituentIndex].canonicalName =
+            ulanArtist.preferredTerm;
+          esDoc.constituents[primaryConstituentIndex].ulan = ulanArtist;
+        }
+        esDoc.primaryConstituent = esDoc.constituents[primaryConstituentIndex];
       }
     }
   }
@@ -290,10 +319,16 @@ function transformDoc(doc: any): CollectionObjectDocument {
 }
 
 export const transformer: ElasticsearchTransformer = {
-  idGenerator: (doc: CollectionObjectDocument, includeSourcePrefix: boolean) => {
-    return sourceAwareIdFormatter(doc.id, 'bkm', includeSourcePrefix);
+  idGenerator: (
+    doc: CollectionObjectDocument,
+    includeSourcePrefix: boolean
+  ) => {
+    return sourceAwareIdFormatter(doc.id, DATASOURCE_NAME, includeSourcePrefix);
   },
   documentTransformer: async (doc) => {
     return transformDoc(doc);
+  },
+  termsExtractor: async (doc: CollectionObjectDocument) => {
+    return collectionsTermsExtractor(doc, DATASOURCE_NAME);
   },
 };

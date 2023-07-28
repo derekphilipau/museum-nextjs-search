@@ -102,11 +102,12 @@ export const terms: T.IndicesIndexSettings = {
   },
   mappings: {
     properties: {
-      id: S.keywordField,
+      source: S.keywordField,
       index: S.keywordField,
       field: S.keywordField,
       value: S.suggestUnaggregatedStandardAnalyzerField,
       alternates: S.unaggregatedStandardAnalyzerTextField,
+      summary: S.textField,
       data: S.disabledObjectField,
     },
   },

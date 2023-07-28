@@ -147,7 +147,7 @@ async function parseULANXMLFile(filename: string) {
   }
 }
 
-export async function transformUlan() {
+export async function ulanXmlToJsonConvert() {
   fs.writeFileSync(ulanArtistsFile, '', { flag: 'w' });
   fs.writeFileSync(ulanCorporateBodiesFile, '', { flag: 'w' });
   for (const filename of ulanRawFilenames) {

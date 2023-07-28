@@ -2,14 +2,14 @@
 import { getClient } from '@/util/elasticsearch/client';
 import {
   bulk,
-  getBulkOperationArray,
   createIndex,
+  getBulkOperationArray,
   getReadlineInterface,
-  snooze,
 } from '@/util/elasticsearch/import';
 import { searchAll } from '@/util/elasticsearch/search/search';
 
 import type { ElasticsearchTransformer } from '@/types/elasticsearchTransformer';
+import { TermIdMap } from '@/types/term';
 
 /**
  * Update data in Elasticsearch from a jsonl file (one JSON object per row, no endline commas)
@@ -31,6 +31,7 @@ export default async function updateFromJsonlFile(
   const rl = getReadlineInterface(dataFilename);
 
   const allIds: string[] = [];
+  let allTerms: TermIdMap = {};
   let operations: any[] = [];
   for await (const line of rl) {
     try {
@@ -40,8 +41,16 @@ export default async function updateFromJsonlFile(
         if (doc !== undefined) {
           const id = transformer.idGenerator(doc, includeSourcePrefix);
           if (doc && id) {
-            operations.push(...getBulkOperationArray('update', indexName, id, doc));
+            operations.push(
+              ...getBulkOperationArray('update', indexName, id, doc)
+            );
             allIds.push(id);
+          }
+          if (transformer.termsExtractor !== undefined) {
+            const termElements = await transformer.termsExtractor(doc);
+            if (termElements) {
+              allTerms = { ...allTerms, ...termElements };
+            }
           }
         }
       }
@@ -52,11 +61,26 @@ export default async function updateFromJsonlFile(
     if (operations.length >= maxBulkOperations) {
       await bulk(client, operations);
       operations = [];
-      await snooze(2);
     }
   }
   if (operations.length > 0) {
     await bulk(client, operations);
+  }
+
+  // Update terms index
+  if (allTerms) {
+    const termOperations: any[] = [];
+    for (const _id in allTerms) {
+      if (allTerms?.[_id]) {
+        const term = allTerms[_id];
+        termOperations.push(
+          ...getBulkOperationArray('update', 'terms', _id, term)
+        );
+      }
+    }
+    if (termOperations.length > 0) {
+      await bulk(client, termOperations);
+    }
   }
 
   // Delete ids not present in data file
@@ -79,7 +103,7 @@ export default async function updateFromJsonlFile(
         query: {
           ids: {
             values: chunk,
-          }
+          },
         },
       },
     });

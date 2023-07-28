@@ -1,6 +1,9 @@
+import type { UlanArtist } from "./ulanArtist";
+
 export interface DocumentConstituent {
   id?: string;
   name: string;
+  canonicalName: string;
   prefix?: string;
   suffix?: string;
   dates?: string;
@@ -13,7 +16,7 @@ export interface DocumentConstituent {
   source?: string;
   sourceId?: string;
   wikiQid?: string;
-  ulanId?: string;
+  ulan?: UlanArtist;
 }
 
 export interface DocumentGeographicalLocation {

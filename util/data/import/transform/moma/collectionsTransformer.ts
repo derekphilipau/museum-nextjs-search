@@ -1,11 +1,13 @@
-import type { DocumentConstituent, DocumentImage } from '@/types/baseDocument';
+import type { DocumentConstituent } from '@/types/baseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { ElasticsearchTransformer } from '@/types/elasticsearchTransformer';
 import { getStringValue, sourceAwareIdFormatter } from '../transformUtil';
+import { searchUlanArtists } from '../ulan/searchUlanArtists';
+import { collectionsTermsExtractor } from '../util/collectionsTermsExtractor';
 import type { MomaDocument } from './types';
 
-export const OBJECT_TYPE = 'object';
-export const DOC_SOURCE = 'moma';
+const DATASOURCE_NAME = 'moma';
+const OBJECT_TYPE = 'object';
 
 interface YearRange {
   startYear: number | null;
@@ -49,7 +51,10 @@ function getArtists(doc: MomaDocument): DocumentConstituent[] {
   if (!doc.Artist || !(doc.Artist?.length > 0)) return [];
   const artists: DocumentConstituent[] = [];
   for (let i = 0; i < doc.Artist.length; i++) {
-    const artist: DocumentConstituent = { name: doc.Artist[i] };
+    const artist: DocumentConstituent = {
+      name: doc.Artist[i],
+      canonicalName: doc.Artist[i],
+    };
     if (doc.ConstituentID?.[i])
       artist.id = getStringValue(doc.ConstituentID[i]);
     if (doc.ArtistBio?.[i]) artist.dates = doc.ArtistBio[i];
@@ -103,11 +108,11 @@ function getImage(doc) {
   return;
 }
 
-function transformDoc(doc: any): CollectionObjectDocument {
+async function transformDoc(doc: any): Promise<CollectionObjectDocument> {
   const esDoc: CollectionObjectDocument = {
     // Begin BaseDocument fields
     type: OBJECT_TYPE,
-    source: DOC_SOURCE,
+    source: DATASOURCE_NAME,
     id: getStringValue(doc.ObjectID),
     title: doc.Title || undefined,
   };
@@ -142,6 +147,16 @@ function transformDoc(doc: any): CollectionObjectDocument {
   const artists = getArtists(doc);
   if (artists.length) {
     esDoc.constituents = artists;
+    // Assume first artist is "primary"
+    const ulanArtist = await searchUlanArtists(
+      esDoc.constituents[0].name,
+      esDoc.constituents[0].birthYear,
+      esDoc.constituents[0].deathYear
+    );
+    if (ulanArtist?.preferredTerm) {
+      esDoc.constituents[0].canonicalName = ulanArtist.preferredTerm;
+      esDoc.constituents[0].ulan = ulanArtist;
+    }
     esDoc.primaryConstituent = artists[0];
   }
 
@@ -155,13 +170,19 @@ function transformDoc(doc: any): CollectionObjectDocument {
   if (image) esDoc.image = image;
 
   return esDoc;
-};
+}
 
 export const transformer: ElasticsearchTransformer = {
-  idGenerator: (doc: CollectionObjectDocument, includeSourcePrefix: boolean) => {
-    return sourceAwareIdFormatter(doc.id, 'moma', includeSourcePrefix);
+  idGenerator: (
+    doc: CollectionObjectDocument,
+    includeSourcePrefix: boolean
+  ) => {
+    return sourceAwareIdFormatter(doc.id, DATASOURCE_NAME, includeSourcePrefix);
   },
   documentTransformer: async (doc) => {
     return transformDoc(doc);
+  },
+  termsExtractor: async (doc: CollectionObjectDocument) => {
+    return collectionsTermsExtractor(doc, DATASOURCE_NAME);
   },
 };

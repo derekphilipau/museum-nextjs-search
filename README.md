@@ -50,7 +50,7 @@ It's often necessary to augment backend collection data with additional metadata
 
 ### Getty Union List of Artist Names (ULAN) Data
 
-ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) and converted to JSON using the `transformUlan.ts` script. When updating the `terms` index, the script attempts to find a matching artist name from this JSON file. If found, the ULAN artist data is added to the terms index document.
+ULAN XML was downloaded from [Getty's website](http://ulandownloads.getty.edu/) and converted to JSON using the `ulanXmlToJsonConvert.ts` script. When updating the `terms` index, the script attempts to find a matching artist name from this JSON file. If found, the ULAN artist data is added to the terms index document.
 
 ## Elasticsearch
 
@@ -108,7 +108,7 @@ Constituent:
 - `source` - Source of the constituent, e.g. "Brooklyn Museum", "Getty ULAN"
 - `sourceId` - Source-dependent ID of the constituent
 - `wikiQid` - Wikidata QID of the constituent
-- `ulanId` - ULAN ID of the constituent
+- `ulan` - ULAN record for the constituent
 
 Geographical Location:
 

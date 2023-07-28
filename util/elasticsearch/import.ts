@@ -76,11 +76,10 @@ async function deleteIndex(client: Client, indexName: string) {
 
 /**
  * Delete all documents from an index that have a given field or source.
- * Create the index if it doesn't exist.
  *
  * @param indexName name of the index
- * @param sourceName name of the source, e.g. 'MoMA'
- * @param fieldName OR name of the field, e.g. 'title'
+ * @param fieldName name of the field, e.g. 'title'
+ * @param sourceName OR name of the source, e.g. 'MoMA'
  */
 export async function deleteDocuments(
   client: Client,
@@ -88,7 +87,7 @@ export async function deleteDocuments(
   fieldName?: string,
   sourceName?: string
 ) {
-  // delete all documents where source = sourceName or field = fieldName
+  // delete all documents where field = fieldName or source = sourceName
   if (!fieldName && !sourceName)
     throw new Error('Must specify either fieldName or sourceName');
   if (await existsIndex(client, indexName)) {

@@ -12,8 +12,6 @@ import { siteConfig } from '@/config/site';
 import { updateAdditionalMetadata } from './updateAdditionalMetadata';
 import { updateDominantColors } from './updateDominantColors';
 import updateFromJsonlFile from './updateFromJsonlFile';
-import { updateAllTerms } from './updateTerms';
-import { updateUlanTerms } from './updateUlanTerms';
 
 loadEnvConfig(process.cwd());
 
@@ -73,8 +71,6 @@ async function run() {
     await updateAdditionalMetadata(additionalMetadataDataFile);
   }
 
-  if (await askYesNo(`Update terms?`)) await updateAllTerms();
-  if (await askYesNo(`Update ULAN terms?`)) await updateUlanTerms();
   if (await askYesNo(`Update dominant colors?`)) await updateDominantColors();
 
   questionsDone();
