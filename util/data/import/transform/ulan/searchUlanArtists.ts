@@ -1,6 +1,5 @@
 import { loadJsonFile } from '@/util/jsonUtil';
 
-import type { Term } from '@/types/term';
 import type { UlanArtist } from '@/types/ulanArtist';
 
 const ULAN_ARTISTS_FILE = './data/ULAN/json/ulanArtists.jsonl.gz';
@@ -8,19 +7,17 @@ let ULAN_ARTISTS: UlanArtist[];
 let ULAN_ARTIST_CACHE: { [key: string]: UlanArtist } = {};
 
 /**
- * Normalizes a name for comparisons:
- * - Converts to lowercase
- * - Removes "Professor" prefix
- * - Removes "&amp;" code
- * - Removes name abbreviations
- * - Removes ending abbreviations
- * - Removes diacritics
- * - Trims string
+ * Normalizes a name for comparisons
+ *
  * @param name ULAN Name to normalize
  * @returns Normalized name
  */
-export function normalizeName(name: string | undefined): string {
+export function normalizeName(
+  name: string | undefined,
+  removeParentheticals = false
+): string {
   if (!name) return '';
+  if (removeParentheticals) name = name.replace(/\(.*?\)/g, '');
   return name
     .toLowerCase()
     .normalize('NFD') // Remove diacritics
@@ -45,7 +42,7 @@ function getUniqueWords(values: string | string[]): string[] {
 
 function countOccurrences(arr?: string[], word?: string): number {
   if (!arr || !word) return 0;
-  return arr.reduce((acc, curr) => curr === word ? acc + 1 : acc, 0);
+  return arr.reduce((acc, curr) => (curr === word ? acc + 1 : acc), 0);
 }
 
 async function loadUlanArtists() {
@@ -110,7 +107,11 @@ function selectUlanMatch(
   }
 }
 
-function getExactPreferredTermMatch(normalizedName: string, birthYear?: number, deathYear?: number) {
+function getExactPreferredTermMatch(
+  normalizedName: string,
+  birthYear?: number,
+  deathYear?: number
+) {
   const preferredTerms = ULAN_ARTISTS.filter(
     (a) => a.normalizedPreferredTerm === normalizedName
   );
@@ -118,7 +119,11 @@ function getExactPreferredTermMatch(normalizedName: string, birthYear?: number, 
     return selectUlanMatch(preferredTerms, birthYear, deathYear);
 }
 
-function getExactNonPreferredTermMatch(normalizedName: string, birthYear?: number, deathYear?: number) {
+function getExactNonPreferredTermMatch(
+  normalizedName: string,
+  birthYear?: number,
+  deathYear?: number
+) {
   const alternateTerms = ULAN_ARTISTS.filter(
     (a) =>
       a.normalizedNonPreferredTerms?.length &&
@@ -128,18 +133,8 @@ function getExactNonPreferredTermMatch(normalizedName: string, birthYear?: numbe
     return selectUlanMatch(alternateTerms, birthYear, deathYear);
 }
 
-function getSubstringPreferredTermMatch(normalizedName: string, birthYear?: number, deathYear?: number) {
-  const preferredTerms = ULAN_ARTISTS.filter((a) =>
-    a.normalizedPreferredTerm?.includes(normalizedName)
-  );
-  if (preferredTerms?.length)
-    return selectUlanMatch(preferredTerms, birthYear, deathYear);
-}
-
 function getHighestWordCountTermMatch(normalizedName: string) {
-  const normalizedConstituentWords = getUniqueWords(
-    normalizedName
-  );
+  const normalizedConstituentWords = getUniqueWords(normalizedName);
 
   let maxCommonWords = 0;
   let bestMatch: UlanArtist | undefined;
@@ -159,7 +154,9 @@ function getHighestWordCountTermMatch(normalizedName: string) {
 
   // sanity check:  make sure at least one word matches the preferred term:
   if (bestMatch?.normalizedPreferredTerm && maxCommonWords > 0) {
-    const preferredTermWords = getUniqueWords(bestMatch.normalizedPreferredTerm);
+    const preferredTermWords = getUniqueWords(
+      bestMatch.normalizedPreferredTerm
+    );
     for (const word of normalizedConstituentWords) {
       if (countOccurrences(preferredTermWords, word) > 0) {
         return bestMatch;
@@ -185,7 +182,7 @@ export async function searchUlanArtists(
     await loadUlanArtists();
   }
 
-  const normalizedConstituentName = normalizeName(constituentName);
+  const normalizedConstituentName = normalizeName(constituentName, true);
 
   if (ULAN_ARTIST_CACHE[normalizedConstituentName]?.id) {
     if (ULAN_ARTIST_CACHE[normalizedConstituentName]?.id === 'Not Found') {
@@ -195,12 +192,21 @@ export async function searchUlanArtists(
     return ULAN_ARTIST_CACHE[normalizedConstituentName];
   }
 
-  let ulanArtist = getExactPreferredTermMatch(normalizedConstituentName, birthYear, deathYear);
+  let ulanArtist = getExactPreferredTermMatch(
+    normalizedConstituentName,
+    birthYear,
+    deathYear
+  );
   if (!ulanArtist) {
-    ulanArtist = getExactNonPreferredTermMatch(normalizedConstituentName, birthYear, deathYear);
+    ulanArtist = getExactNonPreferredTermMatch(
+      normalizedConstituentName,
+      birthYear,
+      deathYear
+    );
   }
   if (!ulanArtist) {
-    ulanArtist = getHighestWordCountTermMatch(normalizedConstituentName);
+    // Too permissive, don't use
+    // ulanArtist = getHighestWordCountTermMatch(normalizedConstituentName);
   }
 
   if (ulanArtist) {
