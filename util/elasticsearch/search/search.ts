@@ -46,7 +46,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
       {
         multi_match: {
           query: q,
-          type: 'best_fields',
+          type: 'cross_fields',
           operator: 'and',
           fields: [
             'boostedKeywords^20',
@@ -124,11 +124,11 @@ export async function searchCollections(
       {
         multi_match: {
           query: q,
-          type: 'best_fields',
+          type: 'cross_fields',
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent.canonicalName^6',
+            'primaryConstituent.canonicalName.search^6',
             'title.search^4',
             'keywords^4',
             'description',
