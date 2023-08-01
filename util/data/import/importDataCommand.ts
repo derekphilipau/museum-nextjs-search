@@ -25,6 +25,7 @@ async function importDataset(dataset: Dataset, includeSourcePrefix: boolean) {
           indexName,
           dataFile,
           transformer,
+          dataset.sourceName,
           includeSourcePrefix
         );
       } catch (e) {

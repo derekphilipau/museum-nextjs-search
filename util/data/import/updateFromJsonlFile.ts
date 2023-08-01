@@ -16,12 +16,15 @@ import { TermIdMap } from '@/types/term';
  *
  * @param indexName  Name of the index.
  * @param dataFilename  Name of the file containing the data.
- * @param idFieldName  Optional name of the field to use as the document ID.
+ * @param transformer  Transformer object with functions to transform the data.
+ * @param source  Name of the source.
+ * @param includeSourcePrefix  Whether to include the source prefix in the document ID.
  */
 export default async function updateFromJsonlFile(
   indexName: string,
   dataFilename: string,
   transformer: ElasticsearchTransformer,
+  source: string,
   includeSourcePrefix = false
 ) {
   const bulkLimit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
@@ -87,7 +90,16 @@ export default async function updateFromJsonlFile(
   }
 
   // Delete ids not present in data file
-  const hits: any[] = await searchAll(indexName, undefined, ['id']);
+  const hits: any[] = await searchAll(
+    indexName,
+    {
+      match: {
+        source,
+      },
+    },
+    ['id']
+  );
+
   const esAllIds = hits.map((hit) => hit._id);
 
   console.log('Got existing index ids: ' + esAllIds?.length);

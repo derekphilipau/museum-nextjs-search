@@ -48,10 +48,11 @@ export function ImageViewer({ item }) {
     return (
       <div className="flex h-48 flex-col items-center justify-center  text-neutral-500 dark:text-neutral-400">
         <Icons.imageOff className="h-24 w-24" />
-        <div className="mt-2 font-semibold">{dict['search.imageUnavailable']}
-          </div>
+        <div className="mt-2 font-semibold">
+          {dict['search.imageUnavailable']}
+        </div>
       </div>
-    )
+    );
   }
 
   function getThumbnailClass(thumbnailUrl: string) {
