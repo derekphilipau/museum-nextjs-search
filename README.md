@@ -218,7 +218,7 @@ Terms documents represent terms from a controlled vocabulary. These are queried 
 - `sourceId`: The ID of the term in the source vocabulary.
 - `sourceType`: The type of the term within the source vocabulary.
 - `index`: The index the term belongs to, e.g. "collections".
-- `field`: The field the term belongs to, e.g. "classification", "primaryConstituent.name"
+- `field`: The field the term belongs to, e.g. "classification", "primaryConstituent.canonicalName"
 - `value`: The value of the term, e.g. "Painting", "Pablo Picasso", etc.
 - `preferred`: The preferred term, e.g. "Pablo Picasso"
 - `alternates`: An array of alternate terms, e.g. ["Picasso, Pablo", "Picasso", etc.]
@@ -255,7 +255,7 @@ How one defines object similarity will vary from institution to institution. The
 
 This project uses a custom bool query of boosted should terms. [similarObjects.ts](./util/elasticsearch/search/similarObjects.ts) specifies which fields are used along with a boost value for each. The primary constituent (e.g. Artist, Maker, etc.) is given the most weight. These fields can be adjusted based on your institution's concept of object similarity. The current weights are:
 
-- `primaryConstituent.name` - 4
+- `primaryConstituent.canonicalName` - 4
 - `dynasty` - 2
 - `period` - 2
 - `classification` - 1.5

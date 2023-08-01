@@ -50,7 +50,7 @@ export async function search(params: any): Promise<ApiResponseSearch> {
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent.name.search^4',
+            'primaryConstituent.canonicalName.search^4',
             'title.search^2',
             'keywords^2',
             'description',
@@ -128,7 +128,7 @@ export async function searchCollections(
           operator: 'and',
           fields: [
             'boostedKeywords^20',
-            'primaryConstituent.name^6',
+            'primaryConstituent.canonicalName^6',
             'title.search^4',
             'keywords^4',
             'description',
@@ -244,8 +244,8 @@ async function getFilterTerm(
   if (Array.isArray(indexName)) return; // TODO: Remove when we implement cross-index filters
   if (indicesMeta[indexName]?.filters?.length > 0) {
     for (const filter of indicesMeta[indexName].filters) {
-      if (params?.[filter] && filter === 'primaryConstituent.name') {
-        // TODO: Only returns primaryConstituent.name filter term
+      if (params?.[filter] && filter === 'primaryConstituent.canonicalName') {
+        // TODO: Only returns primaryConstituent.canonicalName filter term
         // TODO: term fix naming conventions
         const response = await getTerm(
           'primaryConstituent',

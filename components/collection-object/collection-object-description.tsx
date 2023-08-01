@@ -31,7 +31,7 @@ export function CollectionObjectDescription({
     <div className="mt-5 border-t border-gray-200">
       <dl className="divide-y divide-gray-200">
         <DescriptionRow
-          name="primaryConstituent.name"
+          name="primaryConstituent.canonicalName"
           value={primaryConstituentName}
           isLink={true}
         />

@@ -242,14 +242,14 @@ export function SearchPagination({
                       'baseDocument.field.title'
                     )}
                     {sortDropdownMenuItem(
-                      'primaryConstituent.name',
+                      'primaryConstituent.canonicalName',
                       'asc',
-                      'artwork.field.primaryConstituent.name'
+                      'artwork.field.primaryConstituent.canonicalName'
                     )}
                     {sortDropdownMenuItem(
-                      'primaryConstituent.name',
+                      'primaryConstituent.canonicalName',
                       'desc',
-                      'artwork.field.primaryConstituent.name'
+                      'artwork.field.primaryConstituent.canonicalName'
                     )}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>

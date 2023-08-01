@@ -178,7 +178,7 @@ export default async function Page({ params, searchParams }) {
                 term?.field === 'primaryConstituent' && (
                   <div className="mb-4">
                     <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-                      {dict[`index.collections.agg.primaryConstituent.name`]}
+                      {dict[`index.collections.agg.primaryConstituent.canonicalName`]}
                     </h4>
                     {term.value && (
                       <h4 className="text-xl md:text-2xl">{term.value}</h4>

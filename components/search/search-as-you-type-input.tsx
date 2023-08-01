@@ -57,8 +57,8 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
   function searchForTerm(term: Term) {
     const updatedParams = new URLSearchParams(params);
     if (!term.value || !term.field) return;
-    if (term.field === 'primaryConstituent') {
-      updatedParams.set('primaryConstituent.name', term.value);
+    if (term.field === 'primaryConstituent.canonicalName') {
+      updatedParams.set('primaryConstituent.canonicalName', term.value);
     } else {
       updatedParams.set(term.field, term.value);
     }
@@ -91,7 +91,7 @@ export function SearchAsYouTypeInput({ params }: SearchAsYouTypeInputProps) {
 
   function getFieldName(field: string) {
     if (field === 'primaryConstituent')
-      return dict['index.collections.agg.primaryConstituent.name'];
+      return dict['index.collections.agg.primaryConstituent.canonicalName'];
     else return dict[`index.collections.agg.${field}`];
   }
 

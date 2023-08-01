@@ -42,7 +42,7 @@ export function getCaption(
   if (!item) return '';
   let caption = '';
   caption += item?.primaryConstituent?.name
-    ? `${item.primaryConstituent.name}. `
+    ? `${item.primaryConstituent.canonicalName}. `
     : '';
   caption += item?.title ? `${item.title}, ` : '';
   caption += item?.formattedDate ? `${item.formattedDate}. ` : '';

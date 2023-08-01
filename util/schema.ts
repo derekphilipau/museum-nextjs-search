@@ -39,7 +39,7 @@ export function getSchemaVisualArtwork(
     schema.creator = [
       {
         '@type': 'Person',
-        name: item.primaryConstituent.name,
+        name: item.primaryConstituent.canonicalName,
       },
     ];
   }

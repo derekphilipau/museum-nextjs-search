@@ -148,6 +148,20 @@ export async function createIndex(
   }
 }
 
+export async function createIndexIfNotExist(
+  client: Client,
+  indexName: string,
+) {
+  return createIndex(client, indexName, false, true);
+}
+
+export async function forceCreateIndexIfNotExist(
+  client: Client,
+  indexName: string,
+) {
+  return createIndex(client, indexName, true, true);
+}
+
 async function createIndexIfNotExists(client: Client, indexName: string) {
   // Check if the index already exists as an alias
   const aliasExists = await client.indices.existsAlias({

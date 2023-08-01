@@ -2,7 +2,7 @@
 import { getClient } from '@/util/elasticsearch/client';
 import {
   bulk,
-  createIndex,
+  createIndexIfNotExist,
   getBulkOperationArray,
   getReadlineInterface,
 } from '@/util/elasticsearch/import';
@@ -27,7 +27,7 @@ export default async function updateFromJsonlFile(
   const bulkLimit = parseInt(process.env.ELASTICSEARCH_BULK_LIMIT || '1000');
   const maxBulkOperations = bulkLimit * 2;
   const client = getClient();
-  createIndex(client, indexName, false, true);
+  await createIndexIfNotExist(client, indexName);
   const rl = getReadlineInterface(dataFilename);
 
   const allIds: string[] = [];
@@ -79,6 +79,9 @@ export default async function updateFromJsonlFile(
       }
     }
     if (termOperations.length > 0) {
+      // Create terms index if doesn't exist
+      await createIndexIfNotExist(client, 'terms');
+      // TODO: chunk terms into manageable sizes
       await bulk(client, termOperations);
     }
   }
