@@ -17,7 +17,7 @@ export function CollectionObjectDescription({
   const dict = getDictionary();
 
   const primaryConstituentName =
-    item.primaryConstituent?.name || 'Maker Unknown';
+    item.primaryConstituent?.canonicalName || 'Maker Unknown';
 
   //  http://localhost:3000/search/collections?hasPhoto=true&f=true&startYear=2014&endYear=2014
   const startYear = item.startYear;
