@@ -23,7 +23,11 @@ const OpenSeaDragonViewer = dynamic(() => import('./open-seadragon-viewer'), {
 
 export function ImageViewer({ item }) {
   const dict = getDictionary();
-  const images = item?.images;
+  let images = item?.images;
+  if (!images?.length && item?.image) {
+    images = [item.image];
+  }
+
   const [selectedImage, setSelectedImage] = useState<any>({});
   const [open, setOpen] = useState(false);
   const [emblaRef, embla] = useEmblaCarousel({ loop: false });
@@ -40,7 +44,7 @@ export function ImageViewer({ item }) {
   }, [embla, onSelect]);
 
   if (!item || !item?.id) return null;
-  if (!item?.images?.length) {
+  if (!images?.length) {
     return (
       <div className="flex h-48 flex-col items-center justify-center  text-neutral-500 dark:text-neutral-400">
         <Icons.imageOff className="h-24 w-24" />
