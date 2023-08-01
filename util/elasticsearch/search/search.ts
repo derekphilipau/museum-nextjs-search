@@ -248,7 +248,7 @@ async function getFilterTerm(
         // TODO: Only returns primaryConstituent.canonicalName filter term
         // TODO: term fix naming conventions
         const response = await getTerm(
-          'primaryConstituent',
+          'primaryConstituent.canonicalName',
           params?.[filter],
           client
         );

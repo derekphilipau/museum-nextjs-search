@@ -178,7 +178,7 @@ export default async function Page({ params, searchParams }) {
           {filters?.length > 0 &&
             filters.map(
               (term: Term, i: Key) =>
-                term?.field === 'primaryConstituent' && (
+                term?.field === 'primaryConstituent.canonicalName' && (
                   <div className="mb-4">
                     <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
                       {
@@ -190,18 +190,18 @@ export default async function Page({ params, searchParams }) {
                     {term.value && (
                       <h4 className="text-xl md:text-2xl">{term.value}</h4>
                     )}
-                    {term.data?.ulan?.biography && (
+                    {term.data?.biography && (
                       <p className="mb-4 text-neutral-700 dark:text-neutral-400">
-                        {term.data.ulan?.biography}
+                        {term.data.biography}
                       </p>
                     )}
-                    {term.data?.ulan?.descriptiveNotes && (
-                      <p className="">{term.data.ulan?.descriptiveNotes}</p>
+                    {term.data?.descriptiveNotes && (
+                      <p className="">{term.data.descriptiveNotes}</p>
                     )}
-                    {term.data?.ulan?.id && (
+                    {term.data?.id && (
                       <p className="mb-4 mt-2">
                         <Link
-                          href={`https://www.getty.edu/vow/ULANFullDisplay?find=${term.data.ulan?.id}&role=&nation=&subjectid=${term.data.ulan?.id}`}
+                          href={`https://www.getty.edu/vow/ULANFullDisplay?find=${term.data.id}&role=&nation=&subjectid=${term.data.id}`}
                           target="_blank"
                           className="underline"
                         >
