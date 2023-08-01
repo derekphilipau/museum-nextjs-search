@@ -66,7 +66,8 @@ const validTwoLetterWords = ['cd', 'lp', 'ev', 'pc', 'tv'];
  * @param text
  * @returns
  */
-export function getWords(text: string): string[] {
+export function parseSignificantWords(text: string | undefined): string[] {
+  if (!text) return [];
   const words = text
     .toLowerCase()
     .replace(

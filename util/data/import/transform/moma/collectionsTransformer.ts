@@ -5,7 +5,7 @@ import { getStringValue, sourceAwareIdFormatter } from '../transformUtil';
 import { searchUlanArtists } from '../ulan/searchUlanArtists';
 import { collectionsTermsExtractor } from '../util/collectionsTermsExtractor';
 import type { MomaDocument } from './types';
-
+import { parseSignificantWords } from '../transformUtil';
 const DATASOURCE_NAME = 'moma';
 const OBJECT_TYPE = 'object';
 
@@ -137,7 +137,7 @@ async function transformDoc(doc: any): Promise<CollectionObjectDocument> {
     // The array of materials is stored in the medium field,
     // while the entire string is stored in the formattedMedium field.
     esDoc.formattedMedium = doc.Medium;
-    esDoc.medium = [doc.Medium]; // TODO
+    esDoc.medium = parseSignificantWords(doc.Medium);
   }
 
   if (doc.CreditLine) esDoc.creditLine = doc.CreditLine;

@@ -1,14 +1,18 @@
 import type { DocumentImage } from '@/types/baseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import type { ElasticsearchTransformer } from '@/types/elasticsearchTransformer';
-import { getStringValue, sourceAwareIdFormatter } from '../transformUtil';
+import {
+  parseSignificantWords,
+  getStringValue,
+  sourceAwareIdFormatter,
+} from '../transformUtil';
 import { searchUlanArtists } from '../ulan/searchUlanArtists';
+import { collectionsTermsExtractor } from '../util/collectionsTermsExtractor';
 import type { BkmImage } from './types';
 import {
   getLargeOrRestrictedImageUrl,
   getSmallOrRestrictedImageUrl,
 } from './util';
-import { collectionsTermsExtractor } from '../util/collectionsTermsExtractor';
 
 const DATASOURCE_NAME = 'bkm';
 const OBJECT_TYPE = 'object';
@@ -28,33 +32,6 @@ function getSortedImages(
     images[index].rank = 0;
   }
   return images.sort((a, b) => (a.rank || 0) - (b.rank || 0));
-}
-
-function splitMediumString(medium: string): string[] {
-  const mediums = medium
-    .toLowerCase() // convert entire string to lowercase
-    .replace(/\.$/, '') // remove trailing period
-    .replace(/\r\n|\r|\n/g, ' ') // replace carriage returns and newlines with space
-    .replace(/\?/g, ' ')
-    .replace(/\(/g, ' ')
-    .replace(/\)/g, ' ')
-    .replace(/:/g, ' , ')
-    .replace(/ mounted on /g, ' , ')
-    .replace(/ mounted to /g, ' , ')
-    // .replace(/ on /g, ' , ') // still need strings like "oil on canvas"
-    .replace(/ under /g, ' , ')
-    .replace(/ over /g, ' , ')
-    .replace(/ with /g, ' , ')
-    .replace(/ traces of /g, ' , ')
-    .replace(/ and /g, ' , ')
-    .replace(/ an /g, ' , ')
-    .replace(/ a /g, ' , ')
-    .replace(/\d+% /g, ' ') // removes percentages such as "98% "
-    .replace(/;/g, ',')
-    .split(',')
-    .map((item) => item.trim()) // trim whitespace from each item
-    .filter((item) => item.length > 0); // remove any empty strings
-  return Array.from(new Set(mediums)); // remove duplicates
 }
 
 async function transformDoc(doc: any): Promise<CollectionObjectDocument> {
@@ -114,7 +91,7 @@ async function transformDoc(doc: any): Promise<CollectionObjectDocument> {
     // The array of materials is stored in the medium field,
     // while the entire string is stored in the formattedMedium field.
     esDoc.formattedMedium = doc.medium;
-    esDoc.medium = splitMediumString(doc.medium);
+    esDoc.medium = parseSignificantWords(doc.medium);
   }
 
   if (doc.provenance) esDoc.provenance = doc.provenance;
