@@ -77,7 +77,7 @@ export function getBooleanValue(x: any) {
  * @returns
  */
 export function trimStringToLengthAtWordBoundary(
-  str: string,
+  str: string | undefined,
   length: number,
   ellipsis: string = '...'
 ) {
