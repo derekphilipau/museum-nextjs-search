@@ -13,11 +13,13 @@ const SIMILAR_MIN_ITEMS = 12;
 interface SimilarObjectsProps {
   title: string;
   similar: CollectionObjectDocument[];
+  isMultiDataset: boolean;
 }
 
 export function SimilarCollectionObjectList({
   title,
   similar,
+  isMultiDataset,
 }: SimilarObjectsProps) {
   const dict = getDictionary();
   const [showAllSimilar, setShowAllSimilar] = useState(false);
@@ -38,7 +40,10 @@ export function SimilarCollectionObjectList({
                 (item, i) =>
                   item && (
                     <div className="" key={i}>
-                      <SimilarCollectionObjectCard item={item} />
+                      <SimilarCollectionObjectCard
+                        item={item}
+                        isMultiDataset={isMultiDataset}
+                      />
                     </div>
                   )
               )}

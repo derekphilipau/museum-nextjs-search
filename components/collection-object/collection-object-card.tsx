@@ -5,6 +5,7 @@ import {
   trimStringToLengthAtWordBoundary,
 } from '@/util/various';
 
+import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
 import { DominantColors } from '@/components/color/dominant-colors';
 import { CollectionObjectThumbnail } from '../collection-object-image/collection-object-thumbnail';
 
@@ -18,7 +19,21 @@ function getDetailsClass(layout) {
   return 'lg:col-span-2';
 }
 
-export function CollectionObjectCard({ item, layout, showType, showColor }) {
+interface CollectionObjectCardProps {
+  item: CollectionObjectDocument;
+  layout: 'grid' | 'list';
+  showType: boolean;
+  showColor: boolean;
+  isMultiDataset: boolean;
+}
+
+export function CollectionObjectCard({
+  item,
+  layout,
+  showType,
+  showColor,
+  isMultiDataset,
+}: CollectionObjectCardProps) {
   if (!item) return null;
   const dict = getDictionary();
 
@@ -46,6 +61,11 @@ export function CollectionObjectCard({ item, layout, showType, showColor }) {
           </div>
         )}
         <div className={getDetailsClass(layout)}>
+          {isMultiDataset && (
+            <div className="text-sm text-neutral-700 dark:text-neutral-400">
+              {dict[`dataset.${item.source}.name`]}
+            </div>
+          )}
           {showType && layout === 'list' && (
             <h4 className="mb-2 text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
               {dict['index.collections.itemTitle']}

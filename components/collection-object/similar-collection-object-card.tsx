@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getDictionary } from '@/dictionaries/dictionaries';
 import { getObjectUrlWithSlug } from '@/util/various';
 
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
@@ -6,10 +7,13 @@ import { CollectionObjectThumbnail } from '../collection-object-image/collection
 
 export function SimilarCollectionObjectCard({
   item,
+  isMultiDataset,
 }: {
   item: CollectionObjectDocument;
+  isMultiDataset: boolean;
 }) {
   if (!item || !item._id) return null;
+  const dict = getDictionary();
 
   const primaryConstituentName =
     item.primaryConstituent?.name || 'Maker Unknown';
@@ -22,6 +26,11 @@ export function SimilarCollectionObjectCard({
           <CollectionObjectThumbnail item={item} />
         </div>
         <div className="pt-2">
+          {isMultiDataset && (
+            <div className="text-xs text-neutral-700 dark:text-neutral-400">
+              {dict[`dataset.${item.source}.name`]}
+            </div>
+          )}
           <h4 className="font-semibold text-neutral-900 dark:text-white">
             {item.title}
           </h4>

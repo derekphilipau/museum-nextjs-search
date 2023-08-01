@@ -9,6 +9,7 @@ import type { AggOptions } from '@/types/aggOptions';
 import type { ApiResponseSearch } from '@/types/apiResponseSearch';
 import type { BaseDocument } from '@/types/baseDocument';
 import type { Term } from '@/types/term';
+import { siteConfig } from '@/config/site';
 import { CollectionObjectCard } from '@/components/collection-object/collection-object-card';
 import { ArchiveCard } from '@/components/search-card/archive-card';
 import { ColorCard } from '@/components/search-card/color-card';
@@ -47,6 +48,8 @@ export default async function Page({ params, searchParams }) {
   const color = searchParams?.color || '';
 
   const isShowFilters = getBooleanValue(searchParams?.f);
+
+  const isMultiDataset = siteConfig.datasets.length > 1;
 
   const aggFilters = {};
   if (searchParams && Array.isArray(indicesMeta[index]?.aggs)) {
@@ -178,7 +181,11 @@ export default async function Page({ params, searchParams }) {
                 term?.field === 'primaryConstituent' && (
                   <div className="mb-4">
                     <h4 className="text-base font-semibold uppercase text-neutral-500 dark:text-neutral-600">
-                      {dict[`index.collections.agg.primaryConstituent.canonicalName`]}
+                      {
+                        dict[
+                          `index.collections.agg.primaryConstituent.canonicalName`
+                        ]
+                      }
                     </h4>
                     {term.value && (
                       <h4 className="text-xl md:text-2xl">{term.value}</h4>
@@ -274,6 +281,7 @@ export default async function Page({ params, searchParams }) {
                           layout={layout}
                           showType={index === 'all'}
                           showColor={color ? true : false}
+                          isMultiDataset={isMultiDataset}
                         />
                       )}
                       {item.type === 'archive' && (

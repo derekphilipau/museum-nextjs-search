@@ -8,9 +8,10 @@ import { encode } from 'html-entities';
 
 import type { ApiResponseDocument } from '@/types/apiResponseDocument';
 import type { CollectionObjectDocument } from '@/types/collectionObjectDocument';
+import { siteConfig } from '@/config/site';
 import { ImageViewer } from '@/components/collection-object-image/image-viewer';
-import { CollectionObjectShare } from '@/components/collection-object/collection-object-share';
 import { CollectionObjectDescription } from '@/components/collection-object/collection-object-description';
+import { CollectionObjectShare } from '@/components/collection-object/collection-object-share';
 import { LanguageDisclaimer } from '@/components/collection-object/language-disclaimer';
 import { SimilarCollectionObjectList } from '@/components/collection-object/similar-collection-object-list';
 import { MuseumMapDialog } from '@/components/museum-map/museum-map-dialog';
@@ -46,6 +47,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 export default async function Page({ params }) {
   const id = params.slug[0];
   const dict = getDictionary();
+  const isMultiDataset = siteConfig.datasets.length > 1;
 
   let data: ApiResponseDocument = await getDocument('collections', id);
 
@@ -64,6 +66,11 @@ export default async function Page({ params }) {
           <ImageViewer item={collectionObject} />
         </div>
         <div className="md:col-span-1 lg:col-span-5">
+          {isMultiDataset && (
+            <div className="mb-2 text-base text-neutral-700 dark:text-neutral-400">
+              {dict[`dataset.${collectionObject?.source}.name`]}
+            </div>
+          )}
           <h1 className="mb-2 text-2xl font-bold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
             {collectionObject?.title}
           </h1>
@@ -114,6 +121,7 @@ export default async function Page({ params }) {
       <SimilarCollectionObjectList
         title={dict['artwork.similar']}
         similar={similarCollectionObjects}
+        isMultiDataset={isMultiDataset}
       />
 
       {/* https://beta.nextjs.org/docs/guides/seo */}
