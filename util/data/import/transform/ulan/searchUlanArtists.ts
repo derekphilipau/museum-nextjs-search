@@ -23,27 +23,13 @@ export function normalizeName(
     .toLowerCase()
     .normalize('NFD') // Remove diacritics
     .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/^(professor\s)/i, '')
+    .replace(/^(professor\s)/i, '') // BkM specific, maybe remove
     .replace(/&amp;\s/, '') // Remove ampersand code
     .replace(/\w+\.\s/, '') // Remove name abbreviations
     .replace(/,\s\w+\.$/, '') // Remove ending abbreviations
     .replace(/\W+/g, ' ') // Remove all non-word characters
     .replace(/\s+/g, ' ') // Replace multiple spaces with single space
     .trim();
-}
-
-function getWords(values: string | string[]): string[] {
-  const myValues = Array.isArray(values) ? values : [values];
-  return myValues.flatMap((value) => value.split(' '));
-}
-
-function getUniqueWords(values: string | string[]): string[] {
-  return Array.from(new Set(getWords(values)));
-}
-
-function countOccurrences(arr?: string[], word?: string): number {
-  if (!arr || !word) return 0;
-  return arr.reduce((acc, curr) => (curr === word ? acc + 1 : acc), 0);
 }
 
 async function loadUlanArtists() {
