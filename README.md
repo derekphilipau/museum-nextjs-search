@@ -2,6 +2,16 @@
 
 Powerful platforms like [Elasticsearch](https://www.elastic.co/) & [Next.js](https://nextjs.org/) make it possible for museums to easily build performant, responsive and accessible faceted searches for their online collections.
 
+## UPDATE
+
+I've stopped work in this repository, replacing it with a new project:  
+
+Repository: [https://github.com/derekphilipau/musefully](https://github.com/derekphilipau/musefully)
+
+Website: [http://musefully.org/](http://musefully.org/)
+
+Musefully allows for ingesting datasources from various sources, including collections, content, and rss feeds.
+
 ## Demo
 
 This project has been deployed on Vercel at https://bkm-next-search.vercel.app/
